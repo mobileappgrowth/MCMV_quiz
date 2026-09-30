@@ -3,6 +3,19 @@
 import { useState } from 'react'
 import { createBrowserSupabase } from '@/lib/supabase/browser'
 
+// ============================================================================
+// LOGIN -- somente para quem ja esta cadastrado.
+//
+// shouldCreateUser: false e a trava. Sem ela, qualquer pessoa que digitasse um
+// email criaria um usuario de autenticacao no projeto. O cadastro de corretor e
+// feito a mao no admin, que cria o usuario de autenticacao e a linha em
+// corretores na mesma acao.
+//
+// Consequencia: email nao cadastrado recebe erro explicito, nao um link que
+// nunca chega. Com um punhado de corretores conhecidos e onboarding pessoal,
+// dizer "fale com o administrador" evita uma ligacao de suporte.
+// ============================================================================
+
 export function LoginForm() {
   const [email, setEmail] = useState('')
   const [estado, setEstado] = useState<'inicial' | 'enviando' | 'enviado'>('inicial')
@@ -17,12 +30,22 @@ export function LoginForm() {
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: {
+        shouldCreateUser: false,
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
 
     if (error) {
-      setErro('Nao conseguimos enviar o link. Confira o email e tente de novo.')
+      // O Supabase responde otp_disabled quando o email nao existe e a criacao
+      // esta desligada. Qualquer outro erro e falha de envio de verdade.
+      const naoCadastrado =
+        error.code === 'otp_disabled' || /signups not allowed/i.test(error.message)
+
+      setErro(
+        naoCadastrado
+          ? 'Este email nao esta cadastrado. Fale com o administrador para liberar seu acesso.'
+          : 'Nao conseguimos enviar o link agora. Tente de novo em alguns minutos.'
+      )
       setEstado('inicial')
       return
     }
