@@ -18,7 +18,10 @@ Como isso e sustentado no codigo:
 | Postgres | `UNIQUE` em `desbloqueios.lead_id`. Exclusividade e constraint, nao `if` de aplicacao. |
 | Servidor | `SUPABASE_SERVICE_ROLE_KEY` sem prefixo `NEXT_PUBLIC_`: o Next nao a coloca no bundle. |
 | Servidor | `lib/supabase/admin.ts` joga erro se chamado no navegador. |
+| Postgres | A view `vitrine` nao tem as colunas `nome` e `telefone`. Nenhuma consulta a ela pode vazar contato. |
+| Postgres | A view e `security_invoker = true`: se exposta, herda o RLS de `leads`, que nega. |
 | Consulta | A vitrine seleciona colunas explicitas. **Nunca `select *`.** |
+| Teste | `npm run test:vazamento` falha se o contato aparecer na listagem. |
 
 Ao mexer no projeto, essa tabela e a checklist.
 
@@ -35,6 +38,7 @@ No painel do Supabase, **SQL Editor > New query**. Cole e rode, nesta ordem:
 
 1. `supabase/migrations/0001_schema.sql`
 2. `supabase/migrations/0002_rls.sql`
+3. `supabase/migrations/0003_vitrine.sql`
 
 Rodar fora de ordem falha (a segunda depende das tabelas da primeira).
 
@@ -76,6 +80,38 @@ npm run dev
 | `npm run dev` | servidor de desenvolvimento |
 | `npm run build` | build de producao |
 | `npm run lint` | checagem de tipos (`tsc --noEmit`) |
+| `npm run test:vazamento` | prova que o contato nao vaza na listagem |
+
+### O teste de vazamento
+
+```bash
+npm run test:vazamento
+```
+
+Precisa de `.env.local` apontando para um Supabase **de teste** com as tres
+migrations aplicadas. Insere um lead com telefone-sentinela, roda a consulta
+real da vitrine e apaga o lead no fim.
+
+Quatro asserções, e a primeira e a que faz as outras valerem:
+
+1. **Controle positivo** — o telefone sentinela esta no banco e o servidor o
+   encontra. Sem isso, um setup que falhou deixaria o teste verde sem provar
+   nada: asserção negativa passa de graca quando nao ha dado nenhum.
+2. `listarVitrine()` nao devolve telefone nem nome.
+3. `select *` na view nao traz as colunas de contato.
+4. A anon key nao le `leads` nem `vitrine`.
+
+### A checagem no DevTools
+
+O teste cobre a funcao. Para conferir o que de fato sai pela rede:
+
+1. Abra `/painel` logado como corretor, com o DevTools na aba **Network**.
+2. Procure a requisicao do documento (`painel`) e veja a resposta.
+3. Busque (Ctrl+F) o telefone de um lead que esta na vitrine.
+4. Repita nas requisicoes `?_rsc=...`, que e onde o Next serializa props de
+   Server Components. **E o esconderijo menos obvio de um vazamento.**
+
+Nenhuma das duas deve conter o telefone.
 
 ## Onde mexer
 
@@ -98,22 +134,34 @@ app/
   obrigado/             confirmacao pos-envio
   login/                magic link
   auth/callback/        troca o code por sessao
-  painel/               area do corretor (Dia 2)
+  painel/
+    page.tsx            vitrine (Server Component)
+    dados.ts            listarVitrine -- colunas explicitas
+    cartao-lead.tsx     cartao sem contato
+    recarga/            chave PIX + WhatsApp
+  admin/
+    page.tsx            fila de verificacao (telefone visivel: sou eu)
+    actions.ts          aprovar, descartar, anotar, cadastrar corretor
+    corretores/         cadastro manual de corretor
+  sem-acesso/           logado, mas sem cadastro de corretor
 lib/
+  auth.ts               quem pode ver o que -- todo o controle de acesso
   config.ts             knobs de negocio
+  preco.ts              preco na aprovacao, idade do lead
   quiz.ts               perguntas e derivacao do enquadramento
   supabase/
     admin.ts            service_role — SOMENTE SERVIDOR
     browser.ts          anon — so autenticacao
     session.ts          quem esta logado, no servidor
 supabase/migrations/    SQL versionado
+testes/                 o unico teste: vazamento de contato
 middleware.ts           renova o cookie de sessao
 ```
 
 ## Progresso
 
 - [x] **Dia 1** — projeto, migrations, autenticacao, quiz gravando ponta a ponta
-- [ ] **Dia 2** — admin de verificacao, vitrine com contato escondido, teste de vazamento
+- [x] **Dia 2** — admin de verificacao, vitrine com contato escondido, teste de vazamento
 - [ ] **Dia 3** — creditos, desbloqueio atomico, revelacao, WhatsApp, feedback
 - [ ] **Dia 4** — landing page
 - [ ] **Dia 5** — deploy, teste no celular, checagem final

@@ -120,3 +120,25 @@ export const TOTAL_PASSOS = PASSOS_OPCOES.length + 2
 export function enquadramentoDaRenda(rendaFaixa: string): string | null {
   return RENDA_FAIXAS.find((f) => f.valor === rendaFaixa)?.enquadramento ?? null
 }
+
+/**
+ * Traduz o valor gravado no banco para o rotulo legivel.
+ * Usado nos cartoes da vitrine e na fila de verificacao.
+ * Valor desconhecido volta como esta: prefiro ver o codigo cru na tela a
+ * esconder que o dado mudou de formato.
+ */
+export function rotuloDe(campo: string, valor: string | null): string {
+  if (valor === null) return '-'
+  const passo = PASSOS_OPCOES.find((p) => p.campo === campo)
+  return passo?.opcoes.find((o) => o.valor === valor)?.rotulo ?? valor
+}
+
+/** Rotulo para colunas booleanas, ja traduzidas pelo banco. */
+export function rotuloBooleano(
+  valor: boolean | null,
+  seSim: string,
+  seNao: string
+): string {
+  if (valor === null) return '-'
+  return valor ? seSim : seNao
+}
