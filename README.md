@@ -25,6 +25,27 @@ Como isso e sustentado no codigo:
 
 Ao mexer no projeto, essa tabela e a checklist.
 
+## Se voce nao tem terminal
+
+O setup abaixo pressupoe um terminal com o repo clonado. **Sem maquina local,
+nada disso roda** -- e o caminho e outro, todo pelo navegador:
+
+| Em vez de | Faca |
+|---|---|
+| `npm run sql` | abra `setup-supabase.sql` e cole no SQL Editor do Supabase |
+| `cp .env.example .env.local` | cadastre as variaveis no painel da Vercel |
+| `npm run admin:criar` | Supabase > Authentication > Users > Add user, com *Auto Confirm User* ligado |
+| `npm run verifica` | peca a uma sessao do Claude Code com os secrets no ambiente |
+| `npm run dev` | deploy na Vercel: e a unica forma de abrir o app |
+
+`setup-supabase.sql` e **gerado** a partir de `supabase/migrations/`. Quando as
+migrations mudarem, ele e regerado com `npm run sql > setup-supabase.sql` --
+nao edite o arquivo direto.
+
+Nesse modo, os scripts de diagnostico (`verifica`, `admin:criar`,
+`test:vazamento`) rodam numa sessao de Claude Code na nuvem com as chaves
+cadastradas como secrets do ambiente, nao na sua maquina.
+
 ## Setup
 
 Quatro passos. O terceiro e um comando que te diz se os outros deram certo.
