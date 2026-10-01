@@ -176,6 +176,28 @@ configuracao.** Depois de trocar a branch, um retry ainda clona a antiga, e voce
 conclui errado que a troca nao pegou. Dispare um **push novo** na branch certa
 em vez de usar retry.
 
+### Se o deploy falhar com "Aborting the upload operation because of conflicts"
+
+O `cloudflare.config.ts` e a fonte da verdade da configuracao do Worker. O
+`cf deploy` compara o que esta nele com o que esta no painel e **aborta** se
+divergir, para nao apagar silenciosamente o que foi configurado la.
+
+Consequencia: **uma variavel adicionada so pelo painel, como `var` comum,
+quebra o proximo deploy.** Ou ela e declarada no `cloudflare.config.ts`, ou e
+cadastrada como **Secret** -- secrets nao entram nessa comparacao.
+
+A divisao adotada:
+
+| Variavel | Onde vive | Por que |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | `cloudflare.config.ts`, repassada do ambiente de build | publica por natureza; repassar em vez de fixar mantem o repo livre de valores de um projeto especifico |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | idem | idem |
+| `SUPABASE_SERVICE_ROLE_KEY` | painel, como **Secret** | ignora todo o RLS; nunca no repositorio |
+| `ADMIN_EMAILS` | painel, como **Secret** | como `var` comum quebraria o deploy |
+
+**A lista de variaveis de execucao do painel deve ficar vazia.** Tudo que nao
+for Secret vem do `cloudflare.config.ts`.
+
 ### A armadilha das variaveis: LEIA ANTES
 
 A Cloudflare tem **dois lugares diferentes** para variaveis, e eles nao se
