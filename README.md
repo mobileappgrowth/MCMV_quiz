@@ -27,51 +27,100 @@ Ao mexer no projeto, essa tabela e a checklist.
 
 ## Setup
 
+Quatro passos. O terceiro e um comando que te diz se os outros deram certo.
+
 ### 1. Criar o projeto no Supabase
 
-Em [supabase.com](https://supabase.com), crie um projeto. Depois vá em
-**Project Settings > API** e copie as tres chaves.
+Em [supabase.com](https://supabase.com), crie um projeto. Em **Project
+Settings > API**, copie a URL, a `anon` key e a `service_role` key.
+
+```bash
+cp .env.example .env.local
+```
+
+Preencha as tres, mais `ADMIN_EMAILS` com o seu email.
+
+`SUPABASE_SERVICE_ROLE_KEY` ignora todo o RLS. Nunca commite, nunca renomeie
+com `NEXT_PUBLIC_`, nunca cole em chat. Se ela vazar, rotacione no painel.
 
 ### 2. Aplicar as migrations
 
-No painel do Supabase, **SQL Editor > New query**. Cole e rode, nesta ordem:
+```bash
+npm run sql
+```
 
-1. `supabase/migrations/0001_schema.sql`
-2. `supabase/migrations/0002_rls.sql`
-3. `supabase/migrations/0003_vitrine.sql`
+Imprime as migrations concatenadas na ordem certa. Cole no **SQL Editor** do
+Supabase e rode uma vez. Le os arquivos de verdade, entao nunca fica
+desatualizado em relacao a `supabase/migrations/`.
 
-Rodar fora de ordem falha (a segunda depende das tabelas da primeira).
+### 3. Verificar
 
-### 3. Liberar o redirect do magic link
+```bash
+npm run verifica
+```
 
-**Authentication > URL Configuration**, em *Redirect URLs*, adicione:
+Checa oito coisas e diz qual esta errada: chaves presentes, conexao, as 6
+tabelas, a view, o contato inacessivel, a anon key bloqueada, seu usuario de
+admin, e o estado dos dados. Somente leitura -- pode rodar quantas vezes
+quiser, inclusive contra producao.
+
+Rode isto antes de abrir o navegador. Quando a vitrine aparecer vazia ou o
+login nao funcionar, rode de novo: ele responde o porque.
+
+### 4. Criar seu acesso de admin
+
+```bash
+npm run admin:criar
+```
+
+O login tem `shouldCreateUser: false`, para que ninguem crie conta digitando um
+email. **Isso vale para voce tambem:** sem este passo, voce nao entra no
+`/admin` do seu proprio produto. O comando cria o usuario de autenticacao para
+cada email em `ADMIN_EMAILS`. Idempotente.
+
+### 5. Liberar o redirect do magic link
+
+**Authentication > URL Configuration**, em *Redirect URLs*:
 
 ```
 http://localhost:3000/auth/callback
 https://SEU-DOMINIO.vercel.app/auth/callback
 ```
 
-Sem isso o link do email chega, mas nao loga.
+Sem isso o email chega, mas o link nao loga. E a unica coisa do setup que
+`npm run verifica` nao consegue checar.
 
-### 4. Variaveis de ambiente
-
-```bash
-cp .env.example .env.local
-```
-
-Preencha com as chaves do passo 1. `SUPABASE_SERVICE_ROLE_KEY` e secreta:
-nunca commite, nunca renomeie com `NEXT_PUBLIC_`.
-
-### 5. Rodar
+### 6. Rodar
 
 ```bash
 npm install
 npm run dev
 ```
 
-- `/` — quiz publico
-- `/login` — magic link
-- `/painel` — exige sessao
+| Rota | O que e |
+|---|---|
+| `/` | quiz publico |
+| `/login` | magic link |
+| `/painel` | vitrine (exige corretor cadastrado e ativo) |
+| `/painel/recarga` | chave PIX |
+| `/admin` | fila de verificacao (exige email em `ADMIN_EMAILS`) |
+| `/admin/corretores` | cadastro manual de corretor |
+
+### Primeiro teste de ponta a ponta
+
+1. `/` -- responda o quiz inteiro e envie.
+2. `/admin` -- o lead aparece na fila com o telefone. Aprove.
+3. `/admin/corretores` -- cadastre um corretor com um email seu que funcione.
+4. `/login` com o email do corretor, abra o link no celular.
+5. `/painel` -- o lead aparece sem contato. **Confira no DevTools.**
+
+### Limite de email do Supabase
+
+O servico de email embutido do Supabase tem limite baixo de envios por hora, e
+o valor muda. Com poucos corretores isso costuma passar, mas se os magic links
+pararem de chegar, e a primeira suspeita -- confira o limite atual em
+**Authentication > Rate Limits**. Configurar SMTP proprio (Resend, Postmark)
+resolve, e e uma mudanca de painel, nao de codigo.
 
 ## Comandos
 
@@ -80,6 +129,9 @@ npm run dev
 | `npm run dev` | servidor de desenvolvimento |
 | `npm run build` | build de producao |
 | `npm run lint` | checagem de tipos (`tsc --noEmit`) |
+| `npm run sql` | imprime as migrations para colar no Supabase |
+| `npm run verifica` | diagnostica a integracao (somente leitura) |
+| `npm run admin:criar` | cria seu usuario de autenticacao de admin |
 | `npm run test:vazamento` | prova que o contato nao vaza na listagem |
 
 ### O teste de vazamento
@@ -153,6 +205,10 @@ lib/
     admin.ts            service_role — SOMENTE SERVIDOR
     browser.ts          anon — so autenticacao
     session.ts          quem esta logado, no servidor
+scripts/
+  verifica-supabase.ts  diagnostico da integracao
+  criar-admin.ts        cria seu usuario de autenticacao
+  sql.ts                concatena as migrations
 supabase/migrations/    SQL versionado
 testes/                 o unico teste: vazamento de contato
 middleware.ts           renova o cookie de sessao

@@ -2,11 +2,15 @@
   "name": "mcmv-quiz",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
+    "sql": "node scripts/sql.ts",
+    "verifica": "node --env-file-if-exists=.env.local scripts/verifica-supabase.ts",
+    "admin:criar": "node --env-file-if-exists=.env.local scripts/criar-admin.ts",
     "test:vazamento": "node --env-file-if-exists=.env.local --test testes/vazamento-contato.test.ts"
   },
   "dependencies": {
