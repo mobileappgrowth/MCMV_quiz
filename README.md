@@ -22,6 +22,7 @@ Como isso e sustentado no codigo:
 | Postgres | A view e `security_invoker = true`: se exposta, herda o RLS de `leads`, que nega. |
 | Consulta | A vitrine seleciona colunas explicitas. **Nunca `select *`.** |
 | Teste | `npm run test:vazamento` falha se o contato aparecer na listagem. |
+| Deploy | O bundle do Worker nao e servido: buscar por HTTP o arquivo que referencia a chave secreta devolve **404**, enquanto um asset legitimo devolve 200. |
 
 Ao mexer no projeto, essa tabela e a checklist.
 
@@ -33,10 +34,10 @@ nada disso roda** -- e o caminho e outro, todo pelo navegador:
 | Em vez de | Faca |
 |---|---|
 | `npm run sql` | abra `setup-supabase.sql` e cole no SQL Editor do Supabase |
-| `cp .env.example .env.local` | cadastre as variaveis no painel da Vercel |
+| `cp .env.example .env.local` | cadastre as variaveis no painel da Cloudflare (ver abaixo) |
 | `npm run admin:criar` | Supabase > Authentication > Users > Add user, com *Auto Confirm User* ligado |
 | `npm run verifica` | peca a uma sessao do Claude Code com os secrets no ambiente |
-| `npm run dev` | deploy na Vercel: e a unica forma de abrir o app |
+| `npm run dev` | deploy na Cloudflare: e a unica forma de abrir o app |
 
 `setup-supabase.sql` e **gerado** a partir de `supabase/migrations/`. Quando as
 migrations mudarem, ele e regerado com `npm run sql > setup-supabase.sql` --
@@ -105,7 +106,7 @@ cada email em `ADMIN_EMAILS`. Idempotente.
 
 ```
 http://localhost:3000/auth/callback
-https://SEU-DOMINIO.vercel.app/auth/callback
+https://SEU-WORKER.workers.dev/auth/callback
 ```
 
 Sem isso o email chega, mas o link nao loga. E a unica coisa do setup que
@@ -143,12 +144,83 @@ pararem de chegar, e a primeira suspeita -- confira o limite atual em
 **Authentication > Rate Limits**. Configurar SMTP proprio (Resend, Postmark)
 resolve, e e uma mudanca de painel, nao de codigo.
 
+## Deploy (Cloudflare Workers)
+
+O app roda em Cloudflare Workers via [vinext](https://github.com/cloudflare/vinext),
+que reimplementa a API do Next.js sobre Vite. `npx vinext check` reporta 100%
+de compatibilidade com este codigo -- os 5 imports do Next que usamos
+(`next/cache`, `next/link`, `next/server`, `next/headers`, `next/navigation`)
+sao todos integralmente suportados.
+
+### Configuracao no painel
+
+**Workers & Pages > Create > Import a repository**, aponte para este repo.
+
+| Campo | Valor |
+|---|---|
+| Build command | `npm run build` |
+| Deploy command | `npm run deploy` |
+
+Cada push na branch configurada vira um deploy.
+
+### A armadilha das variaveis: LEIA ANTES
+
+A Cloudflare tem **dois lugares diferentes** para variaveis, e eles nao se
+enxergam:
+
+- **Settings > Builds > Build variables and secrets** -- existe so durante o build
+- **Settings > Variables and Secrets** -- existe so em execucao
+
+Variavel de build **nao** e visivel em execucao, e vice-versa. Cadastre assim:
+
+| Variavel | Build | Execucao | Por que |
+|---|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | **sim** | **sim** | embutida no bundle do navegador no build, E lida pelo codigo de servidor em execucao |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | **sim** | **sim** | idem |
+| `SUPABASE_SERVICE_ROLE_KEY` | nao | **sim, como Secret** | nunca no build: mantem a chave fora de log e cache de build |
+| `ADMIN_EMAILS` | nao | **sim** | so o servidor decide quem e admin |
+
+As duas primeiras vao nos dois lugares de proposito. Custa nada e elimina uma
+classe inteira de falha confusa.
+
+Se faltar uma variavel de build, **o build passa e o app quebra em execucao** --
+falha no lugar errado, longe da causa. `npm run verifica` (numa sessao com as
+chaves) diz qual.
+
+### O que acontece se a configuracao estiver errada
+
+Por desenho, as falhas sao assimetricas:
+
+- **A landing page e `/obrigado` continuam de pe.** `proxy.ts` cobre so
+  `/painel` e `/admin`, e falha macia se faltar configuracao. Sua captacao de
+  leads nao cai por causa de um env var errado. Verificado: `/` responde 200
+  sem nenhuma variavel do Supabase definida.
+- **`/painel` e `/admin` devolvem 500.** De proposito: em rota protegida,
+  falhar fechado e mais seguro que redirecionar silenciosamente.
+
+### Escotilha de emergencia
+
+Se um upgrade quebrar o vinext, `npm run build:next` constroi com o Next.js de
+verdade. Nao faz deploy, mas responde "o problema e meu codigo ou o adaptador?"
+em um comando. O `next` segue instalado so para isso.
+
+### Vulnerabilidade conhecida (nao acionavel)
+
+`npm audit` reporta 4 moderadas na cadeia
+`vinext > @vercel/og > satori > fflate`. E a geracao de imagem OG, que este
+projeto nao usa -- o caminho vulneravel (descompactar ZIP64 malformado ao ler
+fonte) nunca e alcancado. `npm audit fix --force` **rebaixa** o vinext para
+0.2.1. Deixe como esta.
+
 ## Comandos
 
 | Comando | O que faz |
 |---|---|
-| `npm run dev` | servidor de desenvolvimento |
-| `npm run build` | build de producao |
+| `npm run dev` | servidor de desenvolvimento (vite, porta 3000) |
+| `npm run build` | build de producao (vinext) |
+| `npm run start` | roda o Worker construido localmente |
+| `npm run deploy` | deploy manual na Cloudflare |
+| `npm run build:next` | escotilha: build com o Next.js de verdade |
 | `npm run lint` | checagem de tipos (`tsc --noEmit`) |
 | `npm run sql` | imprime as migrations para colar no Supabase |
 | `npm run verifica` | diagnostica a integracao (somente leitura) |
@@ -232,7 +304,9 @@ scripts/
   sql.ts                concatena as migrations
 supabase/migrations/    SQL versionado
 testes/                 o unico teste: vazamento de contato
-middleware.ts           renova o cookie de sessao
+proxy.ts                renova o cookie de sessao (so em /painel e /admin)
+vite.config.ts          build vinext
+cloudflare.config.ts    definicao do Worker
 ```
 
 ## Progresso
@@ -241,4 +315,5 @@ middleware.ts           renova o cookie de sessao
 - [x] **Dia 2** — admin de verificacao, vitrine com contato escondido, teste de vazamento
 - [ ] **Dia 3** — creditos, desbloqueio atomico, revelacao, WhatsApp, feedback
 - [ ] **Dia 4** — landing page
-- [ ] **Dia 5** — deploy, teste no celular, checagem final
+- [x] **Deploy** — Cloudflare Workers via vinext (antecipado: sem maquina local, e a unica forma de abrir o app)
+- [ ] **Dia 5** — teste no celular, checagem final
