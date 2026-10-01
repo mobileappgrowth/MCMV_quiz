@@ -30,13 +30,24 @@ export async function exigirAdmin(): Promise<string> {
   const usuario = await getUsuario()
   if (!usuario?.email) redirect('/login')
 
-  if (!emailsAdmin().includes(usuario.email.toLowerCase())) {
+  if (!ehAdmin(usuario.email)) {
     // Nao distingo "nao logado" de "logado sem permissao": a resposta e a
     // mesma, e isso evita confirmar quais emails sao admin.
     redirect('/login')
   }
 
   return usuario.email
+}
+
+/**
+ * Este email e admin? Exportado porque o callback do magic link precisa saber
+ * para onde mandar a pessoa depois do login -- admin vai para /admin, corretor
+ * vai para /painel. Mandar admin para /painel o expulsaria, porque ele nao tem
+ * (nem deve ter) linha em corretores.
+ */
+export function ehAdmin(email: string | null | undefined): boolean {
+  if (!email) return false
+  return emailsAdmin().includes(email.toLowerCase())
 }
 
 export type Corretor = {
