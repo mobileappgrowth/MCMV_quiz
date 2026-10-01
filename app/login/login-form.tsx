@@ -20,37 +20,84 @@ export function LoginForm() {
   const [email, setEmail] = useState('')
   const [estado, setEstado] = useState<'inicial' | 'enviando' | 'enviado'>('inicial')
   const [erro, setErro] = useState<string | null>(null)
+  // Segunda linha da mensagem: o que fazer a respeito.
+  const [detalhe, setDetalhe] = useState<string | null>(null)
 
   async function enviar(evento: React.FormEvent) {
     evento.preventDefault()
     setErro(null)
+    setDetalhe(null)
     setEstado('enviando')
 
-    const supabase = createBrowserSupabase()
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim(),
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-
-    if (error) {
-      // O Supabase responde otp_disabled quando o email nao existe e a criacao
-      // esta desligada. Qualquer outro erro e falha de envio de verdade.
-      const naoCadastrado =
-        error.code === 'otp_disabled' || /signups not allowed/i.test(error.message)
-
-      setErro(
-        naoCadastrado
-          ? 'Este email nao esta cadastrado. Fale com o administrador para liberar seu acesso.'
-          : 'Nao conseguimos enviar o link agora. Tente de novo em alguns minutos.'
+    // As NEXT_PUBLIC_ sao embutidas no bundle durante o BUILD. Se faltarem la,
+    // chegam aqui como undefined e createBrowserSupabase() lanca excecao.
+    // Checar antes transforma "o botao travou" em uma instrucao acionavel.
+    if (
+      !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+      !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ) {
+      setErro('O aplicativo esta sem a configuracao do Supabase.')
+      setDetalhe(
+        'As variaveis NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY ' +
+          'precisam estar nas variaveis de BUILD (nao so nas de execucao), e o ' +
+          'build precisa ser refeito depois de salva-las.'
       )
       setEstado('inicial')
       return
     }
 
-    setEstado('enviado')
+    try {
+      const supabase = createBrowserSupabase()
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (error) {
+        // Mensagem por causa. "Nao funcionou" nao ajuda ninguem a consertar.
+        const status = (error as { status?: number }).status
+        const msg = error.message ?? ''
+
+        if (error.code === 'otp_disabled' || /signups not allowed/i.test(msg)) {
+          setErro('Este email nao esta cadastrado.')
+          setDetalhe(
+            'O login nao cria contas. Peca ao administrador para cadastrar, ou ' +
+              '-- se voce e o administrador -- crie o usuario em Supabase > ' +
+              'Authentication > Users > Add user, com Auto Confirm ligado.'
+          )
+        } else if (status === 429 || /rate limit/i.test(msg)) {
+          setErro('Limite de envio de emails atingido.')
+          setDetalhe(
+            'O servico de email embutido do Supabase tem limite baixo por hora. ' +
+              'Espere alguns minutos, ou configure um SMTP proprio em ' +
+              'Authentication > Emails.'
+          )
+        } else if (/redirect/i.test(msg)) {
+          setErro('A URL de redirecionamento nao esta liberada.')
+          setDetalhe(
+            `Adicione ${window.location.origin}/auth/callback em Supabase > ` +
+              'Authentication > URL Configuration > Redirect URLs.'
+          )
+        } else {
+          setErro('Nao conseguimos enviar o link.')
+          setDetalhe(msg)
+        }
+        setEstado('inicial')
+        return
+      }
+
+      setEstado('enviado')
+    } catch (e) {
+      // Rede caida, chave invalida, CORS. Sem isto o botao ficava preso em
+      // "Enviando..." e a tela nao dizia nada.
+      console.error('[login]', e)
+      setErro('Falha inesperada ao enviar o link.')
+      setDetalhe(e instanceof Error ? e.message : String(e))
+      setEstado('inicial')
+    }
   }
 
   if (estado === 'enviado') {
@@ -88,9 +135,10 @@ export function LoginForm() {
       </button>
 
       {erro && (
-        <p role="alert" className="mt-4 text-sm text-red-700">
-          {erro}
-        </p>
+        <div role="alert" className="mt-4">
+          <p className="text-sm font-medium text-red-700">{erro}</p>
+          {detalhe && <p className="mt-1 text-sm text-gray-600">{detalhe}</p>}
+        </div>
       )}
     </form>
   )
