@@ -163,6 +163,19 @@ sao todos integralmente suportados.
 
 Cada push na branch configurada vira um deploy.
 
+### Se o build falhar com "package.json nao encontrado"
+
+Ele clonou a branch errada. Esta mensagem nao tem nada a ver com Node, npm ou
+vinext: a branch que a Cloudflare clonou nao tem o projeto.
+
+**Settings > Controle da ramificacao** precisa apontar para a branch que tem o
+codigo. O padrao da Cloudflare e `main`.
+
+E a parte que custa tempo: **"Retry deployment" reexecuta o snapshot antigo de
+configuracao.** Depois de trocar a branch, um retry ainda clona a antiga, e voce
+conclui errado que a troca nao pegou. Dispare um **push novo** na branch certa
+em vez de usar retry.
+
 ### A armadilha das variaveis: LEIA ANTES
 
 A Cloudflare tem **dois lugares diferentes** para variaveis, e eles nao se
