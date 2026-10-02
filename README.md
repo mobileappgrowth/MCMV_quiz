@@ -144,6 +144,48 @@ pararem de chegar, e a primeira suspeita -- confira o limite atual em
 **Authentication > Rate Limits**. Configurar SMTP proprio (Resend, Postmark)
 resolve, e e uma mudanca de painel, nao de codigo.
 
+## Motor de qualificacao
+
+`lib/motor.ts` transforma as respostas do quiz em tres saidas: enquadramento,
+selo e preco. **Funcao pura** -- sem banco, sem rede, sem `Date.now()`. A mesma
+entrada da sempre a mesma saida, e e isso que permite reproduzir a decisao de um
+lead antigo meses depois.
+
+**Nenhum numero esta escrito dentro dele.** Todos os pesos, cortes e
+parametros vivem em `lib/config.ts`. Recalibrar nao exige abrir o motor.
+
+### Antes de confiar nos selos: preencha o preco do produto
+
+`PRECO_PRODUTO_POR_CIDADE` em `lib/config.ts` esta **zerado**. Nenhum valor foi
+inventado -- e esse numero que decide quem entra na sua fila.
+
+Enquanto estiver zerado, o motor trata capacidade como nao avaliada: nao elimina
+ninguem por esse criterio e nao da os 20 pontos dele. Falha para o lado seguro
+nas duas pontas, mas **todos os selos saem mais baixos do que deveriam**. O
+`/admin` avisa em vermelho enquanto isso durar.
+
+### O que nunca aparece para quem
+
+| Dado | Lead | Corretor | Voce |
+|---|---|---|---|
+| Pontuacao | nao | nao | sim, na fila |
+| Poder de compra | nao | nao | so no banco |
+| Selo | nao | **sim** | sim |
+| Motivo do descarte | nao | nao | sim, nos contadores |
+
+A pontuacao fora da vitrine nao e timidez: exibida, cada lead vira uma
+negociacao sobre o calculo. E o poder de compra viraria "valor aprovado" na
+cabeca de quem le -- aprovacao e da Caixa.
+
+Nao use **"pre-aprovado"** em lugar nenhum. O termo correto e *perfil
+declarado* ou *perfil verificado*.
+
+### Ao recalibrar
+
+Mudou peso ou corte? **Incremente `REGRA_VERSAO`.** Cada lead carrega a versao
+que o avaliou; sem isso, os leads antigos ficam inexplicaveis depois da
+mudanca.
+
 ## Deploy (Cloudflare Workers)
 
 O app roda em Cloudflare Workers via [vinext](https://github.com/cloudflare/vinext),
@@ -326,7 +368,8 @@ app/
   sem-acesso/           logado, mas sem cadastro de corretor
 lib/
   auth.ts               quem pode ver o que -- todo o controle de acesso
-  config.ts             knobs de negocio
+  config.ts             knobs de negocio E parametros do motor
+  motor.ts              qualificacao: funcao pura, zero numero dentro
   preco.ts              preco na aprovacao, idade do lead
   quiz.ts               perguntas e derivacao do enquadramento
   supabase/
@@ -348,7 +391,8 @@ cloudflare.config.ts    definicao do Worker
 
 - [x] **Dia 1** — projeto, migrations, autenticacao, quiz gravando ponta a ponta
 - [x] **Dia 2** — admin de verificacao, vitrine com contato escondido, teste de vazamento
-- [ ] **Dia 3** — creditos, desbloqueio atomico, revelacao, WhatsApp, feedback
+- [x] **Dia 2.5** — motor de qualificacao: enquadramento, capacidade, eliminatorios, pontuacao, selo, travas
+- [ ] **Dia 3** — creditos, desbloqueio atomico, revelacao, WhatsApp, feedback, contadores do admin
 - [ ] **Dia 4** — landing page
 - [x] **Deploy** — Cloudflare Workers via vinext (antecipado: sem maquina local, e a unica forma de abrir o app)
 - [ ] **Dia 5** — teste no celular, checagem final

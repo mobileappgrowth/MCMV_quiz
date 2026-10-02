@@ -1,5 +1,6 @@
 import { diasDesde, reais } from '@/lib/preco'
 import { rotuloDe, rotuloBooleano } from '@/lib/quiz'
+import { rotuloSelo } from '@/lib/motor'
 import type { LeadVitrine } from './dados'
 
 // ============================================================================
@@ -30,6 +31,12 @@ export function CartaoLead({
   const preco = Number(lead.preco ?? 0)
   const temSaldo = saldo >= preco
 
+  // O selo tem duas formas, e a diferenca e o produto: declarado sai do quiz,
+  // verificado sou eu confirmando no telefone. O cartao diz qual dos dois e --
+  // vender um pelo outro seria vender o que nao foi entregue.
+  const verificado = lead.selo_verificado !== null
+  const selo = lead.selo_verificado ?? lead.selo_declarado
+
   const atributos: [string, string][] = [
     ['Quartos', lead.quartos ? String(lead.quartos) : '-'],
     ['Garagem', rotuloBooleano(lead.garagem, 'Precisa', 'Nao precisa')],
@@ -51,9 +58,20 @@ export function CartaoLead({
             Captado ha {dias} {dias === 1 ? 'dia' : 'dias'}
           </p>
         </div>
-        <span className="shrink-0 border border-green-700 px-2 py-1 text-xs font-medium text-green-700">
-          Verificado
-        </span>
+        {selo && (
+          <span
+            className={`shrink-0 border px-2 py-1 text-center text-xs font-medium ${
+              verificado
+                ? 'border-green-700 text-green-700'
+                : 'border-gray-500 text-gray-600'
+            }`}
+          >
+            {rotuloSelo(selo)}
+            <span className="block text-[10px] font-normal">
+              {verificado ? 'perfil verificado' : 'perfil declarado'}
+            </span>
+          </span>
+        )}
       </div>
 
       <dl className="mb-4 flex flex-col gap-1 text-sm">

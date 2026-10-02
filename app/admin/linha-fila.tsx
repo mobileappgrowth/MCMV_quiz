@@ -3,6 +3,9 @@
 import { useState, useTransition } from 'react'
 import { verificarLead, descartarLead, salvarNota } from './actions'
 import { reais } from '@/lib/preco'
+import { rotuloSelo, type Selo } from '@/lib/motor'
+
+const SELOS: Selo[] = ['forte', 'medio', 'a_confirmar']
 
 type LeadFila = {
   id: string
@@ -12,6 +15,8 @@ type LeadFila = {
   dias: number
   precoSeAprovarAgora: number
   qualificacao: [string, string][]
+  seloDeclarado: string | null
+  pontuacao: number | null
 }
 
 export function LinhaFila({ lead }: { lead: LeadFila }) {
@@ -43,6 +48,16 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
           Captado ha {lead.dias} {lead.dias === 1 ? 'dia' : 'dias'} &middot; se
           aprovar agora, entra a {reais(lead.precoSeAprovarAgora)}
         </p>
+        {/* O selo que o motor deu a partir do que a pessoa digitou. E um ponto
+            de partida para a ligacao, nao um veredito -- quem decide o selo
+            verificado e voce, depois de falar com ela. */}
+        <p className="mt-1 text-sm">
+          Declarado pelo quiz:{' '}
+          <strong>{rotuloSelo(lead.seloDeclarado)}</strong>
+          {lead.pontuacao !== null && (
+            <span className="text-gray-600"> ({lead.pontuacao} pontos)</span>
+          )}
+        </p>
       </div>
 
       <dl className="mb-4 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
@@ -65,6 +80,28 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
         />
       </label>
 
+      {/* Aprovar exige escolher o selo verificado: um toque, sem passo extra.
+          Nao ha botao generico de "aprovar" de proposito -- sem selo, o cartao
+          da vitrine nao teria o que mostrar, e o preco cheio nao se sustenta. */}
+      <p className="mb-2 text-sm font-medium">
+        Aprovar por {reais(lead.precoSeAprovarAgora)} como:
+      </p>
+      <div className="mb-3 flex flex-wrap gap-2">
+        {SELOS.map((selo) => (
+          <button
+            key={selo}
+            type="button"
+            disabled={ocupado}
+            onClick={() => rodar(() => verificarLead(lead.id, selo))}
+            className={`px-4 py-3 text-sm font-medium text-white disabled:opacity-50 ${
+              selo === lead.seloDeclarado ? 'bg-green-800' : 'bg-green-600'
+            }`}
+          >
+            {rotuloSelo(selo)}
+          </button>
+        ))}
+      </div>
+
       <div className="flex flex-wrap gap-2">
         <button
           type="button"
@@ -73,14 +110,6 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
           className="border border-gray-500 px-4 py-3 text-sm disabled:opacity-50"
         >
           Salvar nota
-        </button>
-        <button
-          type="button"
-          disabled={ocupado}
-          onClick={() => rodar(() => verificarLead(lead.id))}
-          className="bg-green-700 px-4 py-3 text-sm font-medium text-white disabled:opacity-50"
-        >
-          Verificado &middot; {reais(lead.precoSeAprovarAgora)}
         </button>
         <button
           type="button"

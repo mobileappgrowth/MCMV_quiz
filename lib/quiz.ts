@@ -1,4 +1,9 @@
-import { RENDA_FAIXAS } from './config'
+import {
+  ENTRADA_FAIXAS,
+  FGTS_SALDO_FAIXAS,
+  RENDA_FAIXAS,
+  VINCULO_RENDA_FAIXAS,
+} from './config'
 
 // ============================================================================
 // DEFINICAO DO QUIZ
@@ -7,9 +12,12 @@ import { RENDA_FAIXAS } from './config'
 // sensiveis no fim (renda, situacao do nome, entrada), contato por ultimo --
 // quando a pessoa ja investiu atencao e a chance de abandono e menor.
 //
-// Os 10 passos abaixo sao de botao unico (um toque avanca). A primeira tela
-// (cidade/bairro) e a ultima (contato) precisam de teclado e sao escritas a
-// mao no componente.
+// Os passos abaixo sao de botao unico. A primeira tela (cidade/bairro) e a
+// ultima (contato) precisam de teclado e sao escritas a mao no componente.
+//
+// RAMIFICACAO: alguns passos so aparecem para certas respostas, via `visivelSe`.
+// A regra mora ao lado da pergunta de proposito -- espalhar isso por um estado
+// separado e como se perde o controle de um quiz.
 // ============================================================================
 
 export type PassoOpcoes = {
@@ -17,6 +25,20 @@ export type PassoOpcoes = {
   pergunta: string
   ajuda?: string
   opcoes: { valor: string; rotulo: string }[]
+  /**
+   * Resposta -> linha tranquilizadora. Quando a resposta escolhida tem nota, a
+   * tela NAO avanca sozinha: mostra a nota e um botao de continuar. E o unico
+   * lugar onde quebro o padrao de um toque por tela, e e de proposito -- a
+   * pessoa acabou de admitir algo que ela teme que a desqualifique.
+   */
+  notas?: Record<string, string>
+  /** Sem isto, o passo sempre aparece. */
+  visivelSe?: (respostas: Record<string, string>) => boolean
+}
+
+/** Renda acima do teto do programa: segue por um caminho curto. */
+function dentroDoPrograma(r: Record<string, string>): boolean {
+  return r.renda_faixa !== 'acima_8600'
 }
 
 export const PASSOS_OPCOES: PassoOpcoes[] = [
@@ -55,17 +77,18 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
     opcoes: RENDA_FAIXAS.map((f) => ({ valor: f.valor, rotulo: f.rotulo })),
   },
   {
-    campo: 'renda_formal',
-    pergunta: 'Essa renda e de carteira assinada?',
-    opcoes: [
-      { valor: 'sim', rotulo: 'Sim, carteira assinada' },
-      { valor: 'nao', rotulo: 'Autonomo ou informal' },
-    ],
+    campo: 'vinculo_renda',
+    pergunta: 'Como e essa renda?',
+    opcoes: VINCULO_RENDA_FAIXAS.map((f) => ({
+      valor: f.valor,
+      rotulo: f.rotulo,
+    })),
   },
   {
     campo: 'renda_composta',
     pergunta: 'Vai compor renda com outra pessoa?',
     ajuda: 'Conjuge, pai, mae, irmao.',
+    visivelSe: dentroDoPrograma,
     opcoes: [
       { valor: 'sim', rotulo: 'Sim' },
       { valor: 'nao', rotulo: 'Nao, so a minha renda' },
@@ -79,17 +102,46 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
       { valor: 'nao', rotulo: 'Com restricao' },
       { valor: 'nao_sei', rotulo: 'Nao sei' },
     ],
+    notas: {
+      nao_sei:
+        'Tudo bem nao saber. Isso nao impede o atendimento -- a gente confere ' +
+        'junto com voce na hora da conversa.',
+    },
+  },
+  {
+    campo: 'regularizacao_andamento',
+    pergunta: 'Voce ja esta regularizando essa pendencia?',
+    ajuda: 'Acordo em andamento, parcelamento, ou ja quitado esperando baixa.',
+    // So para quem declarou restricao. Perguntar isso a quem disse "limpo"
+    // seria constrangedor e inutil.
+    visivelSe: (r) => r.nome_limpo === 'nao',
+    opcoes: [
+      { valor: 'sim', rotulo: 'Sim, ja estou resolvendo' },
+      { valor: 'nao', rotulo: 'Ainda nao' },
+    ],
   },
   {
     campo: 'fgts_tempo',
     pergunta: 'Quanto tempo de FGTS voce tem?',
     ajuda: 'Tempo somado de carteira assinada.',
+    visivelSe: dentroDoPrograma,
     opcoes: [
       { valor: 'nao_tenho', rotulo: 'Nao tenho FGTS' },
       { valor: 'menos_1_ano', rotulo: 'Menos de 1 ano' },
       { valor: '1_a_3_anos', rotulo: 'Entre 1 e 3 anos' },
       { valor: 'mais_3_anos', rotulo: 'Mais de 3 anos' },
     ],
+  },
+  {
+    campo: 'fgts_saldo',
+    pergunta: 'E quanto tem de saldo no FGTS?',
+    ajuda: 'Da para ver no aplicativo do FGTS. Um valor aproximado ja ajuda.',
+    // Nao faz sentido perguntar saldo a quem acabou de dizer que nao tem FGTS.
+    visivelSe: (r) => dentroDoPrograma(r) && r.fgts_tempo !== 'nao_tenho',
+    opcoes: FGTS_SALDO_FAIXAS.map((f) => ({
+      valor: f.valor,
+      rotulo: f.rotulo,
+    })),
   },
   {
     campo: 'ja_financiou',
@@ -103,22 +155,24 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
     campo: 'entrada_disponivel',
     pergunta: 'Quanto tem de entrada?',
     ajuda: 'Dinheiro guardado, sem contar o FGTS.',
-    opcoes: [
-      { valor: 'nada', rotulo: 'Nao tenho entrada' },
-      { valor: 'ate_5k', rotulo: 'Até R$ 5 mil' },
-      { valor: '5k_15k', rotulo: 'R$ 5 mil a R$ 15 mil' },
-      { valor: '15k_30k', rotulo: 'R$ 15 mil a R$ 30 mil' },
-      { valor: 'acima_30k', rotulo: 'Mais de R$ 30 mil' },
-    ],
+    opcoes: ENTRADA_FAIXAS.map((f) => ({ valor: f.valor, rotulo: f.rotulo })),
   },
 ]
 
-// 1 tela de cidade/bairro + 10 de opcoes + 1 de contato.
-export const TOTAL_PASSOS = PASSOS_OPCOES.length + 2
+/**
+ * Os passos que valem para estas respostas. A barra de progresso usa o tamanho
+ * desta lista, entao quem segue o caminho curto ve a barra andar mais rapido --
+ * nao uma barra que encolhe.
+ */
+export function passosVisiveis(
+  respostas: Record<string, string>
+): PassoOpcoes[] {
+  return PASSOS_OPCOES.filter((p) => !p.visivelSe || p.visivelSe(respostas))
+}
 
-/** Deriva o enquadramento MCMV da faixa de renda. Regra em lib/config.ts. */
-export function enquadramentoDaRenda(rendaFaixa: string): string | null {
-  return RENDA_FAIXAS.find((f) => f.valor === rendaFaixa)?.enquadramento ?? null
+/** 1 tela de cidade/bairro + os passos visiveis + 1 de contato. */
+export function totalPassos(respostas: Record<string, string>): number {
+  return passosVisiveis(respostas).length + 2
 }
 
 /**

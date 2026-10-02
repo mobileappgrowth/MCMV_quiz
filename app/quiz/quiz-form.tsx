@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { PASSOS_OPCOES, TOTAL_PASSOS } from '@/lib/quiz'
+import { passosVisiveis, totalPassos, type PassoOpcoes } from '@/lib/quiz'
 import { CONSENTIMENTO } from '@/lib/config'
 import { salvarLead, type RespostasQuiz } from './actions'
 
@@ -11,21 +11,32 @@ import { salvarLead, type RespostasQuiz } from './actions'
 // Estado inteiro em dois useState. Nada e gravado no banco antes do envio
 // final: um lead so existe quando a pessoa chega ao fim e aceita o termo.
 //
-// Passo 0        -> cidade e bairro
-// Passos 1 a 10  -> PASSOS_OPCOES (um toque avanca)
-// Passo 11       -> consentimento, nome e WhatsApp
+// Passo 0            -> cidade e bairro
+// Passos do meio      -> perguntas de botao (um toque avanca)
+// Ultimo passo        -> consentimento, nome e WhatsApp
+//
+// Os passos do meio NAO sao fixos: dependem das respostas. Renda acima do teto
+// do programa pula FGTS e composicao; quem declara restricao ganha uma pergunta
+// extra. Por isso a lista e recalculada a cada render, em vez de ser um indice
+// num array constante.
 //
 // Dia 1: sem estilizacao. Os tamanhos aqui existem so para caber no dedo
 // durante o teste no celular. O visual e o Dia 4.
 // ============================================================================
 
-const ULTIMO_PASSO = TOTAL_PASSOS - 1
-
 export function QuizForm() {
   const [passo, setPasso] = useState(0)
   const [respostas, setRespostas] = useState<RespostasQuiz>({})
   const [erro, setErro] = useState<string | null>(null)
+  // Nota tranquilizadora da resposta recem-escolhida. Quando preenchida, a tela
+  // segura a pessoa com um "Continuar" em vez de avancar sozinha.
+  const [nota, setNota] = useState<string | null>(null)
   const [enviando, iniciarEnvio] = useTransition()
+
+  const visiveis = passosVisiveis(respostas)
+  const total = totalPassos(respostas)
+  const ultimoPasso = total - 1
+  const passoAtual: PassoOpcoes | undefined = visiveis[passo - 1]
 
   function responder(campo: string, valor: string) {
     setRespostas((atual) => ({ ...atual, [campo]: valor }))
@@ -33,12 +44,27 @@ export function QuizForm() {
 
   function avancar() {
     setErro(null)
-    setPasso((p) => Math.min(p + 1, ULTIMO_PASSO))
+    setNota(null)
+    setPasso((p) => Math.min(p + 1, ultimoPasso))
   }
 
   function voltar() {
     setErro(null)
+    setNota(null)
     setPasso((p) => Math.max(p - 1, 0))
+  }
+
+  /**
+   * Escolher uma opcao normalmente avanca. A excecao e quando a resposta tem
+   * nota: ai a tela mostra a nota e espera um toque em Continuar.
+   */
+  function escolher(campo: string, valor: string, notaDaResposta?: string) {
+    responder(campo, valor)
+    if (notaDaResposta) {
+      setNota(notaDaResposta)
+      return
+    }
+    avancar()
   }
 
   function enviar() {
@@ -57,11 +83,11 @@ export function QuizForm() {
         <div className="h-2 w-full bg-gray-200">
           <div
             className="h-2 bg-gray-800"
-            style={{ width: `${((passo + 1) / TOTAL_PASSOS) * 100}%` }}
+            style={{ width: `${((passo + 1) / total) * 100}%` }}
           />
         </div>
         <p className="mt-2 text-sm text-gray-600">
-          Pergunta {passo + 1} de {TOTAL_PASSOS}
+          Pergunta {passo + 1} de {total}
         </p>
       </div>
 
@@ -80,18 +106,19 @@ export function QuizForm() {
           />
         )}
 
-        {passo >= 1 && passo <= PASSOS_OPCOES.length && (
+        {passo >= 1 && passoAtual && (
           <TelaOpcoes
-            passo={PASSOS_OPCOES[passo - 1]}
-            selecionado={respostas[PASSOS_OPCOES[passo - 1].campo]}
-            escolher={(valor) => {
-              responder(PASSOS_OPCOES[passo - 1].campo, valor)
-              avancar()
-            }}
+            passo={passoAtual}
+            selecionado={respostas[passoAtual.campo]}
+            nota={nota}
+            continuar={avancar}
+            escolher={(valor) =>
+              escolher(passoAtual.campo, valor, passoAtual.notas?.[valor])
+            }
           />
         )}
 
-        {passo === ULTIMO_PASSO && (
+        {passo === ultimoPasso && (
           <TelaContato
             respostas={respostas}
             responder={responder}
@@ -173,11 +200,15 @@ function TelaLocalizacao({
 function TelaOpcoes({
   passo,
   selecionado,
+  nota,
   escolher,
+  continuar,
 }: {
-  passo: (typeof PASSOS_OPCOES)[number]
+  passo: PassoOpcoes
   selecionado: string | undefined
+  nota: string | null
   escolher: (valor: string) => void
+  continuar: () => void
 }) {
   return (
     <div>
@@ -200,6 +231,21 @@ function TelaOpcoes({
           </button>
         ))}
       </div>
+
+      {/* A pessoa acabou de admitir algo que ela teme que a desqualifique.
+          Responder na hora, e nao tres telas adiante, e o que evita o abandono. */}
+      {nota && (
+        <div className="mt-6">
+          <p className="mb-4 bg-gray-100 p-4 text-gray-700">{nota}</p>
+          <button
+            type="button"
+            onClick={continuar}
+            className="w-full bg-gray-800 p-4 text-lg font-medium text-white"
+          >
+            Continuar
+          </button>
+        </div>
+      )}
     </div>
   )
 }

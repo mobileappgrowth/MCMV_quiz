@@ -4,7 +4,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { CONSENTIMENTO } from '@/lib/config'
-import { enquadramentoDaRenda } from '@/lib/quiz'
+import { qualificar } from '@/lib/motor'
 
 // ============================================================================
 // GRAVACAO DO LEAD
@@ -14,6 +14,10 @@ import { enquadramentoDaRenda } from '@/lib/quiz'
 // cliente, nao provariam nada.
 //
 // Ordem: consentimento primeiro (o lead aponta para ele), lead depois.
+//
+// O MOTOR RODA AQUI, no servidor, antes do insert. Nunca no navegador: as
+// respostas chegam do cliente, mas a decisao sobre elas e do servidor. Rodar no
+// cliente deixaria a pontuacao visivel no bundle e manipulavel no DevTools.
 // ============================================================================
 
 export type RespostasQuiz = Record<string, string>
@@ -72,6 +76,9 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
     return { erro: 'Nao conseguimos registrar seu cadastro. Tente novamente.' }
   }
 
+  // --- motor de qualificacao ---
+  const motor = qualificar({ ...respostas, cidade })
+
   // --- lead ---
   const quartos = Number.parseInt(respostas.quartos ?? '', 10)
 
@@ -81,21 +88,38 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
     quartos: Number.isNaN(quartos) ? null : quartos,
     garagem: booleano(respostas.garagem),
     // faixa_tamanho: o quiz nao pergunta metragem hoje. Coluna fica nula.
-    enquadramento: respostas.renda_faixa
-      ? enquadramentoDaRenda(respostas.renda_faixa)
-      : null,
+    enquadramento: motor.enquadramento,
     renda_faixa: respostas.renda_faixa ?? null,
-    renda_formal: booleano(respostas.renda_formal),
+    vinculo_renda: respostas.vinculo_renda ?? null,
+    // Booleano derivado do vinculo, para o cartao da vitrine mostrar "formal ou
+    // informal". MEI e autonomo comprovado contam como formal aqui.
+    renda_formal:
+      respostas.vinculo_renda === undefined
+        ? null
+        : respostas.vinculo_renda !== 'informal',
     renda_composta: booleano(respostas.renda_composta),
     nome_limpo: respostas.nome_limpo ?? null,
+    regularizacao_andamento: booleano(respostas.regularizacao_andamento),
     fgts_tempo: respostas.fgts_tempo ?? null,
+    fgts_saldo: respostas.fgts_saldo ?? null,
     ja_financiou: booleano(respostas.ja_financiou),
     entrada_disponivel: respostas.entrada_disponivel ?? null,
     prazo_compra: respostas.prazo_compra ?? null,
     nome,
     telefone,
-    status: 'novo',
-    // preco fica nulo: e definido quando eu aprovo o lead no admin (Dia 2).
+
+    // Eliminado pelo motor nao entra na fila. O motivo fica gravado: sem ele,
+    // "a regra esta matando lead bom?" nao tem resposta -- e lead descartado
+    // por engano e dinheiro de anuncio no lixo.
+    status: motor.eliminado ? 'descartado' : 'novo',
+    motivo_descarte: motor.motivo_descarte,
+
+    pontuacao: motor.pontuacao,
+    selo_declarado: motor.selo_declarado,
+    poder_de_compra: motor.poder_de_compra,
+    regra_versao: motor.regra_versao,
+
+    // preco fica nulo: e definido quando eu aprovo o lead no admin.
     consentimento_id: consentimento.id,
   })
 
@@ -104,5 +128,8 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
     return { erro: 'Nao conseguimos registrar seu cadastro. Tente novamente.' }
   }
 
+  // O MESMO DESFECHO PARA TODO MUNDO. Quem foi eliminado pelo motor ve
+  // exatamente esta tela, no mesmo tempo. A pontuacao e a decisao nunca
+  // aparecem para o lead -- nem aqui, nem em nenhuma outra tela.
   redirect('/obrigado')
 }

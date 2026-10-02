@@ -17,6 +17,11 @@ import { DIAS_NA_VITRINE } from '../../lib/config.ts'
 //
 // Ao adicionar uma coluna aqui, pergunte: o corretor pode ver isso ANTES de
 // pagar? Se a resposta for nao, ela nao entra.
+//
+// `pontuacao` e `poder_de_compra` NAO entram, e nao e descuido: o corretor ve o
+// SELO, nao o numero. Expor a pontuacao transforma cada lead numa negociacao
+// sobre o calculo, e o poder de compra viraria "valor aprovado" na cabeca de
+// quem le -- aprovacao e da Caixa, nao nossa.
 // ----------------------------------------------------------------------------
 const COLUNAS_VITRINE = [
   'id',
@@ -36,6 +41,8 @@ const COLUNAS_VITRINE = [
   'prazo_compra',
   'preco',
   'verificado_em',
+  'selo_declarado',
+  'selo_verificado',
 ].join(', ')
 
 export type LeadVitrine = {
@@ -56,6 +63,8 @@ export type LeadVitrine = {
   prazo_compra: string | null
   preco: number | null
   verificado_em: string | null
+  selo_declarado: string | null
+  selo_verificado: string | null
 }
 
 export type FiltrosVitrine = {

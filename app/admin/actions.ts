@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { exigirAdmin } from '@/lib/auth'
 import { precoNaAprovacao } from '@/lib/preco'
+import type { Selo } from '@/lib/motor'
 
 // ============================================================================
 // ACOES DO ADMIN
@@ -23,8 +24,16 @@ export type Resultado = { ok: true } | { ok: false; erro: string }
  *
  * Aqui o preco CONGELA: calculado a partir da idade do lead no momento da
  * aprovacao e gravado. Nunca recalculado depois.
+ *
+ * E aqui o selo VERIFICADO nasce. O motor produziu um selo declarado a partir
+ * do que a pessoa digitou; este e o que voce confirmou no telefone. Sao coisas
+ * diferentes e o cartao mostra qual e qual -- so o verificado sustenta o preco
+ * cheio.
  */
-export async function verificarLead(leadId: string): Promise<Resultado> {
+export async function verificarLead(
+  leadId: string,
+  selo: Selo
+): Promise<Resultado> {
   await exigirAdmin()
 
   // Precisa da data de captacao para decidir entre 70 e 45.
@@ -45,6 +54,7 @@ export async function verificarLead(leadId: string): Promise<Resultado> {
       status: 'verificado',
       verificado_em: new Date().toISOString(),
       preco: precoNaAprovacao(lead.criado_em),
+      selo_verificado: selo,
     })
     .eq('id', leadId)
     .eq('status', 'novo') // trava: nao reaprova o que ja saiu da fila

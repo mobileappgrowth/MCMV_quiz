@@ -33,6 +33,9 @@ import { listarVitrine } from '../app/painel/dados.ts'
 
 const SENTINELA_TELEFONE = '11900000042'
 const SENTINELA_NOME = 'SENTINELA Nao Deve Vazar'
+// Valores improvaveis de aparecer por acaso, para a varredura no payload.
+const SENTINELA_PONTUACAO = 97
+const SENTINELA_PODER = 987654.21
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
 const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -85,7 +88,9 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
         renda_formal: true,
         renda_composta: false,
         nome_limpo: 'sim',
+        vinculo_renda: 'clt_servidor_aposentado',
         fgts_tempo: 'mais_3_anos',
+        fgts_saldo: '15k_30k',
         ja_financiou: false,
         entrada_disponivel: 'ate_5k',
         prazo_compra: 'imediato',
@@ -94,6 +99,14 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
         status: 'verificado',
         verificado_em: new Date().toISOString(),
         preco: 70,
+        // Saidas do motor. Nenhuma delas pode chegar ao corretor: a pontuacao
+        // viraria negociacao sobre o calculo, e o poder de compra viraria
+        // "valor aprovado" na cabeca de quem le.
+        pontuacao: SENTINELA_PONTUACAO,
+        poder_de_compra: SENTINELA_PODER,
+        selo_declarado: 'forte',
+        selo_verificado: 'forte',
+        regra_versao: 'teste',
         consentimento_id: consentimentoId,
       })
       .select('id')
@@ -161,6 +174,35 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
   })
 
   // --------------------------------------------------------------------------
+  // A2 -- As saidas internas do motor tambem nao saem.
+  // Nao e a regra critica do projeto, mas e a mesma classe de erro: dado de
+  // decisao interna chegando a quem compra.
+  // --------------------------------------------------------------------------
+  it('A2: listarVitrine() nao devolve pontuacao nem poder de compra', async () => {
+    const leads = await listarVitrine()
+    const nosso = leads.find((l) => l.id === leadId)
+    assert.ok(nosso)
+
+    const payload = JSON.stringify(leads)
+    assert.ok(
+      !payload.includes(String(SENTINELA_PONTUACAO)),
+      'VAZAMENTO: a pontuacao apareceu na listagem'
+    )
+    assert.ok(
+      !payload.includes(String(SENTINELA_PODER)),
+      'VAZAMENTO: o poder de compra apareceu na listagem'
+    )
+    assert.ok(!('pontuacao' in nosso), 'VAZAMENTO: a chave pontuacao existe')
+    assert.ok(
+      !('poder_de_compra' in nosso),
+      'VAZAMENTO: a chave poder_de_compra existe'
+    )
+
+    // O selo, ao contrario, DEVE estar: e o produto que o corretor compra.
+    assert.equal(nosso.selo_verificado, 'forte')
+  })
+
+  // --------------------------------------------------------------------------
   // B -- A view nao tem as colunas, nem para quem pede tudo.
   // Prova estrutural: nenhuma consulta a `vitrine` pode vazar contato, por mais
   // desleixada que seja.
@@ -172,8 +214,12 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
     assert.equal(data!.length, 1)
 
     const colunas = Object.keys(data![0])
-    assert.ok(!colunas.includes('telefone'), `VAZAMENTO: a view expoe telefone (${colunas})`)
-    assert.ok(!colunas.includes('nome'), `VAZAMENTO: a view expoe nome (${colunas})`)
+    for (const proibida of ['telefone', 'nome', 'pontuacao', 'poder_de_compra']) {
+      assert.ok(
+        !colunas.includes(proibida),
+        `VAZAMENTO: a view expoe ${proibida} (${colunas})`
+      )
+    }
 
     assert.ok(!JSON.stringify(data).includes(SENTINELA_TELEFONE))
     assert.ok(!JSON.stringify(data).includes(SENTINELA_NOME))
