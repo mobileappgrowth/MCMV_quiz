@@ -1,8 +1,8 @@
-import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { exigirAdmin } from '@/lib/auth'
 import { reais } from '@/lib/preco'
 import { FormCorretor } from './form-corretor'
+import { NavAdmin } from '../nav'
 
 export const dynamic = 'force-dynamic'
 
@@ -16,12 +16,7 @@ export default async function Corretores() {
 
   return (
     <main className="mx-auto max-w-2xl p-4">
-      <nav className="mb-6 flex gap-4 text-sm">
-        <Link href="/admin" className="text-blue-700 underline">
-          Fila de verificacao
-        </Link>
-        <span className="font-medium">Corretores</span>
-      </nav>
+      <NavAdmin atual="corretores" />
 
       <h1 className="mb-1 text-2xl font-bold">Cadastrar corretor</h1>
       <p className="mb-6 text-sm text-gray-600">

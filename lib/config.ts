@@ -216,3 +216,24 @@ export function precoProdutoMaisBarato(): number {
 export function precosConfigurados(): boolean {
   return precoProdutoMaisBarato() > 0
 }
+
+// --- EMPREENDIMENTOS: validacao de preco ---------------------------------
+// Teto de preco do imovel que ainda se enquadra no MCMV. Usado para AVISAR no
+// formulario quando a faixa cadastrada passa do teto -- nunca para bloquear:
+// um empreendimento acima do teto pode ser cadastrado de proposito, para o
+// publico fora_mcmv.
+//
+// Zero desliga o aviso. Nao inventei o valor: ele muda por decreto.
+export const TETO_PRECO_MCMV = 0 // PREENCHER
+
+// Campos sem os quais um empreendimento nao pode ser publicado. Rascunho
+// salva incompleto; publicar exige o conjunto.
+export const CAMPOS_OBRIGATORIOS_PARA_PUBLICAR = [
+  'nome',
+  'construtora',
+  'cidade',
+  'bairro',
+  'quartos',
+  'preco_de',
+  'fonte_material',
+] as const

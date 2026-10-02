@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { exigirAdmin } from '@/lib/auth'
 import { PRECOS, precosConfigurados } from '@/lib/config'
@@ -6,6 +5,7 @@ import { diasDesde, reais } from '@/lib/preco'
 import { rotuloDe, rotuloBooleano } from '@/lib/quiz'
 import { rotuloMotivo } from '@/lib/motor'
 import { LinhaFila } from './linha-fila'
+import { NavAdmin } from './nav'
 
 // ============================================================================
 // FILA DE VERIFICACAO
@@ -88,12 +88,7 @@ export default async function Admin() {
 
   return (
     <main className="mx-auto max-w-2xl p-4">
-      <nav className="mb-6 flex gap-4 text-sm">
-        <span className="font-medium">Fila de verificacao</span>
-        <Link href="/admin/corretores" className="text-blue-700 underline">
-          Corretores
-        </Link>
-      </nav>
+      <NavAdmin atual="fila" />
 
       {/* Sem o preco do produto, o motor nao avalia capacidade: nao elimina
           ninguem por isso e nao da ponto nenhum de capacidade. Falha para o
