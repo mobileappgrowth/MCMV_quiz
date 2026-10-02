@@ -5,21 +5,61 @@
 // Alterar valores exige commit + redeploy na Vercel (leva ~1 minuto).
 // ============================================================================
 
-// --- PRECO ---------------------------------------------------------------
-// O preco e gravado em leads.preco no momento em que voce aprova o lead no
-// admin, nao calculado na hora de exibir. Mudar estes valores afeta apenas
-// leads aprovados DEPOIS da mudanca. Leads ja na vitrine mantem o preco antigo.
+// --- PRECO DO INTERESSE ---------------------------------------------------
+// O que se vende e o INTERESSE, nao o lead. Uma pessoa que marca quatro
+// empreendimentos gera quatro unidades de venda.
+//
+// O preco e gravado em interesses.preco: na criacao (perfil declarado) e
+// recalculado quando voce verifica o lead (perfil verificado). Nao e calculado
+// na hora de exibir -- o corretor que abriu a vitrine as 11h e clicou as 11h05
+// nao pode ver o preco mudar embaixo dele. Preco gravado e preco combinado.
 export const PRECOS = {
-  verificado_fresco: 70, // verificado, captado ha menos de HORAS_FRESCO
-  verificado_antigo: 45, // verificado, captado ha HORAS_FRESCO ou mais
-  nao_verificado: 30, // reservado: hoje nenhum lead entra na vitrine sem verificacao
+  // Interesse em um empreendimento especifico: a pessoa disse o que quer.
+  empreendimento: {
+    verificado_fresco: 90, // verificado, captado ha menos de HORAS_FRESCO
+    verificado_antigo: 60, // verificado, captado ha HORAS_FRESCO ou mais
+    nao_verificado: 30, // perfil so declarado, ainda sem a sua ligacao
+  },
+  // Vitrine geral: nao marcou nenhum empreendimento, mas aceitou contato.
+  // Vale menos porque o corretor nao sabe o que oferecer.
+  geral: {
+    verificado: 60,
+    nao_verificado: 25,
+  },
+} as const
+
+// Multiplicador sobre o valor da linha, conforme o selo. Rebaixa ou premia.
+export const MULTIPLICADOR_SELO = {
+  forte: 1.3,
+  medio: 1.0,
+  a_confirmar: 0.7,
 } as const
 
 // Fronteira entre "fresco" e "antigo", em horas desde leads.criado_em.
 export const HORAS_FRESCO = 72
 
-// Depois de quantos dias desde a captacao o lead sai da vitrine.
+// Depois de quantos dias desde a captacao o interesse sai da vitrine.
 export const DIAS_NA_VITRINE = 10
+
+// --- EMPREENDIMENTOS -----------------------------------------------------
+// Pausar um empreendimento nao apaga nada: os interesses ja criados ficam na
+// vitrine por este tempo, com etiqueta de que ele saiu do ar, e depois somem.
+// Arquivar retira na hora -- isso e regra estrutural e mora na view.
+export const HORAS_CARENCIA_PAUSADO = 72
+
+// QUEM VE OS INTERESSES DOS EMPREENDIMENTOS SEM DONO (cadastrados por voce).
+//
+// false (atual): o corretor ve so os interesses dos empreendimentos DELE, mais
+// a vitrine geral. E a leitura literal da especificacao. Consequencia assumida:
+// os interesses gerados pelo seu catalogo nao aparecem para corretor nenhum --
+// o catalogo vira dispositivo de captacao, e a receita sai da vitrine geral e
+// do estoque que os corretores cadastrarem.
+//
+// true: empreendimento sem dono fica visivel para todos os corretores, e o seu
+// catalogo passa a gerar receita direta.
+//
+// Mudar aqui e a unica coisa necessaria para trocar de modelo.
+export const INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS = false
 
 // --- FAIXA DE RENDA E ENQUADRAMENTO MCMV ---------------------------------
 // As faixas do programa mudam por decreto. Ajuste os rotulos aqui e o

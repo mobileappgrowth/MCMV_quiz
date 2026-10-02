@@ -1,7 +1,7 @@
 import { describe, it, before, after } from 'node:test'
 import assert from 'node:assert/strict'
 import { createClient } from '@supabase/supabase-js'
-import { listarVitrine } from '../app/painel/dados.ts'
+import { listarInteresses } from '../app/painel/dados.ts'
 
 // ============================================================================
 // TESTE DE VAZAMENTO DE CONTATO
@@ -64,6 +64,9 @@ const anonimo = createClient(url, anonKey, {
 describe('contato do lead nao vaza na listagem da vitrine', () => {
   let leadId: string
   let consentimentoId: string
+  let corretorId: string
+  let empreendimentoId: string
+  let interesseId: string
 
   before(async () => {
     const { data: consentimento, error: erroConsentimento } = await admin
@@ -113,9 +116,58 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
       .single()
     assert.equal(erroLead, null, 'setup: falha ao inserir lead')
     leadId = lead!.id
+
+    // A vitrine agora e por corretor: ele ve os interesses dos empreendimentos
+    // DELE mais a vitrine geral. Sem um corretor dono, nao haveria o que listar.
+    const { data: corretor, error: erroCorretor } = await admin
+      .from('corretores')
+      .insert({
+        nome: 'SENTINELA Corretor',
+        email: `sentinela-${Date.now()}@teste.invalido`,
+      })
+      .select('id')
+      .single()
+    assert.equal(erroCorretor, null, 'setup: falha ao inserir corretor')
+    corretorId = corretor!.id
+
+    const { data: emp, error: erroEmp } = await admin
+      .from('empreendimentos')
+      .insert({
+        nome: 'Residencial Sentinela',
+        construtora: 'Construtora Sentinela',
+        cidade: 'Cidade Sentinela',
+        bairro: 'Bairro Sentinela',
+        status_publicacao: 'publicado',
+        preco_de: 200000,
+        preco_ate: 250000,
+        dono_corretor_id: corretorId,
+      })
+      .select('id')
+      .single()
+    assert.equal(erroEmp, null, 'setup: falha ao inserir empreendimento')
+    empreendimentoId = emp!.id
+
+    const { data: interesse, error: erroInteresse } = await admin
+      .from('interesses')
+      .insert({
+        lead_id: leadId,
+        empreendimento_id: empreendimentoId,
+        preco: 90,
+        consentimento_id: consentimentoId,
+      })
+      .select('id')
+      .single()
+    assert.equal(erroInteresse, null, 'setup: falha ao inserir interesse')
+    interesseId = interesse!.id
   })
 
   after(async () => {
+    // Ordem inversa da criacao, por causa das chaves estrangeiras.
+    if (interesseId) await admin.from('interesses').delete().eq('id', interesseId)
+    if (empreendimentoId) {
+      await admin.from('empreendimentos').delete().eq('id', empreendimentoId)
+    }
+    if (corretorId) await admin.from('corretores').delete().eq('id', corretorId)
     if (leadId) await admin.from('leads').delete().eq('id', leadId)
     if (consentimentoId) {
       await admin.from('consentimentos').delete().eq('id', consentimentoId)
@@ -147,13 +199,14 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
   // listarVitrine() e a funcao que alimenta /painel. Tudo que ela devolve chega
   // ao navegador do corretor. Nada mais chega.
   // --------------------------------------------------------------------------
-  it('A: listarVitrine() nao devolve telefone nem nome', async () => {
-    const leads = await listarVitrine()
+  it('A: listarInteresses() nao devolve telefone nem nome', async () => {
+    const leads = await listarInteresses(corretorId)
 
-    const nosso = leads.find((l) => l.id === leadId)
+    const nosso = leads.find((l) => l.id === interesseId)
     assert.ok(
       nosso,
-      'o lead sentinela deveria aparecer na vitrine (verificado, recente, sem desbloqueio)'
+      'o interesse sentinela deveria aparecer na vitrine (lead nao descartado, ' +
+        'empreendimento publicado e do proprio corretor, sem desbloqueio)'
     )
 
     // Varredura no payload inteiro, nao campo por campo: pega tambem o caso de
@@ -178,9 +231,9 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
   // Nao e a regra critica do projeto, mas e a mesma classe de erro: dado de
   // decisao interna chegando a quem compra.
   // --------------------------------------------------------------------------
-  it('A2: listarVitrine() nao devolve pontuacao nem poder de compra', async () => {
-    const leads = await listarVitrine()
-    const nosso = leads.find((l) => l.id === leadId)
+  it('A2: listarInteresses() nao devolve pontuacao nem poder de compra', async () => {
+    const leads = await listarInteresses(corretorId)
+    const nosso = leads.find((l) => l.id === interesseId)
     assert.ok(nosso)
 
     const payload = JSON.stringify(leads)
@@ -203,18 +256,52 @@ describe('contato do lead nao vaza na listagem da vitrine', () => {
   })
 
   // --------------------------------------------------------------------------
+  // A3 -- Quantos interesses a pessoa gerou e assunto interno.
+  //
+  // Com lead_id no payload, o corretor agruparia as linhas e contaria quantos
+  // empreendimentos a mesma pessoa marcou. A especificacao proibe expor isso
+  // "em hipotese alguma" -- e esconder no componente nao bastaria, porque o
+  // dado estaria na resposta.
+  // --------------------------------------------------------------------------
+  it('A3: listarInteresses() nao devolve lead_id nem qtd_interesses', async () => {
+    const leads = await listarInteresses(corretorId)
+    const nosso = leads.find((l) => l.id === interesseId)
+    assert.ok(nosso)
+
+    assert.ok(!('lead_id' in nosso), 'VAZAMENTO: a chave lead_id existe')
+    assert.ok(
+      !('qtd_interesses' in nosso),
+      'VAZAMENTO: a chave qtd_interesses existe'
+    )
+    assert.ok(
+      !JSON.stringify(leads).includes(leadId),
+      'VAZAMENTO: o id do lead aparece na resposta da listagem'
+    )
+  })
+
+  // --------------------------------------------------------------------------
   // B -- A view nao tem as colunas, nem para quem pede tudo.
   // Prova estrutural: nenhuma consulta a `vitrine` pode vazar contato, por mais
   // desleixada que seja.
   // --------------------------------------------------------------------------
   it('B: select * na view vitrine nao traz as colunas de contato', async () => {
-    const { data, error } = await admin.from('vitrine').select('*').eq('id', leadId)
+    const { data, error } = await admin
+      .from('vitrine')
+      .select('*')
+      .eq('id', interesseId)
 
     assert.equal(error, null)
     assert.equal(data!.length, 1)
 
     const colunas = Object.keys(data![0])
-    for (const proibida of ['telefone', 'nome', 'pontuacao', 'poder_de_compra']) {
+    for (const proibida of [
+      'telefone',
+      'nome',
+      'pontuacao',
+      'poder_de_compra',
+      'lead_id',
+      'qtd_interesses',
+    ]) {
       assert.ok(
         !colunas.includes(proibida),
         `VAZAMENTO: a view expoe ${proibida} (${colunas})`

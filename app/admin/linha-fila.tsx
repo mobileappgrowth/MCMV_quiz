@@ -13,7 +13,7 @@ type LeadFila = {
   telefone: string
   notas: string | null
   dias: number
-  precoSeAprovarAgora: number
+  qtdInteresses: number
   qualificacao: [string, string][]
   seloDeclarado: string | null
   pontuacao: number | null
@@ -45,8 +45,10 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
           </a>
         </p>
         <p className="text-sm text-gray-600">
-          Captado ha {lead.dias} {lead.dias === 1 ? 'dia' : 'dias'} &middot; se
-          aprovar agora, entra a {reais(lead.precoSeAprovarAgora)}
+          Captado ha {lead.dias} {lead.dias === 1 ? 'dia' : 'dias'} &middot;{' '}
+          {lead.qtdInteresses === 0
+            ? 'nenhum interesse'
+            : `${lead.qtdInteresses} ${lead.qtdInteresses === 1 ? 'interesse' : 'interesses'}`}
         </p>
         {/* O selo que o motor deu a partir do que a pessoa digitou. E um ponto
             de partida para a ligacao, nao um veredito -- quem decide o selo
@@ -83,9 +85,7 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
       {/* Aprovar exige escolher o selo verificado: um toque, sem passo extra.
           Nao ha botao generico de "aprovar" de proposito -- sem selo, o cartao
           da vitrine nao teria o que mostrar, e o preco cheio nao se sustenta. */}
-      <p className="mb-2 text-sm font-medium">
-        Aprovar por {reais(lead.precoSeAprovarAgora)} como:
-      </p>
+      <p className="mb-2 text-sm font-medium">Aprovar como:</p>
       <div className="mb-3 flex flex-wrap gap-2">
         {SELOS.map((selo) => (
           <button

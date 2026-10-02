@@ -15,7 +15,9 @@ Como isso e sustentado no codigo:
 |---|---|
 | Postgres | RLS ligado em todas as tabelas, zero policies (`0002_rls.sql`). Com a anon key nao se le uma linha. |
 | Postgres | `GRANT` revogado de `anon` e `authenticated`. Se uma policy aparecer por engano, ainda falta o privilegio. |
-| Postgres | `UNIQUE` em `desbloqueios.lead_id`. Exclusividade e constraint, nao `if` de aplicacao. |
+| Postgres | `UNIQUE` em `desbloqueios.interesse_id`. Exclusividade e constraint, nao `if` de aplicacao. |
+| Postgres | Indices unicos parciais em `interesses`: uma pessoa nao gera dois interesses no mesmo empreendimento, nem dois gerais. |
+| Consulta | `lead_id` e `qtd_interesses` ficam fora da vitrine: com eles, daria para contar quantos interesses a mesma pessoa gerou. |
 | Servidor | `SUPABASE_SERVICE_ROLE_KEY` sem prefixo `NEXT_PUBLIC_`: o Next nao a coloca no bundle. |
 | Servidor | `lib/supabase/admin.ts` joga erro se chamado no navegador. |
 | Postgres | A view `vitrine` nao tem as colunas `nome` e `telefone`. Nenhuma consulta a ela pode vazar contato. |

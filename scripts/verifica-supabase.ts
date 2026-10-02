@@ -22,6 +22,9 @@ const TABELAS = [
   'transacoes_credito',
   'feedbacks',
   'consentimentos',
+  'empreendimentos',
+  'empreendimentos_log',
+  'interesses',
 ]
 
 let falhas = 0
@@ -124,7 +127,7 @@ if (faltando.length > 0) {
     'rode `npm run sql` e cole a saida no SQL Editor do Supabase'
   )
 } else {
-  ok('as 6 tabelas existem')
+  ok(`as ${TABELAS.length} tabelas existem`)
 }
 
 {
@@ -144,7 +147,14 @@ console.log('\n4. O contato nao sai do servidor\n')
 // Prova estrutural pela via contraria: PEDIR a coluna e esperar que FALHE.
 // Se o Supabase responde "column does not exist", a coluna nao existe na view
 // -- e nenhuma consulta a ela pode vazar contato.
-for (const coluna of ['nome', 'telefone']) {
+for (const coluna of [
+  'nome',
+  'telefone',
+  'pontuacao',
+  'poder_de_compra',
+  'lead_id',
+  'qtd_interesses',
+]) {
   const { error } = await admin.from('vitrine').select(coluna, { head: true })
   if (!error) {
     falha(

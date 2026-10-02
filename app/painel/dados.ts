@@ -1,31 +1,43 @@
 // ============================================================================
 // DADOS DA VITRINE
 //
-// Imports relativos (nao '@/...') de proposito: assim o teste de vazamento em
-// testes/vazamento-contato.test.ts consegue importar esta funcao com o runner
-// nativo do Node, sem precisar resolver path alias nem instalar nada.
+// A vitrine lista INTERESSES, nao leads. Cada linha e um empreendimento que
+// uma pessoa marcou, ou uma "busca aberta" de quem nao marcou nenhum e aceitou
+// contato de outras opcoes.
+//
+// Imports relativos com extensao (nao '@/...') de proposito: assim o teste de
+// vazamento consegue importar estas funcoes com o runner nativo do Node, sem
+// resolver path alias nem instalar nada.
 // ============================================================================
 import { supabaseAdmin } from '../../lib/supabase/admin.ts'
-import { DIAS_NA_VITRINE } from '../../lib/config.ts'
+import {
+  DIAS_NA_VITRINE,
+  HORAS_CARENCIA_PAUSADO,
+  INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS,
+} from '../../lib/config.ts'
 
 // ----------------------------------------------------------------------------
 // COLUNAS EXPLICITAS. NUNCA `select *`.
 //
-// `nome` e `telefone` nao estao nesta lista, e tambem nao existem na view
-// `vitrine`. Duas camadas: se alguem acrescentar as colunas a view, esta lista
-// ainda nao as pede; se alguem trocar esta lista por '*', a view nao as tem.
+// Fora daqui, e fora da view, de proposito:
+//   nome, telefone   -- a regra critica do projeto
+//   pontuacao        -- o corretor ve o SELO, nao o numero
+//   poder_de_compra  -- e triagem; viraria "valor aprovado" na cabeca de quem le
+//   lead_id          -- com ele no payload, daria para contar quantos interesses
+//                       a mesma pessoa gerou. A especificacao proibe expor isso
+//                       "em hipotese alguma", e esconder no componente nao
+//                       bastaria: o dado estaria na resposta.
+//   qtd_interesses   -- pelo mesmo motivo
 //
 // Ao adicionar uma coluna aqui, pergunte: o corretor pode ver isso ANTES de
 // pagar? Se a resposta for nao, ela nao entra.
-//
-// `pontuacao` e `poder_de_compra` NAO entram, e nao e descuido: o corretor ve o
-// SELO, nao o numero. Expor a pontuacao transforma cada lead numa negociacao
-// sobre o calculo, e o poder de compra viraria "valor aprovado" na cabeca de
-// quem le -- aprovacao e da Caixa, nao nossa.
 // ----------------------------------------------------------------------------
 const COLUNAS_VITRINE = [
   'id',
   'criado_em',
+  'preco',
+  'empreendimento_id',
+  // qualificacao do lead
   'cidade',
   'bairro',
   'quartos',
@@ -39,15 +51,28 @@ const COLUNAS_VITRINE = [
   'ja_financiou',
   'entrada_disponivel',
   'prazo_compra',
-  'preco',
-  'verificado_em',
   'selo_declarado',
   'selo_verificado',
+  'verificado_em',
+  'lead_status',
+  // empreendimento pedido (tudo nulo quando e vitrine geral)
+  'empreendimento_nome',
+  'construtora',
+  'empreendimento_bairro',
+  'empreendimento_cidade',
+  'tipologias',
+  'preco_de',
+  'preco_ate',
+  'foto_url',
+  'status_publicacao',
+  'pausado_em',
 ].join(', ')
 
-export type LeadVitrine = {
+export type InteresseVitrine = {
   id: string
   criado_em: string
+  preco: number | null
+  empreendimento_id: string | null
   cidade: string
   bairro: string | null
   quartos: number | null
@@ -61,10 +86,20 @@ export type LeadVitrine = {
   ja_financiou: boolean | null
   entrada_disponivel: string | null
   prazo_compra: string | null
-  preco: number | null
-  verificado_em: string | null
   selo_declarado: string | null
   selo_verificado: string | null
+  verificado_em: string | null
+  lead_status: string
+  empreendimento_nome: string | null
+  construtora: string | null
+  empreendimento_bairro: string | null
+  empreendimento_cidade: string | null
+  tipologias: string | null
+  preco_de: number | null
+  preco_ate: number | null
+  foto_url: string | null
+  status_publicacao: string | null
+  pausado_em: string | null
 }
 
 export type FiltrosVitrine = {
@@ -74,18 +109,22 @@ export type FiltrosVitrine = {
 }
 
 /**
- * Lista os leads disponiveis na vitrine.
+ * Os interesses que ESTE corretor pode ver.
  *
- * O que a view `vitrine` ja garante: status verificado e nenhum desbloqueio.
- * O que esta funcao acrescenta: a janela de DIAS_NA_VITRINE e os filtros.
+ * A view ja garante o que e estrutural: lead nao descartado, empreendimento
+ * nao arquivado, interesse ainda nao vendido. Aqui entram as regras de negocio:
+ * a janela de DIAS_NA_VITRINE, a visibilidade por dono, a carencia do pausado e
+ * os filtros da tela.
  *
- * O retorno desta funcao e tudo que chega ao navegador do corretor. Se nome ou
- * telefone aparecerem aqui, o produto acabou -- e por isso que o teste de
- * vazamento aponta exatamente para esta funcao.
+ * VISIBILIDADE: por padrao o corretor ve os interesses dos empreendimentos
+ * DELE mais a vitrine geral -- os cadastrados por mim nao aparecem para
+ * ninguem. Isso e uma decisao de modelo de negocio, nao um descuido, e vive
+ * atras de INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS em lib/config.ts.
  */
-export async function listarVitrine(
+export async function listarInteresses(
+  corretorId: string,
   filtros: FiltrosVitrine = {}
-): Promise<LeadVitrine[]> {
+): Promise<InteresseVitrine[]> {
   const corte = new Date(
     Date.now() - DIAS_NA_VITRINE * 86_400_000
   ).toISOString()
@@ -94,6 +133,17 @@ export async function listarVitrine(
     .from('vitrine')
     .select(COLUNAS_VITRINE)
     .gte('criado_em', corte)
+
+  // Vitrine geral (sem empreendimento) + os empreendimentos deste corretor,
+  // mais os sem dono quando a constante estiver ligada.
+  const visiveis = [
+    'empreendimento_id.is.null',
+    `dono_corretor_id.eq.${corretorId}`,
+  ]
+  if (INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS) {
+    visiveis.push('dono_corretor_id.is.null')
+  }
+  consulta = consulta.or(visiveis.join(','))
 
   if (filtros.cidade?.trim()) {
     consulta = consulta.ilike('cidade', `%${filtros.cidade.trim()}%`)
@@ -109,19 +159,31 @@ export async function listarVitrine(
   // tirariam os metodos de filtro usados acima.
   const { data, error } = await consulta
     .order('criado_em', { ascending: false })
-    .returns<LeadVitrine[]>()
+    .returns<InteresseVitrine[]>()
 
   if (error) {
-    console.error('[listarVitrine] falha na consulta:', error)
+    console.error('[listarInteresses] falha na consulta:', error)
     throw new Error('Nao foi possivel carregar a vitrine.')
   }
 
-  return data ?? []
+  // Carencia do pausado, filtrada aqui e nao no SQL: o prazo e knob de negocio
+  // (HORAS_CARENCIA_PAUSADO) e mudar de 72h para 24h nao deve exigir migration.
+  // Com dezenas de interesses por semana, filtrar em memoria custa nada.
+  const limitePausado = Date.now() - HORAS_CARENCIA_PAUSADO * 3_600_000
+  return (data ?? []).filter((i) => {
+    if (i.status_publicacao !== 'pausado') return true
+    if (!i.pausado_em) return true
+    return new Date(i.pausado_em).getTime() > limitePausado
+  })
 }
 
-/** Cidades presentes na vitrine, para popular o filtro. */
-export async function cidadesNaVitrine(): Promise<string[]> {
-  const { data, error } = await supabaseAdmin().from('vitrine').select('cidade')
-  if (error || !data) return []
-  return [...new Set(data.map((l) => l.cidade as string))].sort()
+/** O empreendimento saiu do ar e esta na carencia? Vira etiqueta no cartao. */
+export function emCarencia(i: InteresseVitrine): boolean {
+  return i.status_publicacao === 'pausado'
+}
+
+/** Cidades presentes na vitrine deste corretor, para popular o filtro. */
+export async function cidadesNaVitrine(corretorId: string): Promise<string[]> {
+  const interesses = await listarInteresses(corretorId)
+  return [...new Set(interesses.map((i) => i.cidade))].sort()
 }

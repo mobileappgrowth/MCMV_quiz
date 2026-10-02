@@ -1,8 +1,8 @@
 import { exigirCorretor } from '@/lib/auth'
 import { RENDA_FAIXAS, DIAS_NA_VITRINE } from '@/lib/config'
 import { reais } from '@/lib/preco'
-import { listarVitrine, cidadesNaVitrine } from './dados'
-import { CartaoLead } from './cartao-lead'
+import { listarInteresses, cidadesNaVitrine } from './dados'
+import { CartaoInteresse } from './cartao-interesse'
 
 // ============================================================================
 // VITRINE
@@ -26,9 +26,9 @@ export default async function Painel({
   const corretor = await exigirCorretor()
   const filtros = await searchParams
 
-  const [leads, cidades] = await Promise.all([
-    listarVitrine(filtros),
-    cidadesNaVitrine(),
+  const [interesses, cidades] = await Promise.all([
+    listarInteresses(corretor.id, filtros),
+    cidadesNaVitrine(corretor.id),
   ])
 
   return (
@@ -58,7 +58,7 @@ export default async function Painel({
               className="w-full border border-gray-400 p-3 text-sm"
             >
               <option value="">Todas as cidades</option>
-              {cidades.map((c) => (
+              {cidades.map((c: string) => (
                 <option key={c} value={c}>
                   {c}
                 </option>
@@ -89,19 +89,26 @@ export default async function Painel({
         </form>
 
         <h1 className="mb-4 text-lg font-bold">
-          {leads.length} {leads.length === 1 ? 'lead disponivel' : 'leads disponiveis'}
+          {interesses.length}{' '}
+          {interesses.length === 1 ? 'interesse disponivel' : 'interesses disponiveis'}
         </h1>
 
-        {leads.length === 0 && (
+        {interesses.length === 0 && (
           <p className="text-gray-600">
-            Nenhum lead com esses filtros. Leads ficam na vitrine por{' '}
-            {DIAS_NA_VITRINE} dias e saem assim que outro corretor desbloqueia.
+            Nenhum interesse com esses filtros. Eles ficam na vitrine por{' '}
+            {DIAS_NA_VITRINE} dias e saem assim que outro corretor revela o
+            contato. Voce ve os interesses dos seus empreendimentos e os da
+            vitrine geral.
           </p>
         )}
 
         <div className="flex flex-col gap-4">
-          {leads.map((lead) => (
-            <CartaoLead key={lead.id} lead={lead} saldo={Number(corretor.creditos)} />
+          {interesses.map((interesse) => (
+            <CartaoInteresse
+              key={interesse.id}
+              interesse={interesse}
+              saldo={Number(corretor.creditos)}
+            />
           ))}
         </div>
       </main>

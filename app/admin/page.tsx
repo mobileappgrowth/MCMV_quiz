@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { exigirAdmin } from '@/lib/auth'
-import { PRECOS, HORAS_FRESCO, precosConfigurados } from '@/lib/config'
-import { diasDesde, precoNaAprovacao, reais } from '@/lib/preco'
+import { PRECOS, precosConfigurados } from '@/lib/config'
+import { diasDesde, reais } from '@/lib/preco'
 import { rotuloDe, rotuloBooleano } from '@/lib/quiz'
 import { rotuloMotivo } from '@/lib/motor'
 import { LinhaFila } from './linha-fila'
@@ -45,6 +45,7 @@ type LinhaLead = {
   regularizacao_andamento: boolean | null
   selo_declarado: string | null
   pontuacao: number | null
+  qtd_interesses: number
 }
 
 export default async function Admin() {
@@ -57,7 +58,7 @@ export default async function Admin() {
         'renda_faixa, renda_formal, renda_composta, nome_limpo, fgts_tempo, ' +
         'ja_financiou, entrada_disponivel, prazo_compra, nome, telefone, ' +
         'notas_verificacao, vinculo_renda, fgts_saldo, ' +
-        'regularizacao_andamento, selo_declarado, pontuacao'
+        'regularizacao_andamento, selo_declarado, pontuacao, qtd_interesses'
     )
     .eq('status', 'novo')
     .order('criado_em', { ascending: true }) // mais antigo primeiro: ligo na ordem
@@ -115,10 +116,12 @@ export default async function Admin() {
         {leads.length} {leads.length === 1 ? 'lead' : 'leads'} na fila
       </h1>
       <p className="mb-6 text-sm text-gray-600">
-        Ligue, confirme o perfil e aprove. O lead so entra na vitrine depois da
-        aprovacao. O preco congela no momento em que voce aprova:{' '}
-        {reais(PRECOS.verificado_fresco)} ate {HORAS_FRESCO}h de captado,{' '}
-        {reais(PRECOS.verificado_antigo)} depois.
+        Ligue, confirme o perfil e aprove. Aprovar sobe TODOS os interesses do
+        lead da faixa de perfil declarado ({reais(PRECOS.empreendimento.nao_verificado)}{' '}
+        por empreendimento, {reais(PRECOS.geral.nao_verificado)} na vitrine
+        geral) para a de verificado ({reais(PRECOS.empreendimento.verificado_fresco)}{' '}
+        e {reais(PRECOS.geral.verificado)}), com o multiplicador do selo por
+        cima. Quem marcou quatro empreendimentos tem quatro precos subindo.
       </p>
 
       {leads.length === 0 && (
@@ -137,7 +140,7 @@ export default async function Admin() {
               telefone: lead.telefone,
               notas: lead.notas_verificacao,
               dias: diasDesde(lead.criado_em),
-              precoSeAprovarAgora: precoNaAprovacao(lead.criado_em),
+              qtdInteresses: lead.qtd_interesses,
               seloDeclarado: lead.selo_declarado,
               pontuacao: lead.pontuacao,
               qualificacao: [

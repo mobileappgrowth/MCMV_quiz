@@ -28,6 +28,23 @@ pergunta condicional de regularizacao, so para quem declara restricao.
 contas pelo piso da faixa, nunca pelo meio. Superestimar capacidade empurra lead
 fraco para a fila e gasta ligacao com quem nao fecha.
 
+**A unidade de venda e o INTERESSE, nao o lead** (2 de outubro de 2026). A
+pessoa marca empreendimentos no fim do quiz e cada marcacao vira um interesse
+vendavel. A especificacao abaixo, da secao "Modelo de dados" em diante, ja
+reflete isso -- mas duas coisas divergem dela:
+
+- Os dois indices unicos parciais ficam em `interesses`, nao em `desbloqueios`:
+  a especificacao os coloca sobre `(lead_id, empreendimento_id)`, colunas que
+  `desbloqueios` nao tem. `desbloqueios` ganha `unique (interesse_id)`, e o
+  efeito pedido e preservado inteiro.
+- `leads` mantem `selo_declarado` e `selo_verificado` em vez de um unico `selo`:
+  a regra de produto manda o cartao mostrar qual das duas formas e, e uma coluna
+  so nao da conta disso.
+
+**`lead_id` nunca sai na vitrine.** Com ele no payload, o corretor contaria
+quantos interesses a mesma pessoa gerou -- proibido "em hipotese alguma". Esta
+na mesma categoria de nome e telefone: ausente, nao escondido.
+
 **`PRECO_PRODUTO_POR_CIDADE` esta zerado.** Nenhum valor foi inventado. Com
 zero, o motor nao avalia capacidade: nao elimina ninguem e nao da ponto nenhum.
 O /admin avisa em vermelho enquanto estiver assim.
