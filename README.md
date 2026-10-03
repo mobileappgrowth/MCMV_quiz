@@ -372,7 +372,8 @@ lib/
   auth.ts               quem pode ver o que -- todo o controle de acesso
   config.ts             knobs de negocio E parametros do motor
   motor.ts              qualificacao: funcao pura, zero numero dentro
-  preco.ts              preco na aprovacao, idade do lead
+  match.ts              quais empreendimentos servem para cada pessoa
+  preco.ts              preco do interesse, idade do lead
   quiz.ts               perguntas e derivacao do enquadramento
   supabase/
     admin.ts            service_role — SOMENTE SERVIDOR
@@ -394,7 +395,9 @@ cloudflare.config.ts    definicao do Worker
 - [x] **Dia 1** — projeto, migrations, autenticacao, quiz gravando ponta a ponta
 - [x] **Dia 2** — admin de verificacao, vitrine com contato escondido, teste de vazamento
 - [x] **Dia 2.5** — motor de qualificacao: enquadramento, capacidade, eliminatorios, pontuacao, selo, travas
-- [ ] **Dia 3** — creditos, desbloqueio atomico, revelacao, WhatsApp, feedback, contadores do admin
+- [x] **Dia 2A** — catalogo de empreendimentos com ciclo de publicacao e log de auditoria
+- [x] **Dia 2B** — match por poder de compra, tela de resultado, gravacao dos interesses
+- [ ] **Dia 3** — vitrine de interesses, creditos, revelacao atomica, WhatsApp, feedback, contadores do admin
 - [ ] **Dia 4** — landing page
 - [x] **Deploy** — Cloudflare Workers via vinext (antecipado: sem maquina local, e a unica forma de abrir o app)
 - [ ] **Dia 5** — teste no celular, checagem final

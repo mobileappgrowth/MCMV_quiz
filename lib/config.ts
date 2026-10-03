@@ -237,3 +237,35 @@ export const CAMPOS_OBRIGATORIOS_PARA_PUBLICAR = [
   'preco_de',
   'fonte_material',
 ] as const
+
+// --- TELA DE RESULTADO ----------------------------------------------------
+// Quantos empreendimentos mostrar. A especificacao pede de 3 a 8: o maximo e
+// teto duro, o minimo e alvo -- se o catalogo so tem dois publicados que
+// servem, mostramos dois. Inventar opcao que a pessoa nao pode pagar seria
+// pior que mostrar pouco.
+export const MAX_RESULTADOS = 8
+export const MIN_RESULTADOS_DESEJADO = 3
+
+// --- CONSENTIMENTO DA MARCACAO -------------------------------------------
+// Marcar um empreendimento e um ato de consentimento proprio, mais especifico
+// que o do fim do quiz: ali a pessoa aceitou ser contatada, aqui ela escolhe
+// POR QUEM. Por isso `interesses` tem consentimento_id proprio, e nao o do
+// lead -- e o que permite provar depois quais empreendimentos cada pessoa
+// escolheu, e quando.
+//
+// Mesma regra de sempre: ao mudar o texto, INCREMENTE a versao.
+export const CONSENTIMENTO_INTERESSES = {
+  versao: 'interesses_v1',
+  texto:
+    'Quero receber contato de corretores e imobiliarias sobre os ' +
+    'empreendimentos que marquei, e posso pedir a remocao dos meus dados a ' +
+    'qualquer momento.',
+} as const
+
+// Texto do consentimento da vitrine geral, para quem nao marcou nenhum.
+export const CONSENTIMENTO_CONTATO_GERAL = {
+  versao: 'contato_geral_v1',
+  texto:
+    'Quero que um corretor da regiao entre em contato comigo com outras ' +
+    'opcoes, e posso pedir a remocao dos meus dados a qualquer momento.',
+} as const

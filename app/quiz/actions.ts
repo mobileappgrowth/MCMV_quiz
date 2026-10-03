@@ -1,6 +1,6 @@
 'use server'
 
-import { headers } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { CONSENTIMENTO } from '@/lib/config'
@@ -82,7 +82,9 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
   // --- lead ---
   const quartos = Number.parseInt(respostas.quartos ?? '', 10)
 
-  const { error: erroLead } = await supabaseAdmin().from('leads').insert({
+  const { data: lead, error: erroLead } = await supabaseAdmin()
+    .from('leads')
+    .insert({
     cidade,
     bairro: (respostas.bairro ?? '').trim() || null,
     quartos: Number.isNaN(quartos) ? null : quartos,
@@ -119,17 +121,40 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
     poder_de_compra: motor.poder_de_compra,
     regra_versao: motor.regra_versao,
 
-    // preco fica nulo: e definido quando eu aprovo o lead no admin.
-    consentimento_id: consentimento.id,
-  })
+      consentimento_id: consentimento.id,
+    })
+    .select('id')
+    .single()
 
-  if (erroLead) {
+  if (erroLead || !lead) {
     console.error('[salvarLead] falha ao gravar lead:', erroLead)
     return { erro: 'Nao conseguimos registrar seu cadastro. Tente novamente.' }
   }
 
-  // O MESMO DESFECHO PARA TODO MUNDO. Quem foi eliminado pelo motor ve
-  // exatamente esta tela, no mesmo tempo. A pontuacao e a decisao nunca
-  // aparecem para o lead -- nem aqui, nem em nenhuma outra tela.
-  redirect('/obrigado')
+  // ---------------------------------------------------------------------
+  // O id do lead vai num cookie httpOnly, NAO na URL.
+  //
+  // Com /resultado?lead=<uuid>, o endereco vaza no historico, no Referer de
+  // qualquer imagem de terceiro e em qualquer print que a pessoa mande. O
+  // cookie e ilegivel para o JavaScript da pagina, e a proxima tela o le no
+  // servidor.
+  //
+  // Uma hora e o bastante para escolher empreendimentos; depois disso, o link
+  // morre sozinho. A acao da tela de resultado apaga o cookie ao gravar.
+  // ---------------------------------------------------------------------
+  const biscoitos = await cookies()
+  biscoitos.set('lead_resultado', lead.id, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: true,
+    path: '/',
+    maxAge: 60 * 60,
+  })
+
+  // O MESMO DESFECHO PARA TODO MUNDO. Quem foi eliminado pelo motor segue por
+  // este mesmo caminho: o match simplesmente nao vai achar nada para ele (sem
+  // capacidade, ou fora da area), e ele cai na pergunta de contato geral e
+  // depois na mesma tela de agradecimento. Nenhum tratamento especial, nenhuma
+  // pista da decisao -- a pontuacao nunca aparece para o lead.
+  redirect('/resultado')
 }
