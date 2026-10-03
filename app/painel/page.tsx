@@ -40,12 +40,20 @@ export default async function Painel({
             <p className="text-xs text-gray-600">Seu saldo</p>
             <p className="text-xl font-bold">{reais(Number(corretor.creditos))}</p>
           </div>
-          <a
-            href="/painel/recarga"
-            className="border border-gray-800 px-4 py-3 text-sm font-medium"
-          >
-            Recarregar
-          </a>
+          <div className="flex gap-2">
+            <a
+              href="/painel/meus-leads"
+              className="border border-gray-500 px-3 py-3 text-sm"
+            >
+              Meus leads
+            </a>
+            <a
+              href="/painel/recarga"
+              className="border border-gray-800 px-4 py-3 text-sm font-medium"
+            >
+              Recarregar
+            </a>
+          </div>
         </div>
       </header>
 
@@ -108,6 +116,7 @@ export default async function Painel({
               key={interesse.id}
               interesse={interesse}
               saldo={Number(corretor.creditos)}
+              nomeCorretor={corretor.nome}
             />
           ))}
         </div>

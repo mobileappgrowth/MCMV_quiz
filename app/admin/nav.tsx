@@ -5,6 +5,7 @@ const ITENS = [
   { chave: 'fila', href: '/admin', rotulo: 'Fila de verificacao' },
   { chave: 'empreendimentos', href: '/admin/empreendimentos', rotulo: 'Empreendimentos' },
   { chave: 'corretores', href: '/admin/corretores', rotulo: 'Corretores' },
+  { chave: 'recargas', href: '/admin/recargas', rotulo: 'Recargas' },
 ] as const
 
 export function NavAdmin({ atual }: { atual: (typeof ITENS)[number]['chave'] }) {

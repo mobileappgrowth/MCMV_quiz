@@ -2,6 +2,7 @@ import { diasDesde, reais } from '@/lib/preco'
 import { rotuloDe, rotuloBooleano } from '@/lib/quiz'
 import { rotuloSelo } from '@/lib/motor'
 import { emCarencia, type InteresseVitrine } from './dados'
+import { BotaoRevelar } from './botao-revelar'
 
 // ============================================================================
 // CARTAO DA VITRINE -- um INTERESSE, nao um lead
@@ -26,13 +27,14 @@ import { emCarencia, type InteresseVitrine } from './dados'
 export function CartaoInteresse({
   interesse,
   saldo,
+  nomeCorretor,
 }: {
   interesse: InteresseVitrine
   saldo: number
+  nomeCorretor: string
 }) {
   const dias = diasDesde(interesse.criado_em)
   const preco = Number(interesse.preco ?? 0)
-  const temSaldo = saldo >= preco
 
   // O selo tem duas formas, e a diferenca e o produto: declarado sai do quiz,
   // verificado sou eu confirmando no telefone. O cartao diz qual dos dois e --
@@ -136,18 +138,12 @@ export function CartaoInteresse({
         <p className="sr-only">Nome e telefone liberados apos o desbloqueio.</p>
       </div>
 
-      <button
-        type="button"
-        disabled
-        className="w-full bg-gray-800 p-4 font-medium text-white disabled:opacity-50"
-      >
-        Revelar contato por {reais(preco)}
-      </button>
-      <p className="mt-2 text-center text-xs text-gray-600">
-        {temSaldo
-          ? 'A revelacao entra no Dia 3.'
-          : 'Saldo insuficiente. Recarregue para revelar.'}
-      </p>
+      <BotaoRevelar
+        interesseId={interesse.id}
+        preco={preco}
+        saldo={saldo}
+        nomeCorretor={nomeCorretor}
+      />
     </article>
   )
 }

@@ -229,3 +229,53 @@ export async function cadastrarCorretor(dados: {
   revalidatePath('/admin/corretores')
   return { ok: true }
 }
+
+
+// ============================================================================
+// APROVACAO DE RECARGA (PIX manual)
+//
+// Sem gateway de pagamento: o corretor faz o PIX, me manda o comprovante, e eu
+// credito aqui. A funcao creditar_corretor() insere a transacao e atualiza o
+// cache do saldo na MESMA transacao -- os dois nunca divergem.
+//
+// A referencia e obrigatoria de proposito: daqui a dois meses, "por que esse
+// corretor tem R$ 300?" precisa de resposta, e "recarga" nao e resposta.
+// ============================================================================
+export async function creditarCorretor(
+  corretorId: string,
+  valor: number,
+  referencia: string
+): Promise<Resultado> {
+  await exigirAdmin()
+
+  if (!Number.isFinite(valor) || valor <= 0) {
+    return { ok: false, erro: 'Informe um valor maior que zero.' }
+  }
+  if (!referencia.trim()) {
+    return {
+      ok: false,
+      erro: 'Informe a referencia (data do PIX, ultimos digitos, o que te ajude a achar depois).',
+    }
+  }
+
+  const { error } = await supabaseAdmin().rpc('creditar_corretor', {
+    p_corretor_id: corretorId,
+    p_valor: valor,
+    p_referencia: referencia.trim(),
+  })
+
+  if (error) {
+    console.error('[creditarCorretor]', error)
+    if (error.message?.includes('CORRETOR_NAO_ENCONTRADO')) {
+      return { ok: false, erro: 'Corretor nao encontrado.' }
+    }
+    if (error.message?.includes('VALOR_INVALIDO')) {
+      return { ok: false, erro: 'Valor invalido.' }
+    }
+    return { ok: false, erro: 'Falha ao creditar. Nada foi lancado.' }
+  }
+
+  revalidatePath('/admin/recargas')
+  revalidatePath('/admin/corretores')
+  return { ok: true }
+}

@@ -23,6 +23,8 @@ Como isso e sustentado no codigo:
 | Postgres | A view `vitrine` nao tem as colunas `nome` e `telefone`. Nenhuma consulta a ela pode vazar contato. |
 | Postgres | A view e `security_invoker = true`: se exposta, herda o RLS de `leads`, que nega. |
 | Consulta | A vitrine seleciona colunas explicitas. **Nunca `select *`.** |
+| Postgres | Debito e desbloqueio numa funcao so (`revelar_interesse`). Falhou qualquer parte, nada e cobrado. |
+| Servidor | Nome e telefone saem SO por `lib/contato.ts`, que confere o desbloqueio daquele corretor naquele interesse. |
 | Teste | `npm run test:vazamento` falha se o contato aparecer na listagem. |
 | Deploy | O bundle do Worker nao e servido: buscar por HTTP o arquivo que referencia a chave secreta devolve **404**, enquanto um asset legitimo devolve 200. |
 
@@ -370,6 +372,7 @@ app/
   sem-acesso/           logado, mas sem cadastro de corretor
 lib/
   auth.ts               quem pode ver o que -- todo o controle de acesso
+  contato.ts            o UNICO caminho por onde nome e telefone saem
   config.ts             knobs de negocio E parametros do motor
   motor.ts              qualificacao: funcao pura, zero numero dentro
   match.ts              quais empreendimentos servem para cada pessoa
@@ -397,7 +400,7 @@ cloudflare.config.ts    definicao do Worker
 - [x] **Dia 2.5** — motor de qualificacao: enquadramento, capacidade, eliminatorios, pontuacao, selo, travas
 - [x] **Dia 2A** — catalogo de empreendimentos com ciclo de publicacao e log de auditoria
 - [x] **Dia 2B** — match por poder de compra, tela de resultado, gravacao dos interesses
-- [ ] **Dia 3** — vitrine de interesses, creditos, revelacao atomica, WhatsApp, feedback, contadores do admin
+- [x] **Dia 3** — revelacao em transacao atomica, creditos, WhatsApp, feedback, recarga PIX, contadores
 - [ ] **Dia 4** — landing page
 - [x] **Deploy** — Cloudflare Workers via vinext (antecipado: sem maquina local, e a unica forma de abrir o app)
 - [ ] **Dia 5** — teste no celular, checagem final

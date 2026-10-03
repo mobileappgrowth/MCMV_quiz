@@ -6,6 +6,7 @@ import { rotuloDe, rotuloBooleano } from '@/lib/quiz'
 import { rotuloMotivo } from '@/lib/motor'
 import { LinhaFila } from './linha-fila'
 import { NavAdmin } from './nav'
+import { Contadores } from './contadores'
 
 // ============================================================================
 // FILA DE VERIFICACAO
@@ -161,6 +162,8 @@ export default async function Admin() {
           />
         ))}
       </div>
+
+      <Contadores />
 
       {/* O motor descarta sem passar por voce. Estes numeros sao o unico jeito
           de perceber se ele esta matando lead bom que voce pagou anuncio para
