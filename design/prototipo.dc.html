@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#f4f6f9;font-family:'Public Sans',sans-serif;color:#0f2340;-webkit-font-smoothing:antialiased}*{box-sizing:border-box}a{color:#2f6fd6;text-decoration:none}a:hover{color:#0f2340}input,textarea,button{font-family:inherit}</style>
+</helmet>
+<div style="background:#e3e7ed;border-bottom:1px solid #d0d7e2;padding:8px 12px;display:flex;flex-wrap:wrap;gap:6px;align-items:center">
+<div style="font:600 11px 'JetBrains Mono',monospace;color:#5a6b80;letter-spacing:.06em;margin-right:6px">PROTÓTIPO ·</div>
+<sc-for list="{{ nav }}" as="n" hint-placeholder-count="9">
+<sc-if value="{{ n.active }}"><div style="padding:6px 10px;border-radius:5px;background:#0f2340;color:#fff;font:600 11px 'JetBrains Mono',monospace">{{ n.label }}</div></sc-if>
+<sc-if value="{{ n.inactive }}"><div onClick="{{ n.go }}" style="padding:6px 10px;border-radius:5px;color:#0f2340;font:600 11px 'JetBrains Mono',monospace;cursor:pointer" style-hover="background:#d0d7e2">{{ n.label }}</div></sc-if>
+</sc-for>
+</div>
+
+<sc-if value="{{ isLanding }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Landing" style="background:#fff;min-height:100vh;color:#0f2340">
+<div style="background:#0f2340;color:#fff">
+<div style="max-width:1080px;margin:0 auto;padding:20px;display:flex;justify-content:space-between;align-items:center;gap:16px">
+<div style="display:flex;align-items:center;gap:10px"><div style="width:20px;height:20px;background:#ffc93c;transform:rotate(45deg);border-radius:3px"></div><div style="font:800 18px 'Public Sans';letter-spacing:.02em">MCMV</div></div>
+<div onClick="{{ goLogin }}" style="font:600 14px 'Public Sans';color:#9fb0c8;cursor:pointer;padding:10px 0" style-hover="color:#fff">Sou corretor</div>
+</div>
+<div style="max-width:1080px;margin:0 auto;padding:32px 20px 64px;display:flex;flex-wrap:wrap;gap:40px;align-items:center">
+<div style="flex:1 1 340px;display:flex;flex-direction:column;gap:20px">
+<div style="font:700 13px 'Public Sans';color:#ffc93c;text-transform:uppercase;letter-spacing:.08em">Minha Casa Minha Vida</div>
+<div style="font:800 44px/1.08 'Public Sans';letter-spacing:-.02em;text-wrap:pretty">Descubra se você se enquadra e quanto precisa de entrada.</div>
+<div style="font:400 18px/1.5 'Public Sans';color:#c9d4e4;text-wrap:pretty;max-width:520px">Responda 12 perguntas rápidas. A gente confere tudo com você pelo WhatsApp e indica opções com entrada baixa na sua cidade.</div>
+<div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:8px">
+<div onClick="{{ goQuiz }}" style="padding:20px 28px;border-radius:8px;background:#ffc93c;color:#0f2340;font:800 18px 'Public Sans';cursor:pointer" style-hover="background:#ffd666">Começar agora →</div>
+<div style="font:500 14px 'Public Sans';color:#9fb0c8">Leva cerca de 2 minutos · Sem custo</div>
+</div>
+</div>
+<div style="flex:1 1 300px;aspect-ratio:4/3;border-radius:12px;background:repeating-linear-gradient(135deg,#1a3157 0 10px,#173055 10px 20px);display:flex;align-items:center;justify-content:center;font:500 12px 'JetBrains Mono',monospace;color:#7d8fab">foto: família na frente do novo apartamento</div>
+</div>
+</div>
+<div style="max-width:1080px;margin:0 auto;padding:56px 20px;display:flex;flex-direction:column;gap:28px">
+<div style="font:800 28px 'Public Sans';letter-spacing:-.01em">Como funciona</div>
+<div style="display:flex;flex-wrap:wrap;gap:16px">
+<div style="flex:1 1 260px;padding:24px;border-radius:10px;border:1.5px solid #dfe5ee;display:flex;flex-direction:column;gap:10px"><div style="font:600 13px 'JetBrains Mono',monospace;color:#2f6fd6">01</div><div style="font:800 19px 'Public Sans'">Responda o quiz</div><div style="font:400 16px/1.5 'Public Sans';color:#5a6b80">Renda, FGTS, quartos e onde você quer morar. Um toque por pergunta.</div></div>
+<div style="flex:1 1 260px;padding:24px;border-radius:10px;border:1.5px solid #dfe5ee;display:flex;flex-direction:column;gap:10px"><div style="font:600 13px 'JetBrains Mono',monospace;color:#2f6fd6">02</div><div style="font:800 19px 'Public Sans'">A gente confirma pelo WhatsApp</div><div style="font:400 16px/1.5 'Public Sans';color:#5a6b80">Uma conversa rápida para entender o que você procura.</div></div>
+<div style="flex:1 1 260px;padding:24px;border-radius:10px;border:1.5px solid #dfe5ee;display:flex;flex-direction:column;gap:10px"><div style="font:600 13px 'JetBrains Mono',monospace;color:#2f6fd6">03</div><div style="font:800 19px 'Public Sans'">Um corretor da sua região te atende</div><div style="font:400 16px/1.5 'Public Sans';color:#5a6b80">Só um. Seu contato não fica circulando por aí.</div></div>
+</div>
+<div style="padding:20px 24px;border-radius:10px;background:#f4f6f9;display:flex;gap:14px;align-items:flex-start"><div style="width:10px;height:10px;border-radius:50%;background:#1f8a4c;margin-top:7px;flex-shrink:0"></div><div style="font:400 16px/1.5 'Public Sans';color:#33445c;text-wrap:pretty"><strong style="color:#0f2340">Seus dados não ficam públicos.</strong> Compartilhamos seu contato só com um corretor parceiro da região, e você pode pedir para remover a qualquer momento.</div></div>
+</div>
+<div style="background:#ffc93c"><div style="max-width:1080px;margin:0 auto;padding:40px 20px;display:flex;flex-wrap:wrap;gap:20px;justify-content:space-between;align-items:center"><div style="font:800 26px 'Public Sans'">Pronto para descobrir?</div><div onClick="{{ goQuiz }}" style="padding:18px 26px;border-radius:8px;background:#0f2340;color:#fff;font:800 17px 'Public Sans';cursor:pointer">Começar o quiz</div></div></div>
+<div style="max-width:1080px;margin:0 auto;padding:24px 20px;font:400 13px 'Public Sans';color:#5a6b80">Serviço independente de orientação. Não somos a Caixa nem órgão do governo.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isQuiz }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Quiz" style="min-height:100vh;background:#e9edf2;display:flex;justify-content:center">
+<div style="width:100%;max-width:480px;min-height:100vh;background:#fff;display:flex;flex-direction:column">
+<div style="background:#0f2340;color:#fff;padding:20px 20px 24px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px"><div onClick="{{ goLanding }}" style="display:flex;align-items:center;gap:8px;cursor:pointer"><div style="width:20px;height:20px;background:#ffc93c;transform:rotate(45deg);border-radius:3px"></div><div style="font:800 17px 'Public Sans';letter-spacing:.02em">MCMV</div></div><div style="font:600 14px 'Public Sans';color:#ffc93c">{{ q.stepLabel }}</div></div>
+<div style="height:8px;background:#28406a;border-radius:4px;overflow:hidden"><div style="width:{{ q.progress }};height:8px;background:#ffc93c;border-radius:4px;transition:width .3s"></div></div>
+</div>
+<div style="padding:28px 20px 20px;display:flex;flex-direction:column;flex:1">
+<div style="font:700 13px 'Public Sans';color:#2f6fd6;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">{{ q.tema }}</div>
+<div style="font:800 27px/1.2 'Public Sans';letter-spacing:-.01em;margin-bottom:8px;text-wrap:pretty">{{ q.pergunta }}</div>
+<sc-if value="{{ q.hasAjuda }}"><div style="font:400 16px/1.45 'Public Sans';color:#5a6b80">{{ q.ajuda }}</div></sc-if>
+<div style="height:22px"></div>
+
+<sc-if value="{{ q.isLocal }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:700 14px 'Public Sans'">Cidade</span><input value="{{ a.cidade }}" onChange="{{ setCidade }}" placeholder="Ex: Campinas" style="padding:16px;border-radius:8px;border:2px solid #d6dde8;font:500 18px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:700 14px 'Public Sans'">Bairro <span style="font-weight:400;color:#5a6b80">(opcional)</span></span><input value="{{ a.bairro }}" onChange="{{ setBairro }}" placeholder="Ex: Jardim Florença" style="padding:16px;border-radius:8px;border:2px solid #d6dde8;font:500 18px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+</div>
+</sc-if>
+
+<sc-if value="{{ q.isOpcoes }}">
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ q.opcoes }}" as="o" hint-placeholder-count="4">
+<sc-if value="{{ o.sel }}"><div onClick="{{ o.pick }}" style="padding:18px 16px;border-radius:8px;border:2px solid #0f2340;background:#fff6dc;font:700 17px 'Public Sans';display:flex;align-items:center;gap:12px;cursor:pointer"><div style="width:22px;height:22px;border-radius:50%;border:7px solid #0f2340;flex-shrink:0"></div>{{ o.rotulo }}</div></sc-if>
+<sc-if value="{{ o.unsel }}"><div onClick="{{ o.pick }}" style="padding:18px 16px;border-radius:8px;border:2px solid #d6dde8;font:600 17px 'Public Sans';display:flex;align-items:center;gap:12px;cursor:pointer" style-hover="border-color:#9fb0c8"><div style="width:22px;height:22px;border-radius:50%;border:2px solid #b5c0d0;flex-shrink:0"></div>{{ o.rotulo }}</div></sc-if>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ q.isContato }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:700 14px 'Public Sans'">Seu nome</span><input value="{{ a.nome }}" onChange="{{ setNome }}" autoComplete="name" style="padding:16px;border-radius:8px;border:2px solid #d6dde8;font:500 18px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:700 14px 'Public Sans'">WhatsApp com DDD</span><input value="{{ a.telefone }}" onChange="{{ setTelefone }}" type="tel" inputMode="numeric" placeholder="(11) 99999-9999" style="padding:16px;border-radius:8px;border:2px solid #d6dde8;font:500 18px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+<div onClick="{{ toggleConsent }}" style="display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:8px;background:#f4f6f9;cursor:pointer">
+<sc-if value="{{ a.consent }}"><div style="width:24px;height:24px;border-radius:5px;background:#0f2340;color:#ffc93c;font:800 14px 'Public Sans';display:flex;align-items:center;justify-content:center;flex-shrink:0">✓</div></sc-if>
+<sc-if value="{{ noConsent }}"><div style="width:24px;height:24px;border-radius:5px;border:2px solid #9fb0c8;background:#fff;flex-shrink:0"></div></sc-if>
+<div style="font:400 14px/1.45 'Public Sans';color:#33445c">Os dados serão compartilhados com corretores e imobiliárias parceiras da região para apresentação de imóveis, e podem ser removidos a qualquer momento por solicitação.</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasErro }}"><div role="alert" style="margin-top:14px;padding:12px 14px;border-radius:8px;background:#fbeceb;color:#b03a2e;font:600 14px 'Public Sans'">{{ erro }}</div></sc-if>
+<div style="flex:1;min-height:24px"></div>
+<div style="display:flex;gap:10px">
+<sc-if value="{{ q.showVoltar }}"><div onClick="{{ q.voltar }}" style="padding:17px 18px;border-radius:8px;border:2px solid #d6dde8;font:700 16px 'Public Sans';cursor:pointer">Voltar</div></sc-if>
+<sc-if value="{{ q.showContinuar }}"><div onClick="{{ q.continuar }}" style="flex:1;padding:17px;border-radius:8px;background:#ffc93c;text-align:center;font:800 16px 'Public Sans';cursor:pointer" style-hover="background:#ffd666">Continuar</div></sc-if>
+<sc-if value="{{ q.isContato }}"><div onClick="{{ enviarQuiz }}" style="flex:1;padding:17px;border-radius:8px;background:#ffc93c;text-align:center;font:800 16px 'Public Sans';cursor:pointer" style-hover="background:#ffd666">Quero ver as opções</div></sc-if>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isObrigado }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Obrigado" style="min-height:100vh;background:#e9edf2;display:flex;justify-content:center">
+<div style="width:100%;max-width:480px;min-height:100vh;background:#fff;display:flex;flex-direction:column">
+<div style="background:#0f2340;color:#fff;padding:20px 20px 40px;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;align-items:center;gap:8px"><div style="width:20px;height:20px;background:#ffc93c;transform:rotate(45deg);border-radius:3px"></div><div style="font:800 17px 'Public Sans';letter-spacing:.02em">MCMV</div></div>
+<div style="width:56px;height:56px;border-radius:50%;background:#ffc93c;color:#0f2340;font:800 26px 'Public Sans';display:flex;align-items:center;justify-content:center">✓</div>
+<div style="font:800 30px/1.15 'Public Sans';letter-spacing:-.01em">Recebemos seu cadastro{{ obrigadoNome }}.</div>
+</div>
+<div style="padding:28px 20px;display:flex;flex-direction:column;gap:20px">
+<div style="font:400 17px/1.5 'Public Sans';color:#33445c">Vou entrar em contato pelo WhatsApp para entender melhor o que você procura e confirmar as informações.</div>
+<div style="display:flex;flex-direction:column;border:1.5px solid #dfe5ee;border-radius:10px">
+<div style="padding:16px;display:flex;gap:14px;border-bottom:1px solid #eef1f5"><div style="font:600 13px 'JetBrains Mono',monospace;color:#1f8a4c">✓</div><div style="font:600 16px 'Public Sans'">Respostas enviadas</div></div>
+<div style="padding:16px;display:flex;gap:14px;border-bottom:1px solid #eef1f5"><div style="font:600 13px 'JetBrains Mono',monospace;color:#2f6fd6">02</div><div><div style="font:600 16px 'Public Sans'">Mensagem no WhatsApp</div><div style="font:400 14px 'Public Sans';color:#5a6b80">Fique de olho no número que você cadastrou.</div></div></div>
+<div style="padding:16px;display:flex;gap:14px"><div style="font:600 13px 'JetBrains Mono',monospace;color:#9fb0c8">03</div><div style="font:600 16px 'Public Sans';color:#5a6b80">Contato do corretor da sua região</div></div>
+</div>
+<div style="font:400 15px 'Public Sans';color:#5a6b80">Não precisa fazer mais nada agora.</div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Login" style="min-height:100vh;background:#0f2340;display:flex;align-items:center;justify-content:center;padding:24px">
+<div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:24px">
+<div style="display:flex;align-items:center;gap:10px;color:#fff"><div style="width:20px;height:20px;background:#ffc93c;transform:rotate(45deg);border-radius:3px"></div><div style="font:800 18px 'Public Sans';letter-spacing:.02em">MCMV</div><div style="font:500 14px 'Public Sans';color:#9fb0c8">· Corretores</div></div>
+<div style="background:#fff;border-radius:12px;padding:28px 24px;display:flex;flex-direction:column;gap:18px">
+<sc-if value="{{ loginForm }}">
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:800 24px 'Public Sans'">Entrar no painel</div><div style="font:400 15px/1.45 'Public Sans';color:#5a6b80">Mandamos um link de acesso para o seu email. Sem senha.</div></div>
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:700 14px 'Public Sans'">Email</span><input value="{{ loginEmail }}" onChange="{{ setLoginEmail }}" type="email" placeholder="voce@imobiliaria.com.br" style="padding:16px;border-radius:8px;border:2px solid #d6dde8;font:500 17px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+<div onClick="{{ enviarLogin }}" style="padding:17px;border-radius:8px;background:#0f2340;color:#fff;text-align:center;font:800 16px 'Public Sans';cursor:pointer">Enviar link de acesso</div>
+<sc-if value="{{ hasLoginErro }}"><div role="alert" style="padding:12px 14px;border-radius:8px;background:#fbeceb;display:flex;flex-direction:column;gap:4px"><div style="font:700 14px 'Public Sans';color:#b03a2e">{{ loginErro }}</div><div style="font:400 13px 'Public Sans';color:#5a6b80">O login não cria contas. Peça ao administrador para cadastrar seu email.</div></div></sc-if>
+</sc-if>
+<sc-if value="{{ loginEnviado }}">
+<div style="width:48px;height:48px;border-radius:50%;background:#e3f2e9;color:#1f8a4c;font:800 22px 'Public Sans';display:flex;align-items:center;justify-content:center">✓</div>
+<div style="display:flex;flex-direction:column;gap:6px"><div style="font:800 22px 'Public Sans'">Link enviado</div><div style="font:400 15px/1.45 'Public Sans';color:#5a6b80">Enviamos para <strong style="color:#0f2340">{{ loginEmail }}</strong>. Abra o email no celular e toque no link. Ele vale por uma hora.</div></div>
+<div onClick="{{ abrirLink }}" style="padding:15px;border-radius:8px;border:2px dashed #9fb0c8;text-align:center;font:600 14px 'JetBrains Mono',monospace;color:#2f6fd6;cursor:pointer">simular: abrir link do email →</div>
+<div onClick="{{ voltarLogin }}" style="font:600 14px 'Public Sans';color:#5a6b80;cursor:pointer;text-align:center">Usar outro email</div>
+</sc-if>
+</div>
+<div onClick="{{ goAdmin }}" style="font:500 13px 'Public Sans';color:#9fb0c8;text-align:center;cursor:pointer">Entrar como administrador</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCorretorArea }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;background:#f4f6f9">
+<div style="background:#0f2340;color:#fff">
+<div style="max-width:1120px;margin:0 auto;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap">
+<div onClick="{{ goPainel }}" style="display:flex;align-items:center;gap:10px;cursor:pointer"><div style="width:18px;height:18px;background:#ffc93c;transform:rotate(45deg);border-radius:3px"></div><div style="font:800 16px 'Public Sans'">MCMV</div><div style="font:500 14px 'Public Sans';color:#9fb0c8">Carlos Mendes</div></div>
+<div style="display:flex;align-items:center;gap:16px">
+<div style="text-align:right"><div style="font:500 12px 'Public Sans';color:#9fb0c8">Saldo</div><div style="font:800 22px 'Public Sans'">{{ saldoFmt }}</div></div>
+<div onClick="{{ goRecarga }}" style="padding:12px 16px;border-radius:8px;background:#ffc93c;color:#0f2340;font:800 14px 'Public Sans';cursor:pointer">Recarregar</div>
+</div>
+</div>
+</div>
+
+<sc-if value="{{ isPainel }}">
+<div data-screen-label="Vitrine" style="max-width:1120px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;gap:4px;border-bottom:2px solid #dfe5ee">
+<sc-if value="{{ tabVitrine }}"><div style="padding:12px 4px;margin-right:20px;border-bottom:3px solid #0f2340;margin-bottom:-2px;font:800 15px 'Public Sans'">Vitrine · {{ vitrineTotal }}</div><div onClick="{{ goTabMeus }}" style="padding:12px 4px;font:600 15px 'Public Sans';color:#5a6b80;cursor:pointer">Meus leads · {{ meusTotal }}</div></sc-if>
+<sc-if value="{{ tabMeus }}"><div onClick="{{ goTabVitrine }}" style="padding:12px 4px;margin-right:20px;font:600 15px 'Public Sans';color:#5a6b80;cursor:pointer">Vitrine · {{ vitrineTotal }}</div><div style="padding:12px 4px;border-bottom:3px solid #0f2340;margin-bottom:-2px;font:800 15px 'Public Sans'">Meus leads · {{ meusTotal }}</div></sc-if>
+</div>
+
+<sc-if value="{{ tabVitrine }}">
+<div style="display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center">
+<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><div style="font:600 12px 'Public Sans';color:#5a6b80;text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Cidade</div>
+<sc-for list="{{ chipsCidade }}" as="c" hint-placeholder-count="4">
+<sc-if value="{{ c.on }}"><div style="padding:9px 14px;border-radius:20px;background:#0f2340;color:#fff;font:700 13px 'Public Sans'">{{ c.label }}</div></sc-if>
+<sc-if value="{{ c.off }}"><div onClick="{{ c.pick }}" style="padding:9px 14px;border-radius:20px;background:#fff;border:1.5px solid #d6dde8;font:600 13px 'Public Sans';cursor:pointer">{{ c.label }}</div></sc-if>
+</sc-for>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><div style="font:600 12px 'Public Sans';color:#5a6b80;text-transform:uppercase;letter-spacing:.06em;margin-right:4px">Faixa</div>
+<sc-for list="{{ chipsFaixa }}" as="c" hint-placeholder-count="4">
+<sc-if value="{{ c.on }}"><div style="padding:9px 14px;border-radius:20px;background:#0f2340;color:#fff;font:700 13px 'Public Sans'">{{ c.label }}</div></sc-if>
+<sc-if value="{{ c.off }}"><div onClick="{{ c.pick }}" style="padding:9px 14px;border-radius:20px;background:#fff;border:1.5px solid #d6dde8;font:600 13px 'Public Sans';cursor:pointer">{{ c.label }}</div></sc-if>
+</sc-for>
+</div>
+</div>
+<div style="font:700 13px 'Public Sans';color:#5a6b80;letter-spacing:.04em">{{ vitrineCountLabel }}</div>
+<sc-if value="{{ vitrineVazia }}"><div style="padding:32px 24px;border-radius:10px;border:1.5px dashed #c5cfdc;font:400 16px/1.5 'Public Sans';color:#5a6b80;text-wrap:pretty">Nenhum lead com esses filtros. Leads ficam na vitrine por 10 dias e saem assim que outro corretor desbloqueia.</div></sc-if>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
+<sc-for list="{{ cards }}" as="l" hint-placeholder-count="6">
+<div style="background:#fff;border-radius:10px;border:1px solid #dfe5ee;overflow:hidden;display:flex;flex-direction:column">
+<div style="padding:16px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #eef1f5">
+<div style="min-width:0"><div style="font:800 18px 'Public Sans'">{{ l.bairro }}</div><div style="font:500 13px 'Public Sans';color:#5a6b80">{{ l.cidade }}</div></div>
+<div style="text-align:right;flex-shrink:0">
+<sc-if value="{{ l.fresco }}"><div style="display:inline-block;padding:4px 8px;border-radius:4px;background:#ffc93c;font:800 11px 'Public Sans';letter-spacing:.04em">FRESCO · {{ l.idadeCurta }}</div></sc-if>
+<sc-if value="{{ l.antigo }}"><div style="display:inline-block;padding:4px 8px;border-radius:4px;background:#eef1f5;color:#5a6b80;font:700 11px 'Public Sans';letter-spacing:.04em">{{ l.idadeCurta }}</div></sc-if>
+<div style="font:600 12px 'Public Sans';color:#1f8a4c;margin-top:5px">✓ Verificado por ligação</div>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#eef1f5">
+<sc-for list="{{ l.attrs }}" as="t" hint-placeholder-count="6"><div style="padding:11px 14px;background:#fff"><div style="font:500 11px 'Public Sans';color:#5a6b80">{{ t.k }}</div><div style="font:700 14px 'Public Sans'">{{ t.v }}</div></div></sc-for>
+</div>
+<div style="padding:14px 16px;display:flex;align-items:center;gap:12px;background:#f4f6f9"><div style="width:34px;height:34px;border-radius:50%;background:#dfe5ee;flex-shrink:0"></div><div style="display:flex;flex-direction:column;gap:6px;flex:1"><div style="width:55%;height:10px;background:#d6dde8;border-radius:2px"></div><div style="width:70%;height:10px;background:#d6dde8;border-radius:2px"></div></div><div style="font:500 11px 'Public Sans';color:#5a6b80;text-align:right">contato<br>exclusivo</div></div>
+<div style="padding:12px;margin-top:auto">
+<sc-if value="{{ l.podePagar }}"><div onClick="{{ l.unlock }}" style="padding:15px;border-radius:8px;background:#0f2340;color:#fff;text-align:center;font:800 16px 'Public Sans';cursor:pointer" style-hover="background:#1b3560">Desbloquear · {{ l.preco }}</div></sc-if>
+<sc-if value="{{ l.semSaldo }}"><div onClick="{{ goRecarga }}" style="padding:13px;border-radius:8px;border:2px solid #d6dde8;text-align:center;cursor:pointer"><div style="font:800 15px 'Public Sans';color:#5a6b80">{{ l.preco }} · saldo insuficiente</div><div style="font:600 13px 'Public Sans';color:#2f6fd6">Recarregar para desbloquear</div></div></sc-if>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ tabMeus }}">
+<sc-if value="{{ meusVazio }}"><div style="padding:32px 24px;border-radius:10px;border:1.5px dashed #c5cfdc;font:400 16px/1.5 'Public Sans';color:#5a6b80">Você ainda não desbloqueou nenhum lead. Os desbloqueados ficam aqui com nome e WhatsApp.</div></sc-if>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ meusCards }}" as="m" hint-placeholder-count="2">
+<div onClick="{{ m.abrir }}" style="background:#fff;border-radius:10px;border:1px solid #dfe5ee;padding:16px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;cursor:pointer" style-hover="border-color:#9fb0c8">
+<div><div style="font:800 17px 'Public Sans'">{{ m.nome }}</div><div style="font:500 14px 'Public Sans';color:#5a6b80">{{ m.local }} · {{ m.tel }}</div></div>
+<div style="display:flex;align-items:center;gap:10px"><div style="padding:6px 10px;border-radius:4px;background:#eef1f5;font:600 12px 'Public Sans';color:#33445c">{{ m.status }}</div><div style="font:700 14px 'Public Sans';color:#2f6fd6">Abrir →</div></div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRevelado }}">
+<div data-screen-label="Lead desbloqueado" style="max-width:720px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px">
+<div onClick="{{ goPainel }}" style="font:600 14px 'Public Sans';color:#2f6fd6;cursor:pointer">← Voltar para a vitrine</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #dfe5ee;overflow:hidden">
+<div style="padding:12px 20px;background:#e3f2e9;color:#1f6b3d;font:700 14px 'Public Sans';display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px"><span>✓ Desbloqueado por {{ rev.preco }} · exclusivo seu</span><span style="font-weight:500">Saiu da vitrine dos outros corretores</span></div>
+<div style="padding:24px 20px;display:flex;flex-direction:column;gap:18px">
+<div><div style="font:800 30px 'Public Sans';letter-spacing:-.01em">{{ rev.nome }}</div><div style="font:500 15px 'Public Sans';color:#5a6b80">{{ rev.local }} · captado {{ rev.idade }}</div></div>
+<div style="font:700 26px 'JetBrains Mono',monospace;letter-spacing:-.01em">{{ rev.tel }}</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px">
+<a href="{{ rev.wa }}" target="_blank" rel="noopener" style="flex:2 1 220px;padding:17px;border-radius:8px;background:#1f8a4c;color:#fff;text-align:center;font:800 16px 'Public Sans'">Chamar no WhatsApp</a>
+<a href="{{ rev.telLink }}" style="flex:1 1 120px;padding:17px;border-radius:8px;border:2px solid #d6dde8;color:#0f2340;text-align:center;font:800 16px 'Public Sans'">Ligar</a>
+</div>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:1px;background:#eef1f5;border-top:1px solid #eef1f5">
+<sc-for list="{{ rev.attrs }}" as="t" hint-placeholder-count="12"><div style="padding:12px 20px;background:#fff"><div style="font:500 11px 'Public Sans';color:#5a6b80">{{ t.k }}</div><div style="font:700 14px 'Public Sans'">{{ t.v }}</div></div></sc-for>
+</div>
+</div>
+<div style="background:#fff;border-radius:12px;border:1px solid #dfe5ee;padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="font:800 17px 'Public Sans'">Como foi o contato?</div>
+<div style="font:400 14px 'Public Sans';color:#5a6b80">Seu retorno ajuda a gente a melhorar a verificação. Número errado vira crédito de volta.</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<sc-for list="{{ rev.feedback }}" as="f" hint-placeholder-count="4">
+<sc-if value="{{ f.on }}"><div style="padding:11px 14px;border-radius:8px;background:#0f2340;color:#fff;font:700 14px 'Public Sans'">{{ f.label }}</div></sc-if>
+<sc-if value="{{ f.off }}"><div onClick="{{ f.pick }}" style="padding:11px 14px;border-radius:8px;border:2px solid #d6dde8;font:600 14px 'Public Sans';cursor:pointer" style-hover="border-color:#9fb0c8">{{ f.label }}</div></sc-if>
+</sc-for>
+</div>
+<sc-if value="{{ rev.temFeedback }}"><div style="font:600 14px 'Public Sans';color:#1f8a4c">Obrigado, registrado.</div></sc-if>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRecarga }}">
+<div data-screen-label="Recarga" style="max-width:560px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:18px">
+<div onClick="{{ goPainel }}" style="font:600 14px 'Public Sans';color:#2f6fd6;cursor:pointer">← Voltar para a vitrine</div>
+<div><div style="font:800 28px 'Public Sans'">Recarregar créditos</div><div style="font:500 15px 'Public Sans';color:#5a6b80">Saldo atual: {{ saldoFmt }}</div></div>
+<div style="background:#fff;border-radius:12px;border:1px solid #dfe5ee;overflow:hidden">
+<div style="padding:16px 20px;display:flex;gap:14px;border-bottom:1px solid #eef1f5"><div style="font:600 13px 'JetBrains Mono',monospace;color:#2f6fd6">01</div><div style="font:500 15px 'Public Sans'">Faça um PIX do valor que quiser para a chave abaixo.</div></div>
+<div style="padding:16px 20px;display:flex;gap:14px;border-bottom:1px solid #eef1f5"><div style="font:600 13px 'JetBrains Mono',monospace;color:#2f6fd6">02</div><div style="font:500 15px 'Public Sans'">Mande o comprovante no WhatsApp.</div></div>
+<div style="padding:16px 20px;display:flex;gap:14px"><div style="font:600 13px 'JetBrains Mono',monospace;color:#2f6fd6">03</div><div style="font:500 15px 'Public Sans'">A gente credita e o saldo aparece aqui.</div></div>
+</div>
+<div style="background:#0f2340;color:#fff;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
+<div><div style="font:500 12px 'Public Sans';color:#9fb0c8">Chave PIX (CNPJ)</div><div style="font:600 20px 'JetBrains Mono',monospace;word-break:break-all">00.000.000/0001-00</div></div>
+<div><div style="font:500 12px 'Public Sans';color:#9fb0c8">Favorecido</div><div style="font:700 16px 'Public Sans'">MCMV Leads Ltda</div></div>
+<div onClick="{{ copiarPix }}" style="padding:13px;border-radius:8px;background:#ffc93c;color:#0f2340;text-align:center;font:800 15px 'Public Sans';cursor:pointer">{{ copiarLabel }}</div>
+</div>
+<a href="{{ waRecarga }}" target="_blank" rel="noopener" style="padding:17px;border-radius:8px;background:#1f8a4c;color:#fff;text-align:center;font:800 16px 'Public Sans'">Mandar comprovante no WhatsApp</a>
+<div style="font:400 14px/1.5 'Public Sans';color:#5a6b80">Leads frescos (até 72h) custam {{ precoFrescoFmt }}. Depois disso, {{ precoAntigoFmt }}.</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAdminArea }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;background:#f4f6f9">
+<div style="background:#0f2340;color:#fff">
+<div style="max-width:1200px;margin:0 auto;padding:0 20px;display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+<div style="display:flex;align-items:center;gap:10px;padding:16px 0"><div style="width:18px;height:18px;background:#ffc93c;transform:rotate(45deg);border-radius:3px"></div><div style="font:800 16px 'Public Sans'">MCMV Admin</div></div>
+<div style="display:flex;gap:4px">
+<sc-if value="{{ isAdmin }}"><div style="padding:18px 12px;border-bottom:3px solid #ffc93c;font:700 14px 'Public Sans';display:flex;gap:8px;align-items:center">Fila<span style="background:#ffc93c;color:#0f2340;padding:1px 8px;border-radius:10px;font-size:12px">{{ filaTotal }}</span></div><div onClick="{{ goCorretores }}" style="padding:18px 12px;font:600 14px 'Public Sans';color:#9fb0c8;cursor:pointer">Corretores</div></sc-if>
+<sc-if value="{{ isCorretores }}"><div onClick="{{ goAdmin }}" style="padding:18px 12px;font:600 14px 'Public Sans';color:#9fb0c8;cursor:pointer;display:flex;gap:8px;align-items:center">Fila<span style="background:#28406a;color:#fff;padding:1px 8px;border-radius:10px;font-size:12px">{{ filaTotal }}</span></div><div style="padding:18px 12px;border-bottom:3px solid #ffc93c;font:700 14px 'Public Sans'">Corretores</div></sc-if>
+</div>
+</div>
+</div>
+
+<sc-if value="{{ isAdmin }}">
+<div data-screen-label="Admin fila" style="max-width:1200px;margin:0 auto;padding:20px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;align-items:baseline"><div style="font:800 26px 'Public Sans'">{{ filaTitulo }}</div><div style="font:500 14px 'Public Sans';color:#5a6b80">Ligue, confirme e aprove. Preço congela na aprovação: {{ precoFrescoFmt }} até 72h, {{ precoAntigoFmt }} depois.</div></div>
+<sc-if value="{{ filaVazia }}"><div style="padding:40px 24px;border-radius:10px;border:1.5px dashed #c5cfdc;font:400 16px 'Public Sans';color:#5a6b80">Nada para verificar agora. Leads novos do quiz aparecem aqui.</div></sc-if>
+<sc-if value="{{ filaCheia }}">
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+<div style="flex:1 1 260px;background:#fff;border-radius:10px;border:1px solid #dfe5ee;overflow:hidden">
+<div style="padding:10px 16px;font:600 11px 'Public Sans';color:#5a6b80;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #eef1f5">Mais antigo primeiro</div>
+<sc-for list="{{ filaItems }}" as="f" hint-placeholder-count="4">
+<sc-if value="{{ f.sel }}"><div style="padding:14px 16px;background:#fff6dc;border-left:4px solid #ffc93c;border-bottom:1px solid #f0e2b5"><div style="font:800 15px 'Public Sans'">{{ f.nome }}</div><div style="font:500 13px 'Public Sans';color:#5a6b80">{{ f.sub }}</div></div></sc-if>
+<sc-if value="{{ f.unsel }}"><div onClick="{{ f.pick }}" style="padding:14px 16px 14px 20px;border-bottom:1px solid #eef1f5;cursor:pointer" style-hover="background:#f8f9fb"><div style="font:600 15px 'Public Sans'">{{ f.nome }}</div><div style="font:500 13px 'Public Sans';color:#5a6b80">{{ f.sub }}</div></div></sc-if>
+</sc-for>
+</div>
+<div style="flex:3 1 440px;background:#fff;border-radius:10px;border:1px solid #dfe5ee;overflow:hidden">
+<div style="padding:20px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center;border-bottom:1px solid #eef1f5">
+<div><div style="font:800 24px 'Public Sans'">{{ det.nome }}</div><div style="font:500 14px 'Public Sans';color:#5a6b80">{{ det.local }} · captado {{ det.idade }}</div></div>
+<a href="{{ det.wa }}" target="_blank" rel="noopener" style="padding:12px 16px;border-radius:8px;background:#1f8a4c;color:#fff;font:700 15px 'JetBrains Mono',monospace;white-space:nowrap">{{ det.tel }} ↗</a>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:1px;background:#eef1f5;border-bottom:1px solid #eef1f5">
+<sc-for list="{{ det.attrs }}" as="t" hint-placeholder-count="12"><div style="padding:11px 20px;background:#fff"><div style="font:500 11px 'Public Sans';color:#5a6b80">{{ t.k }}</div><div style="font:700 14px 'Public Sans'">{{ t.v }}</div></div></sc-for>
+</div>
+<div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+<label style="display:flex;flex-direction:column;gap:6px"><span style="font:700 14px 'Public Sans'">Notas da verificação</span><textarea value="{{ det.nota }}" onChange="{{ det.setNota }}" rows="3" placeholder="O que ela disse na ligação." style="padding:12px;border-radius:8px;border:2px solid #d6dde8;font:400 15px 'Public Sans';color:#0f2340;outline:none;resize:vertical;width:100%" style-focus="border-color:#0f2340"></textarea></label>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+<div onClick="{{ det.verificar }}" style="flex:2 1 200px;padding:15px;border-radius:8px;background:#1f8a4c;color:#fff;text-align:center;font:800 15px 'Public Sans';cursor:pointer" style-hover="background:#197a42">Verificado · entra a {{ det.preco }}</div>
+<div onClick="{{ det.salvar }}" style="flex:1 1 120px;padding:15px;border-radius:8px;border:2px solid #d6dde8;text-align:center;font:700 15px 'Public Sans';cursor:pointer">Salvar nota</div>
+<div onClick="{{ det.descartar }}" style="flex:1 1 120px;padding:15px;border-radius:8px;border:2px solid #e4b4ae;color:#b03a2e;text-align:center;font:700 15px 'Public Sans';cursor:pointer">Descartar</div>
+</div>
+</div>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCorretores }}">
+<div data-screen-label="Admin corretores" style="max-width:1200px;margin:0 auto;padding:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+<div style="flex:1 1 300px;background:#fff;border-radius:10px;border:1px solid #dfe5ee;padding:20px;display:flex;flex-direction:column;gap:14px">
+<div><div style="font:800 20px 'Public Sans'">Cadastrar corretor</div><div style="font:400 14px/1.45 'Public Sans';color:#5a6b80">Cria o acesso e a conta. Sem passar por aqui o corretor não entra: o login não cria contas sozinho.</div></div>
+<label style="display:flex;flex-direction:column;gap:5px"><span style="font:700 13px 'Public Sans'">Nome</span><input value="{{ form.nome }}" onChange="{{ setFormNome }}" style="padding:13px;border-radius:8px;border:2px solid #d6dde8;font:500 16px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+<label style="display:flex;flex-direction:column;gap:5px"><span style="font:700 13px 'Public Sans'">Email <span style="font-weight:400;color:#5a6b80">(é por onde ele entra)</span></span><input value="{{ form.email }}" onChange="{{ setFormEmail }}" type="email" style="padding:13px;border-radius:8px;border:2px solid #d6dde8;font:500 16px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+<div style="display:flex;gap:10px;flex-wrap:wrap">
+<label style="flex:1 1 140px;display:flex;flex-direction:column;gap:5px"><span style="font:700 13px 'Public Sans'">Telefone</span><input value="{{ form.telefone }}" onChange="{{ setFormTel }}" type="tel" style="padding:13px;border-radius:8px;border:2px solid #d6dde8;font:500 16px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+<label style="flex:1 1 120px;display:flex;flex-direction:column;gap:5px"><span style="font:700 13px 'Public Sans'">CRECI</span><input value="{{ form.creci }}" onChange="{{ setFormCreci }}" style="padding:13px;border-radius:8px;border:2px solid #d6dde8;font:500 16px 'Public Sans';color:#0f2340;outline:none;width:100%" style-focus="border-color:#0f2340"></label>
+</div>
+<div onClick="{{ cadastrar }}" style="padding:15px;border-radius:8px;background:#0f2340;color:#fff;text-align:center;font:800 15px 'Public Sans';cursor:pointer">Cadastrar e liberar acesso</div>
+<sc-if value="{{ hasFormErro }}"><div role="alert" style="font:600 14px 'Public Sans';color:#b03a2e">{{ formErro }}</div></sc-if>
+</div>
+<div style="flex:2 1 420px;display:flex;flex-direction:column;gap:10px">
+<div style="font:700 13px 'Public Sans';color:#5a6b80;letter-spacing:.04em">{{ corretoresLabel }}</div>
+<sc-for list="{{ corretoresList }}" as="c" hint-placeholder-count="3">
+<div style="background:#fff;border-radius:10px;border:1px solid #dfe5ee;padding:16px;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center">
+<div style="min-width:0">
+<div style="display:flex;gap:8px;align-items:center"><div style="font:800 16px 'Public Sans'">{{ c.nome }}</div><sc-if value="{{ c.inativo }}"><div style="padding:2px 8px;border-radius:4px;background:#fbeceb;color:#b03a2e;font:700 11px 'Public Sans'">INATIVO</div></sc-if></div>
+<div style="font:500 13px 'Public Sans';color:#5a6b80">{{ c.email }}</div>
+<div style="font:500 13px 'Public Sans';color:#5a6b80">{{ c.linha }}</div>
+</div>
+<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+<div style="text-align:right;margin-right:4px"><div style="font:500 11px 'Public Sans';color:#5a6b80">Saldo</div><div style="font:800 17px 'Public Sans'">{{ c.saldo }}</div></div>
+<div onClick="{{ c.creditar }}" style="padding:10px 12px;border-radius:8px;background:#ffc93c;font:800 13px 'Public Sans';cursor:pointer;white-space:nowrap">+ R$ 100</div>
+<div onClick="{{ c.toggle }}" style="padding:10px 12px;border-radius:8px;border:2px solid #d6dde8;font:700 13px 'Public Sans';cursor:pointer">{{ c.toggleLabel }}</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ confirm.show }}" hint-placeholder-val="{{ false }}">
+<div onClick="{{ confirm.cancelar }}" style="position:fixed;inset:0;background:rgba(15,35,64,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px;z-index:20">
+<div onClick="{{ stop }}" style="width:100%;max-width:440px;background:#fff;border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px;margin-bottom:auto;margin-top:auto">
+<div style="font:800 22px 'Public Sans'">Desbloquear este lead?</div>
+<div style="font:500 15px 'Public Sans';color:#5a6b80">{{ confirm.local }}</div>
+<div style="border:1px solid #dfe5ee;border-radius:8px">
+<div style="padding:12px 14px;display:flex;justify-content:space-between;border-bottom:1px solid #eef1f5;font:500 15px 'Public Sans'"><span>Preço</span><strong>{{ confirm.preco }}</strong></div>
+<div style="padding:12px 14px;display:flex;justify-content:space-between;font:500 15px 'Public Sans'"><span>Saldo depois</span><strong>{{ confirm.saldoApos }}</strong></div>
+</div>
+<div style="font:400 14px/1.45 'Public Sans';color:#33445c">O contato é exclusivo: sai da vitrine dos outros corretores na hora.</div>
+<div style="display:flex;gap:10px"><div onClick="{{ confirm.cancelar }}" style="padding:15px 18px;border-radius:8px;border:2px solid #d6dde8;font:700 15px 'Public Sans';cursor:pointer">Cancelar</div><div onClick="{{ confirm.confirmar }}" style="flex:1;padding:15px;border-radius:8px;background:#0f2340;color:#fff;text-align:center;font:800 15px 'Public Sans';cursor:pointer">Confirmar · {{ confirm.preco }}</div></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+<div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f2340;color:#fff;padding:14px 18px;border-radius:8px;font:600 14px 'Public Sans';box-shadow:0 10px 30px -10px rgba(15,35,64,.5);z-index:30;max-width:calc(100% - 32px)">{{ toast }}</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;saldoInicial&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:210,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:0,&quot;max&quot;:1000,&quot;step&quot;:5,&quot;unit&quot;:&quot;R$&quot;,&quot;section&quot;:&quot;Simulação&quot;},&quot;precoFresco&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:70,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:10,&quot;max&quot;:200,&quot;unit&quot;:&quot;R$&quot;,&quot;section&quot;:&quot;Preço (lib/config.ts)&quot;},&quot;precoAntigo&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:45,&quot;tsType&quot;:&quot;number&quot;,&quot;min&quot;:10,&quot;max&quot;:200,&quot;unit&quot;:&quot;R$&quot;,&quot;section&quot;:&quot;Preço (lib/config.ts)&quot;}}">
+const FAIXAS=[
+ {valor:'ate_2850',rotulo:'Até R$ 2.850',faixa:'Faixa 1'},
+ {valor:'2851_4700',rotulo:'R$ 2.851 a R$ 4.700',faixa:'Faixa 2'},
+ {valor:'4701_8600',rotulo:'R$ 4.701 a R$ 8.600',faixa:'Faixa 3'},
+ {valor:'acima_8600',rotulo:'Acima de R$ 8.600',faixa:'Fora do MCMV'}];
+const PASSOS=[
+ {campo:'quartos',tema:'O imóvel',pergunta:'Quantos quartos você precisa?',opcoes:[['1','1 quarto'],['2','2 quartos'],['3','3 quartos ou mais']]},
+ {campo:'garagem',tema:'O imóvel',pergunta:'Precisa de garagem?',opcoes:[['sim','Sim, preciso'],['nao','Não é necessário']]},
+ {campo:'prazo_compra',tema:'Seu prazo',pergunta:'Quando pretende comprar?',opcoes:[['imediato','O quanto antes'],['ate_3_meses','Nos próximos 3 meses'],['ate_6_meses','Em até 6 meses'],['ate_1_ano','Em até 1 ano'],['pesquisando','Só pesquisando por enquanto']]},
+ {campo:'renda_faixa',tema:'Sua renda',pergunta:'Qual a renda da família por mês?',ajuda:'Somando todos que vão entrar no financiamento.',opcoes:FAIXAS.map(f=>[f.valor,f.rotulo])},
+ {campo:'renda_formal',tema:'Sua renda',pergunta:'Essa renda é de carteira assinada?',opcoes:[['sim','Sim, carteira assinada'],['nao','Autônomo ou informal']]},
+ {campo:'renda_composta',tema:'Sua renda',pergunta:'Vai compor renda com outra pessoa?',ajuda:'Cônjuge, pai, mãe, irmão.',opcoes:[['sim','Sim'],['nao','Não, só a minha renda']]},
+ {campo:'nome_limpo',tema:'Seu crédito',pergunta:'Como está o seu nome hoje?',opcoes:[['sim','Limpo'],['nao','Com restrição'],['nao_sei','Não sei']]},
+ {campo:'fgts_tempo',tema:'Seu FGTS',pergunta:'Quanto tempo de FGTS você tem?',ajuda:'Tempo somado de carteira assinada.',opcoes:[['nao_tenho','Não tenho FGTS'],['menos_1_ano','Menos de 1 ano'],['1_a_3_anos','Entre 1 e 3 anos'],['mais_3_anos','Mais de 3 anos']]},
+ {campo:'ja_financiou',tema:'Seu histórico',pergunta:'Já financiou um imóvel antes?',opcoes:[['nao','Não, seria o primeiro'],['sim','Sim, já financiei']]},
+ {campo:'entrada_disponivel',tema:'Sua entrada',pergunta:'Quanto tem de entrada?',ajuda:'Dinheiro guardado, sem contar o FGTS.',opcoes:[['nada','Não tenho entrada'],['ate_5k','Até R$ 5 mil'],['5k_15k','R$ 5 mil a R$ 15 mil'],['15k_30k','R$ 15 mil a R$ 30 mil'],['acima_30k','Mais de R$ 30 mil']]}];
+const TOTAL=PASSOS.length+2;
+const CURTO={
+ renda_faixa:{ate_2850:'Até 2,8 mil','2851_4700':'2,8 a 4,7 mil','4701_8600':'4,7 a 8,6 mil',acima_8600:'Acima de 8,6 mil'},
+ faixa:{ate_2850:'Faixa 1','2851_4700':'Faixa 2','4701_8600':'Faixa 3',acima_8600:'Fora do MCMV'},
+ renda_formal:{sim:'Carteira',nao:'Informal'},renda_composta:{sim:'Sim',nao:'Não'},
+ nome_limpo:{sim:'Limpo',nao:'Com restrição',nao_sei:'Não sabe'},
+ fgts_tempo:{nao_tenho:'Não tem',menos_1_ano:'Menos de 1 ano','1_a_3_anos':'1 a 3 anos',mais_3_anos:'Mais de 3 anos'},
+ ja_financiou:{nao:'1º imóvel',sim:'Já financiou'},
+ entrada_disponivel:{nada:'Sem entrada',ate_5k:'Até R$ 5 mil','5k_15k':'R$ 5–15 mil','15k_30k':'R$ 15–30 mil',acima_30k:'Mais de R$ 30 mil'},
+ prazo_compra:{imediato:'Imediato',ate_3_meses:'Até 3 meses',ate_6_meses:'Até 6 meses',ate_1_ano:'Até 1 ano',pesquisando:'Pesquisando'},
+ quartos:{'1':'1','2':'2','3':'3 ou mais'},garagem:{sim:'Precisa',nao:'Não precisa'}};
+const cv=(k,v)=>(CURTO[k]&&CURTO[k][v])||'—';
+const reais=v=>Number(v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const fone=t=>{const d=String(t).replace(/\D/g,'');return d.length===11?`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`:d.length===10?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:d;};
+const idadeCurta=h=>h<1?'AGORA':h<24?`${Math.round(h)}H`:`${Math.floor(h/24)} ${Math.floor(h/24)===1?'DIA':'DIAS'}`;
+const idadeLonga=h=>h<1?'agora mesmo':h<24?`há ${Math.round(h)} ${Math.round(h)===1?'hora':'horas'}`:`há ${Math.floor(h/24)} ${Math.floor(h/24)===1?'dia':'dias'}`;
+const local=l=>[l.bairro,l.cidade].filter(Boolean).join(', ');
+const attrs6=l=>[['Renda',cv('faixa',l.renda_faixa)],['Nome',cv('nome_limpo',l.nome_limpo)],['FGTS',cv('fgts_tempo',l.fgts_tempo)],['Vínculo',cv('renda_formal',l.renda_formal)],['Quartos',cv('quartos',l.quartos)],['Prazo',cv('prazo_compra',l.prazo_compra)]].map(([k,v])=>({k,v}));
+const attrs12=l=>[['Renda',cv('renda_faixa',l.renda_faixa)],['Enquadramento',cv('faixa',l.renda_faixa)],['Vínculo',cv('renda_formal',l.renda_formal)],['Compõe renda',cv('renda_composta',l.renda_composta)],['Nome',cv('nome_limpo',l.nome_limpo)],['FGTS',cv('fgts_tempo',l.fgts_tempo)],['Entrada',cv('entrada_disponivel',l.entrada_disponivel)],['Já financiou',cv('ja_financiou',l.ja_financiou)],['Quartos',cv('quartos',l.quartos)],['Garagem',cv('garagem',l.garagem)],['Prazo',cv('prazo_compra',l.prazo_compra)],['Local',local(l)]].map(([k,v])=>({k,v}));
+const L=(id,cidade,bairro,horas,q,g,rf,fo,co,nl,fg,jf,en,pr,nome,telefone,preco)=>({id,cidade,bairro,horas,quartos:q,garagem:g,renda_faixa:rf,renda_formal:fo,renda_composta:co,nome_limpo:nl,fgts_tempo:fg,ja_financiou:jf,entrada_disponivel:en,prazo_compra:pr,nome,telefone,preco});
+const VITRINE0=[
+ L('v1','Campinas','Jardim Florença',14,'2','sim','2851_4700','sim','nao','sim','1_a_3_anos','nao','5k_15k','ate_3_meses','Juliana Ferreira','19981234567',70),
+ L('v2','Hortolândia','Jardim Amanda',6,'2','nao','ate_2850','sim','sim','sim','mais_3_anos','nao','ate_5k','imediato','Diego Martins','19992345678',70),
+ L('v3','Campinas','Vila Industrial',50,'3','sim','4701_8600','sim','sim','sim','mais_3_anos','nao','15k_30k','ate_6_meses','Fernanda Rocha','19993456789',70),
+ L('v4','Sumaré','Centro',98,'2','nao','2851_4700','nao','nao','nao_sei','menos_1_ano','nao','nada','ate_1_ano','Marcos Vinícius Alves','19994567890',45),
+ L('v5','Campinas','Parque Prado',122,'1','nao','ate_2850','sim','nao','sim','1_a_3_anos','nao','ate_5k','ate_3_meses','Camila Duarte','19995678901',45),
+ L('v6','Sumaré','Nova Veneza',190,'2','sim','2851_4700','sim','sim','nao','mais_3_anos','sim','5k_15k','ate_6_meses','Roberto Nascimento','19996789012',45)];
+const FILA0=[
+ L('f1','Campinas','Jardim Proença',6,'2','sim','2851_4700','sim','nao','sim','1_a_3_anos','nao','5k_15k','ate_3_meses','Maria Aparecida Souza','19987654321'),
+ L('f2','Sumaré','Jardim Picerno',9,'3','nao','2851_4700','sim','sim','sim','mais_3_anos','nao','ate_5k','imediato','José Carlos Lima','19988776655'),
+ L('f3','Hortolândia','Remanso Campineiro',27,'2','nao','ate_2850','nao','sim','nao_sei','nao_tenho','nao','nada','ate_6_meses','Ana Paula Ribeiro','19991122334'),
+ L('f4','Campinas','',80,'1','nao','ate_2850','sim','nao','nao','menos_1_ano','nao','nada','pesquisando','Rogério Santos','19993344556')];
+const CORRETORES0=[
+ {id:'c1',nome:'Carlos Mendes',email:'carlos@larnovo.com.br',telefone:'19990001122',creci:'123456-F',creditos:null,ativo:true},
+ {id:'c2',nome:'Patrícia Alves',email:'patricia.alves@gmail.com',telefone:'19990003344',creci:'98765-F',creditos:0,ativo:true},
+ {id:'c3',nome:'Imobiliária Casa Viva',email:'contato@casaviva.com.br',telefone:'',creci:'J-31200',creditos:140,ativo:false}];
+const FEEDBACK=['Atendeu, tem interesse','Não atendeu','Número errado','Sem perfil'];
+const SCREENS=[['landing','Landing'],['quiz','Quiz'],['obrigado','Obrigado'],['login','Login'],['painel','Vitrine'],['revelado','Lead desbloqueado'],['recarga','Recarga'],['admin','Admin · fila'],['corretores','Admin · corretores']];
+
+class Component extends DCLogic {
+  state={screen:'landing',step:0,a:{cidade:'',bairro:'',nome:'',telefone:'',consent:false},erro:null,
+    vitrine:VITRINE0,fila:FILA0,meus:[],saldo:this.props.saldoInicial??210,fCidade:'Todas',fFaixa:'Todas',tab:'vitrine',
+    confirmId:null,revId:null,filaSel:'f1',notas:{},toast:null,corretores:CORRETORES0,
+    form:{nome:'',email:'',telefone:'',creci:''},formErro:null,loginEmail:'',loginEnviado:false,loginErro:null,copiado:false};
+  go=s=>{this.setState({screen:s,confirmId:null});window.scrollTo(0,0);};
+  setA=(k,v)=>this.setState(s=>({a:{...s.a,[k]:v},erro:null}));
+  flash=msg=>{this.setState({toast:msg});clearTimeout(this._t);this._t=setTimeout(()=>this.setState({toast:null}),2600);};
+  pf=()=>this.props.precoFresco??70; pa=()=>this.props.precoAntigo??45;
+  precoAprov=h=>h<72?this.pf():this.pa();
+  avancar=()=>this.setState(s=>({step:Math.min(s.step+1,TOTAL-1),erro:null}));
+  enviarQuiz=()=>{
+    const a=this.state.a,d=a.telefone.replace(/\D/g,'');
+    if(a.nome.trim().length<2) return this.setState({erro:'Informe seu nome.'});
+    if(d.length<10||d.length>11) return this.setState({erro:'Informe o WhatsApp com DDD, só números.'});
+    if(!a.consent) return this.setState({erro:'Para continuar, aceite o compartilhamento dos dados.'});
+    const lead={...a,id:'f'+Date.now(),telefone:d,horas:0.2};
+    this.setState(s=>({fila:[...s.fila,lead],screen:'obrigado'}));
+  };
+  unlock=()=>{
+    const s=this.state,l=s.vitrine.find(x=>x.id===s.confirmId); if(!l||s.saldo<l.preco) return;
+    this.setState({saldo:s.saldo-l.preco,vitrine:s.vitrine.filter(x=>x.id!==l.id),meus:[{...l,feedback:null},...s.meus],revId:l.id,confirmId:null,screen:'revelado'});
+    window.scrollTo(0,0);
+  };
+  verificar=id=>{
+    const s=this.state,l=s.fila.find(x=>x.id===id); if(!l) return;
+    const preco=this.precoAprov(l.horas),rest=s.fila.filter(x=>x.id!==id);
+    this.setState({fila:rest,vitrine:[{...l,preco},...s.vitrine],filaSel:rest[0]?.id??null});
+    this.flash(`${l.nome.split(' ')[0]} aprovado a ${reais(preco)} · já está na vitrine`);
+  };
+  descartar=id=>{
+    const s=this.state,l=s.fila.find(x=>x.id===id),rest=s.fila.filter(x=>x.id!==id);
+    this.setState({fila:rest,filaSel:rest[0]?.id??null}); this.flash(`${l.nome.split(' ')[0]} descartado`);
+  };
+  cadastrar=()=>{
+    const f=this.state.form;
+    if(!f.nome.trim()) return this.setState({formErro:'Informe o nome.'});
+    if(!/^\S+@\S+\.\S+$/.test(f.email.trim())) return this.setState({formErro:'Email inválido.'});
+    if(this.state.corretores.some(c=>c.email===f.email.trim())) return this.setState({formErro:'Esse email já está cadastrado.'});
+    this.setState(s=>({corretores:[{id:'c'+Date.now(),...f,email:f.email.trim(),creditos:0,ativo:true},...s.corretores],form:{nome:'',email:'',telefone:'',creci:''},formErro:null}));
+    this.flash(`${f.nome} cadastrado. Já pode entrar pelo login.`);
+  };
+  setForm=(k,v)=>this.setState(s=>({form:{...s.form,[k]:v},formErro:null}));
+
+  renderVals(){
+    const s=this.state,sc=s.screen;
+    const nav=SCREENS.map(([k,label])=>({label,active:sc===k,inactive:sc!==k,go:()=>{
+      if(k==='revelado'&&!s.meus.length){const l={...s.vitrine[0]};this.setState({vitrine:s.vitrine.slice(1),meus:[{...l,feedback:null}],revId:l.id,saldo:s.saldo-l.preco});}
+      else if(k==='revelado'&&!s.meus.find(m=>m.id===s.revId)) this.setState({revId:s.meus[0].id});
+      this.go(k);}}));
+    // quiz
+    const st=s.step,isLocal=st===0,isContato=st===TOTAL-1,isOpcoes=!isLocal&&!isContato,p=isOpcoes?PASSOS[st-1]:null;
+    const meta=isLocal?{tema:'Onde você quer morar',pergunta:'Em qual cidade você quer morar?',ajuda:'O bairro é opcional, mas ajuda a achar o imóvel certo.'}
+      :isContato?{tema:'Último passo',pergunta:'Para onde mando as opções?',ajuda:'Vamos falar com você pelo WhatsApp antes de qualquer visita.'}:p;
+    const q={...meta,hasAjuda:!!meta.ajuda,stepLabel:`${st+1} de ${TOTAL}`,progress:`${((st+1)/TOTAL)*100}%`,isLocal,isOpcoes,isContato,
+      showVoltar:st>0,showContinuar:isLocal||(isOpcoes&&!!s.a[p.campo]),
+      voltar:()=>this.setState({step:Math.max(st-1,0),erro:null}),
+      continuar:()=>{if(isLocal&&!s.a.cidade.trim()) return this.setState({erro:'Informe a cidade.'});this.avancar();},
+      opcoes:isOpcoes?p.opcoes.map(([v,r])=>({rotulo:r,sel:s.a[p.campo]===v,unsel:s.a[p.campo]!==v,pick:()=>{this.setA(p.campo,v);setTimeout(this.avancar,180);}})):[]};
+    // vitrine
+    const cidades=['Todas',...[...new Set(s.vitrine.map(l=>l.cidade))].sort()];
+    const fCidade=cidades.includes(s.fCidade)?s.fCidade:'Todas';
+    const lista=s.vitrine.filter(l=>(fCidade==='Todas'||l.cidade===fCidade)&&(s.fFaixa==='Todas'||cv('faixa',l.renda_faixa)===s.fFaixa)).sort((x,y)=>x.horas-y.horas);
+    const cards=lista.map(l=>({id:l.id,bairro:l.bairro||'Bairro não informado',cidade:l.cidade,fresco:l.horas<72,antigo:l.horas>=72,idadeCurta:idadeCurta(l.horas),
+      attrs:attrs6(l),preco:reais(l.preco),podePagar:s.saldo>=l.preco,semSaldo:s.saldo<l.preco,unlock:()=>this.setState({confirmId:l.id})}));
+    const cl=s.vitrine.find(l=>l.id===s.confirmId);
+    const confirm={show:!!cl,local:cl?`${local(cl)} · captado ${idadeLonga(cl.horas)}`:'',preco:cl?reais(cl.preco):'',saldoApos:cl?reais(s.saldo-cl.preco):'',confirmar:this.unlock,cancelar:()=>this.setState({confirmId:null})};
+    const rl=s.meus.find(m=>m.id===s.revId)||s.meus[0];
+    const rev=rl?{nome:rl.nome,local:local(rl),idade:idadeLonga(rl.horas),preco:reais(rl.preco),tel:fone(rl.telefone),
+      wa:`https://wa.me/55${rl.telefone}?text=${encodeURIComponent(`Oi ${rl.nome.split(' ')[0]}, tudo bem? Sou o Carlos, corretor. Vi que você procura imóvel pelo Minha Casa Minha Vida em ${rl.cidade}.`)}`,
+      telLink:`tel:+55${rl.telefone}`,attrs:attrs12(rl),temFeedback:!!rl.feedback,
+      feedback:FEEDBACK.map(f=>({label:f,on:rl.feedback===f,off:rl.feedback!==f,pick:()=>this.setState(st2=>({meus:st2.meus.map(m=>m.id===rl.id?{...m,feedback:f}:m)}))}))}:{attrs:[],feedback:[]};
+    const meusCards=s.meus.map(m=>({nome:m.nome,local:local(m),tel:fone(m.telefone),status:m.feedback||'Sem retorno ainda',abrir:()=>{this.setState({revId:m.id});this.go('revelado');}}));
+    // admin
+    const fl=s.fila.find(l=>l.id===s.filaSel)||s.fila[0];
+    const det=fl?{nome:fl.nome,local:local(fl),idade:idadeLonga(fl.horas),tel:fone(fl.telefone),wa:`https://wa.me/55${fl.telefone}`,preco:reais(this.precoAprov(fl.horas)),attrs:attrs12(fl),
+      nota:s.notas[fl.id]??'',setNota:e=>{const v=e.target.value;this.setState(x=>({notas:{...x.notas,[fl.id]:v}}));},
+      salvar:()=>this.flash('Nota salva'),verificar:()=>this.verificar(fl.id),descartar:()=>this.descartar(fl.id)}:{attrs:[]};
+    const filaItems=s.fila.map(l=>({nome:l.nome,sub:`${l.cidade} · ${idadeCurta(l.horas).toLowerCase()} · ${reais(this.precoAprov(l.horas))}`,sel:fl&&l.id===fl.id,unsel:!fl||l.id!==fl.id,pick:()=>this.setState({filaSel:l.id})}));
+    const corretoresList=s.corretores.map(c=>{const cr=c.creditos===null?s.saldo:c.creditos;return{nome:c.nome,email:c.email,inativo:!c.ativo,
+      linha:[c.creci?`CRECI ${c.creci}`:null,c.telefone?fone(c.telefone):'sem telefone'].filter(Boolean).join(' · '),saldo:reais(cr),toggleLabel:c.ativo?'Desativar':'Ativar',
+      creditar:()=>{if(c.creditos===null) this.setState(x=>({saldo:x.saldo+100}));else this.setState(x=>({corretores:x.corretores.map(k=>k.id===c.id?{...k,creditos:k.creditos+100}:k)}));this.flash(`+ R$ 100,00 para ${c.nome}`);},
+      toggle:()=>this.setState(x=>({corretores:x.corretores.map(k=>k.id===c.id?{...k,ativo:!k.ativo}:k)}))};});
+    const n=s.vitrine.length;
+    return {nav,q,a:s.a,noConsent:!s.a.consent,erro:s.erro,hasErro:!!s.erro,
+      isLanding:sc==='landing',isQuiz:sc==='quiz',isObrigado:sc==='obrigado',isLogin:sc==='login',
+      isCorretorArea:['painel','revelado','recarga'].includes(sc),isPainel:sc==='painel',isRevelado:sc==='revelado',isRecarga:sc==='recarga',
+      isAdminArea:sc==='admin'||sc==='corretores',isAdmin:sc==='admin',isCorretores:sc==='corretores',
+      goLanding:()=>this.go('landing'),goQuiz:()=>{this.setState({step:0});this.go('quiz');},goLogin:()=>this.go('login'),goPainel:()=>{this.setState({tab:'vitrine'});this.go('painel');},
+      goRecarga:()=>this.go('recarga'),goAdmin:()=>this.go('admin'),goCorretores:()=>this.go('corretores'),
+      setCidade:e=>this.setA('cidade',e.target.value),setBairro:e=>this.setA('bairro',e.target.value),setNome:e=>this.setA('nome',e.target.value),
+      setTelefone:e=>this.setA('telefone',e.target.value.replace(/[^\d()\s-]/g,'').slice(0,16)),toggleConsent:()=>this.setA('consent',!s.a.consent),enviarQuiz:this.enviarQuiz,
+      obrigadoNome:s.a.nome.trim()?`, ${s.a.nome.trim().split(' ')[0]}`:'',
+      loginEmail:s.loginEmail,loginForm:!s.loginEnviado,loginEnviado:s.loginEnviado,loginErro:s.loginErro,hasLoginErro:!!s.loginErro,
+      setLoginEmail:e=>this.setState({loginEmail:e.target.value,loginErro:null}),
+      enviarLogin:()=>{const e=s.loginEmail.trim().toLowerCase();if(!/^\S+@\S+\.\S+$/.test(e)) return this.setState({loginErro:'Digite um email válido.'});
+        if(!s.corretores.some(c=>c.email===e)) return this.setState({loginErro:'Este email não está cadastrado.'});this.setState({loginEnviado:true});},
+      voltarLogin:()=>this.setState({loginEnviado:false}),abrirLink:()=>{this.setState({loginEnviado:false});this.go('painel');},
+      saldoFmt:reais(s.saldo),tabVitrine:s.tab==='vitrine',tabMeus:s.tab==='meus',goTabMeus:()=>this.setState({tab:'meus'}),goTabVitrine:()=>this.setState({tab:'vitrine'}),
+      vitrineTotal:n,meusTotal:s.meus.length,meusVazio:!s.meus.length,meusCards,
+      chipsCidade:cidades.map(c=>({label:c,on:c===fCidade,off:c!==fCidade,pick:()=>this.setState({fCidade:c})})),
+      chipsFaixa:['Todas','Faixa 1','Faixa 2','Faixa 3'].map(c=>({label:c,on:c===s.fFaixa,off:c!==s.fFaixa,pick:()=>this.setState({fFaixa:c})})),
+      cards,vitrineVazia:!cards.length,vitrineCountLabel:`${cards.length} ${cards.length===1?'LEAD DISPONÍVEL':'LEADS DISPONÍVEIS'}`,
+      confirm,stop:e=>e.stopPropagation(),rev,
+      copiarPix:()=>{try{navigator.clipboard.writeText('00.000.000/0001-00');}catch(e){}this.setState({copiado:true});setTimeout(()=>this.setState({copiado:false}),2000);},
+      copiarLabel:s.copiado?'Copiado ✓':'Copiar chave',
+      waRecarga:`https://wa.me/5519900000000?text=${encodeURIComponent('Oi! Fiz um PIX para recarregar meus créditos. Sou Carlos Mendes (carlos@larnovo.com.br).')}`,
+      precoFrescoFmt:reais(this.pf()),precoAntigoFmt:reais(this.pa()),
+      filaTotal:s.fila.length,filaVazia:!s.fila.length,filaCheia:!!s.fila.length,filaTitulo:`${s.fila.length} ${s.fila.length===1?'lead':'leads'} para ligar`,filaItems,det,
+      form:s.form,setFormNome:e=>this.setForm('nome',e.target.value),setFormEmail:e=>this.setForm('email',e.target.value),setFormTel:e=>this.setForm('telefone',e.target.value),setFormCreci:e=>this.setForm('creci',e.target.value),
+      cadastrar:this.cadastrar,formErro:s.formErro,hasFormErro:!!s.formErro,corretoresList,corretoresLabel:`${s.corretores.length} CADASTRADOS`,
+      toast:s.toast,hasToast:!!s.toast};
+  }
+}
+</script>
+</body>
+</html>

@@ -107,6 +107,17 @@ export const REGRA_VERSAO = 'v1'
 // Comparacao sem acento e sem maiuscula. Cidade fora daqui e eliminatorio.
 export const CIDADES_ATENDIDAS = ['contagem', 'betim'] as const
 
+/**
+ * "Contagem e Betim", para a landing e o quiz. Derivado da lista acima de
+ * proposito: acrescentar uma cidade na area de atuacao e esquecer de mudar o
+ * texto da landing seria anunciar o que o motor elimina.
+ */
+export const CIDADES_ROTULO = CIDADES_ATENDIDAS.map(
+  (c) => c.charAt(0).toUpperCase() + c.slice(1)
+).reduce((texto, cidade, i, todas) =>
+  i === todas.length - 1 ? `${texto} e ${cidade}` : `${texto}, ${cidade}`
+)
+
 // --- PRECO TIPICO DO PRODUTO POR CIDADE ----------------------------------
 //
 //   >>> PREENCHER ANTES DE SUBIR <<<
