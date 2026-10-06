@@ -59,6 +59,15 @@ linha.
 zero, o motor nao avalia capacidade: nao elimina ninguem e nao da ponto nenhum.
 O /admin avisa em vermelho enquanto estiver assim.
 
+**O admin abre `/painel` em modo vistoria.** A pedido do Albert, 6 de outubro.
+Ve a vitrine inteira (sem o filtro de dono, entao tambem os interesses do
+catalogo cadastrado por ele) e o preco de cada interesse, sem saldo e sem botao
+de revelar. Nao existe linha em `corretores` para o email de admin: ela daria
+saldo, e um clique em revelar gastaria credito e consumiria a exclusividade do
+interesse. As acoes que movem dinheiro seguem exigindo corretor cadastrado, no
+servidor. Nome e telefone continuam fora da consulta para todo mundo, admin
+incluido -- quem precisa do telefone e a fila do /admin.
+
 ---
 ## Contexto
 
