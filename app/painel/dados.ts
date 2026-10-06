@@ -120,9 +120,12 @@ export type FiltrosVitrine = {
  * DELE mais a vitrine geral -- os cadastrados por mim nao aparecem para
  * ninguem. Isso e uma decisao de modelo de negocio, nao um descuido, e vive
  * atras de INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS em lib/config.ts.
+ *
+ * corretorId null e a vistoria do admin: a vitrine inteira, sem filtro de dono
+ * e sem poder comprar nada (ver exigirCorretorOuAdmin em lib/auth.ts).
  */
 export async function listarInteresses(
-  corretorId: string,
+  corretorId: string | null,
   filtros: FiltrosVitrine = {}
 ): Promise<InteresseVitrine[]> {
   const corte = new Date(
@@ -134,16 +137,22 @@ export async function listarInteresses(
     .select(COLUNAS_VITRINE)
     .gte('criado_em', corte)
 
-  // Vitrine geral (sem empreendimento) + os empreendimentos deste corretor,
-  // mais os sem dono quando a constante estiver ligada.
-  const visiveis = [
-    'empreendimento_id.is.null',
-    `dono_corretor_id.eq.${corretorId}`,
-  ]
-  if (INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS) {
-    visiveis.push('dono_corretor_id.is.null')
+  // corretorId null = vistoria do admin: sem filtro de dono, porque o ponto da
+  // vistoria e ver a vitrine inteira -- inclusive os interesses do catalogo que
+  // eu cadastrei, que corretor nenhum ve. Isso nao afrouxa a regra critica: as
+  // colunas sao as mesmas da lista acima, e nome e telefone nao estao nelas.
+  if (corretorId !== null) {
+    // Vitrine geral (sem empreendimento) + os empreendimentos deste corretor,
+    // mais os sem dono quando a constante estiver ligada.
+    const visiveis = [
+      'empreendimento_id.is.null',
+      `dono_corretor_id.eq.${corretorId}`,
+    ]
+    if (INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS) {
+      visiveis.push('dono_corretor_id.is.null')
+    }
+    consulta = consulta.or(visiveis.join(','))
   }
-  consulta = consulta.or(visiveis.join(','))
 
   if (filtros.cidade?.trim()) {
     consulta = consulta.ilike('cidade', `%${filtros.cidade.trim()}%`)
@@ -183,7 +192,9 @@ export function emCarencia(i: InteresseVitrine): boolean {
 }
 
 /** Cidades presentes na vitrine deste corretor, para popular o filtro. */
-export async function cidadesNaVitrine(corretorId: string): Promise<string[]> {
+export async function cidadesNaVitrine(
+  corretorId: string | null
+): Promise<string[]> {
   const interesses = await listarInteresses(corretorId)
   return [...new Set(interesses.map((i) => i.cidade))].sort()
 }

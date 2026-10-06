@@ -6,6 +6,8 @@ const ITENS = [
   { chave: 'empreendimentos', href: '/admin/empreendimentos', rotulo: 'Empreendimentos' },
   { chave: 'corretores', href: '/admin/corretores', rotulo: 'Corretores' },
   { chave: 'recargas', href: '/admin/recargas', rotulo: 'Recargas' },
+  // A vitrine do corretor, em modo vistoria: sem saldo e sem botao de compra.
+  { chave: 'vitrine', href: '/painel', rotulo: 'Vitrine (vistoria)' },
 ] as const
 
 export function NavAdmin({ atual }: { atual: (typeof ITENS)[number]['chave'] }) {

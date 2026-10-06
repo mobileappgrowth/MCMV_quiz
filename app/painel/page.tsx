@@ -1,4 +1,5 @@
-import { exigirCorretor } from '@/lib/auth'
+import Link from 'next/link'
+import { exigirCorretorOuAdmin } from '@/lib/auth'
 import { RENDA_FAIXAS, DIAS_NA_VITRINE } from '@/lib/config'
 import { reais } from '@/lib/preco'
 import { listarInteresses, cidadesNaVitrine } from './dados'
@@ -14,6 +15,14 @@ import { CartaoInteresse } from './cartao-interesse'
 // Os filtros vivem na URL (?cidade=...), nao em estado de cliente. Assim o
 // corretor pode guardar o link de "Campinas, 2 quartos" nos favoritos, e eu
 // nao preciso de state manager.
+//
+// DUAS LEITURAS DESTA MESMA TELA:
+//   corretor -> a vitrine dele (os empreendimentos dele + a vitrine geral),
+//               com saldo, recarga e o botao de revelar.
+//   admin    -> vistoria: a vitrine inteira, sem filtro de dono, sem saldo e
+//               sem botao de compra. Serve para eu ver o que o corretor ve
+//               antes de mandar o link, e para conferir o preco que o motor
+//               gravou em cada interesse.
 // ============================================================================
 
 export const dynamic = 'force-dynamic'
@@ -23,38 +32,70 @@ export default async function Painel({
 }: {
   searchParams: Promise<{ cidade?: string; bairro?: string; renda_faixa?: string }>
 }) {
-  const corretor = await exigirCorretor()
+  const visitante = await exigirCorretorOuAdmin()
   const filtros = await searchParams
 
+  // null = vistoria: listarInteresses nao aplica o filtro de dono.
+  const corretorId =
+    visitante.tipo === 'corretor' ? visitante.corretor.id : null
+
   const [interesses, cidades] = await Promise.all([
-    listarInteresses(corretor.id, filtros),
-    cidadesNaVitrine(corretor.id),
+    listarInteresses(corretorId, filtros),
+    cidadesNaVitrine(corretorId),
   ])
+
+  // O cartao usa isto para decidir se mostra o botao que cobra.
+  const comprador =
+    visitante.tipo === 'corretor'
+      ? {
+          saldo: Number(visitante.corretor.creditos),
+          nome: visitante.corretor.nome,
+        }
+      : null
 
   return (
     <div className="mx-auto max-w-md pb-10">
-      {/* Saldo sempre visivel no topo. */}
+      {/* Saldo sempre visivel no topo -- ou o aviso de vistoria, no meu caso. */}
       <header className="sticky top-0 border-b border-gray-300 bg-white p-4">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs text-gray-600">Seu saldo</p>
-            <p className="text-xl font-bold">{reais(Number(corretor.creditos))}</p>
+        {comprador ? (
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs text-gray-600">Seu saldo</p>
+              <p className="text-xl font-bold">{reais(comprador.saldo)}</p>
+            </div>
+            <div className="flex gap-2">
+              <a
+                href="/painel/meus-leads"
+                className="border border-gray-500 px-3 py-3 text-sm"
+              >
+                Meus leads
+              </a>
+              <a
+                href="/painel/recarga"
+                className="border border-gray-800 px-4 py-3 text-sm font-medium"
+              >
+                Recarregar
+              </a>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <a
-              href="/painel/meus-leads"
-              className="border border-gray-500 px-3 py-3 text-sm"
+        ) : (
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-medium text-amber-800">
+                Vistoria de admin
+              </p>
+              <p className="text-sm text-gray-700">
+                Vitrine inteira, sem filtro de dono. Nao da para comprar daqui.
+              </p>
+            </div>
+            <Link
+              href="/admin"
+              className="shrink-0 border border-gray-800 px-4 py-3 text-sm font-medium"
             >
-              Meus leads
-            </a>
-            <a
-              href="/painel/recarga"
-              className="border border-gray-800 px-4 py-3 text-sm font-medium"
-            >
-              Recarregar
-            </a>
+              Admin
+            </Link>
           </div>
-        </div>
+        )}
       </header>
 
       <main className="p-4">
@@ -105,8 +146,10 @@ export default async function Painel({
           <p className="text-gray-600">
             Nenhum interesse com esses filtros. Eles ficam na vitrine por{' '}
             {DIAS_NA_VITRINE} dias e saem assim que outro corretor revela o
-            contato. Voce ve os interesses dos seus empreendimentos e os da
-            vitrine geral.
+            contato.{' '}
+            {comprador
+              ? 'Voce ve os interesses dos seus empreendimentos e os da vitrine geral.'
+              : 'Na vistoria aparecem todos, inclusive os dos empreendimentos sem dono.'}
           </p>
         )}
 
@@ -115,8 +158,7 @@ export default async function Painel({
             <CartaoInteresse
               key={interesse.id}
               interesse={interesse}
-              saldo={Number(corretor.creditos)}
-              nomeCorretor={corretor.nome}
+              comprador={comprador}
             />
           ))}
         </div>

@@ -26,12 +26,16 @@ import { BotaoRevelar } from './botao-revelar'
 
 export function CartaoInteresse({
   interesse,
-  saldo,
-  nomeCorretor,
+  comprador,
 }: {
   interesse: InteresseVitrine
-  saldo: number
-  nomeCorretor: string
+  /**
+   * null = vistoria do admin. O cartao mostra tudo o que o corretor veria,
+   * inclusive o preco, mas nao oferece o botao de revelar: admin nao compra.
+   * Isto e so a tela -- a recusa de verdade esta em revelarContato(), que exige
+   * linha em `corretores`.
+   */
+  comprador: { saldo: number; nome: string } | null
 }) {
   const dias = diasDesde(interesse.criado_em)
   const preco = Number(interesse.preco ?? 0)
@@ -138,12 +142,24 @@ export function CartaoInteresse({
         <p className="sr-only">Nome e telefone liberados apos o desbloqueio.</p>
       </div>
 
-      <BotaoRevelar
-        interesseId={interesse.id}
-        preco={preco}
-        saldo={saldo}
-        nomeCorretor={nomeCorretor}
-      />
+      {comprador ? (
+        <BotaoRevelar
+          interesseId={interesse.id}
+          preco={preco}
+          saldo={comprador.saldo}
+          nomeCorretor={comprador.nome}
+        />
+      ) : (
+        <div className="border border-dashed border-gray-400 p-3 text-center">
+          <p className="text-sm font-medium text-gray-700">
+            Valeria {reais(preco)} para o corretor
+          </p>
+          <p className="mt-1 text-xs text-gray-600">
+            Vistoria: aqui nao se compra. O contato desta pessoa esta na fila de
+            verificacao, em /admin.
+          </p>
+        </div>
+      )}
     </article>
   )
 }

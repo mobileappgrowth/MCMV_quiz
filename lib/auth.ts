@@ -83,3 +83,38 @@ export async function exigirCorretor(): Promise<Corretor> {
 
   return corretor as Corretor
 }
+
+/**
+ * Quem esta olhando a vitrine: um corretor cadastrado, ou eu, em vistoria.
+ */
+export type VisitanteVitrine =
+  | { tipo: 'corretor'; corretor: Corretor }
+  | { tipo: 'admin'; email: string }
+
+/**
+ * Guard do /painel. Libera o admin para OLHAR a vitrine sem virar corretor.
+ *
+ * Por que nao resolvi isso criando uma linha em `corretores` para o meu email:
+ * essa linha me daria saldo, e um clique meu em "revelar" gastaria credito de
+ * verdade e consumiria a exclusividade do interesse -- ele sairia da vitrine de
+ * todos os corretores, vendido para mim, sem estorno e sem ninguem para ligar
+ * para o lead. A vistoria precisa ser INCAPAZ de comprar, nao apenas
+ * desencorajada.
+ *
+ * Por isso as acoes que movem dinheiro (revelarContato, salvarFeedback) seguem
+ * chamando exigirCorretor(), nunca este guard: sem linha em `corretores`, o
+ * admin e recusado la mesmo que chame a Server Action na mao, com o botao
+ * escondido ou nao. O botao desabilitado na tela e conveniencia; a recusa no
+ * servidor e a garantia.
+ *
+ * Admin que por acaso tambem esteja cadastrado como corretor entra como admin:
+ * entre as duas leituras, a que nao gasta dinheiro e a certa.
+ */
+export async function exigirCorretorOuAdmin(): Promise<VisitanteVitrine> {
+  const usuario = await getUsuario()
+  if (!usuario?.email) redirect('/login')
+
+  if (ehAdmin(usuario.email)) return { tipo: 'admin', email: usuario.email }
+
+  return { tipo: 'corretor', corretor: await exigirCorretor() }
+}
