@@ -17,17 +17,25 @@
 -- Catalogo cadastrado a mao. Alimenta a tela de resultado do quiz, entao
 -- precisa existir antes de rodar midia.
 -- ---------------------------------------------------------------------------
-create type status_obra as enum ('lancamento', 'obras', 'pronto');
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'status_obra') then
+    create type status_obra as enum ('lancamento', 'obras', 'pronto');
+  end if;
+end $$;
 
-create type status_publicacao as enum (
-  'rascunho',    -- invisivel
-  'em_revisao',  -- aguardando minha aprovacao
-  'publicado',   -- entra no match do quiz
-  'pausado',     -- sai do match; interesses existentes ficam na carencia
-  'arquivado'    -- sai de tudo
-);
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'status_publicacao') then
+    create type status_publicacao as enum (
+      'rascunho',    -- invisivel
+      'em_revisao',  -- aguardando minha aprovacao
+      'publicado',   -- entra no match do quiz
+      'pausado',     -- sai do match, mas os interesses ficam na carencia
+      'arquivado'    -- sai de tudo
+    );
+  end if;
+end $$;
 
-create table empreendimentos (
+create table if not exists empreendimentos (
   id            uuid primary key default gen_random_uuid(),
   nome          text not null,
   construtora   text not null,
@@ -77,9 +85,9 @@ create table empreendimentos (
     check (preco_de is null or preco_ate is null or preco_ate >= preco_de)
 );
 
-create index empreendimentos_match_idx
+create index if not exists empreendimentos_match_idx
   on empreendimentos (status_publicacao, cidade);
-create index empreendimentos_dono_idx
+create index if not exists empreendimentos_dono_idx
   on empreendimentos (dono_corretor_id)
   where dono_corretor_id is not null;
 
@@ -89,7 +97,7 @@ create index empreendimentos_dono_idx
 -- Uma linha por campo alterado. Serve para responder a uma construtora que
 -- questione o que foi publicado: o que estava no ar, quando, e quem mudou.
 -- ---------------------------------------------------------------------------
-create table empreendimentos_log (
+create table if not exists empreendimentos_log (
   id               uuid primary key default gen_random_uuid(),
   empreendimento_id uuid not null references empreendimentos (id),
   campo            text not null,
@@ -99,7 +107,7 @@ create table empreendimentos_log (
   criado_em        timestamptz not null default now()
 );
 
-create index empreendimentos_log_emp_idx
+create index if not exists empreendimentos_log_emp_idx
   on empreendimentos_log (empreendimento_id, criado_em desc);
 
 -- ---------------------------------------------------------------------------
@@ -122,7 +130,7 @@ create index empreendimentos_log_emp_idx
 -- Dois corretores clicando ao mesmo tempo continuam resultando em um sucesso e
 -- uma violacao de constraint. Regra de banco, nao de aplicacao.
 -- ---------------------------------------------------------------------------
-create table interesses (
+create table if not exists interesses (
   id               uuid primary key default gen_random_uuid(),
   lead_id          uuid not null references leads (id),
   empreendimento_id uuid references empreendimentos (id),
@@ -137,15 +145,15 @@ create table interesses (
   consentimento_id uuid references consentimentos (id)
 );
 
-create unique index interesses_lead_empreendimento_idx
+create unique index if not exists interesses_lead_empreendimento_idx
   on interesses (lead_id, empreendimento_id)
   where empreendimento_id is not null;
 
-create unique index interesses_lead_geral_idx
+create unique index if not exists interesses_lead_geral_idx
   on interesses (lead_id)
   where empreendimento_id is null;
 
-create index interesses_empreendimento_idx
+create index if not exists interesses_empreendimento_idx
   on interesses (empreendimento_id, criado_em desc);
 
 -- ---------------------------------------------------------------------------
@@ -166,33 +174,47 @@ create index interesses_empreendimento_idx
 -- ---------------------------------------------------------------------------
 drop view if exists vitrine;
 
-alter table feedbacks drop constraint feedbacks_desbloqueio_id_fkey;
+-- GUARDA DE IDEMPOTENCIA: so troca se a tabela ainda estiver na forma antiga.
+--
+-- Sem ela, colar este arquivo uma segunda vez APAGARIA os desbloqueios ja
+-- vendidos -- e desbloqueio apagado e dinheiro cobrado sem rastro de entrega.
+-- Com volume baixo e SQL colado a mao num editor web, rodar duas vezes nao e
+-- hipotese remota: e questao de tempo.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_name = 'desbloqueios' and column_name = 'lead_id'
+  ) then
+    alter table feedbacks drop constraint if exists feedbacks_desbloqueio_id_fkey;
 
-drop table desbloqueios;
+    drop table desbloqueios;
 
-create table desbloqueios (
-  id           uuid primary key default gen_random_uuid(),
-  interesse_id uuid not null unique references interesses (id),
-  corretor_id  uuid not null references corretores (id),
-  preco_pago   numeric(10, 2) not null,
-  criado_em    timestamptz not null default now()
-);
+    create table desbloqueios (
+      id           uuid primary key default gen_random_uuid(),
+      interesse_id uuid not null unique references interesses (id),
+      corretor_id  uuid not null references corretores (id),
+      preco_pago   numeric(10, 2) not null,
+      criado_em    timestamptz not null default now()
+    );
 
-create index desbloqueios_corretor_id_idx
-  on desbloqueios (corretor_id, criado_em desc);
+    create index desbloqueios_corretor_id_idx
+      on desbloqueios (corretor_id, criado_em desc);
 
-alter table feedbacks
-  add constraint feedbacks_desbloqueio_id_fkey
-  foreign key (desbloqueio_id) references desbloqueios (id);
+    alter table feedbacks
+      add constraint feedbacks_desbloqueio_id_fkey
+      foreign key (desbloqueio_id) references desbloqueios (id);
 
--- RECRIAR A TABELA ZEROU O RLS que 0002_rls.sql tinha ligado. Sem estas duas
--- linhas, `desbloqueios` volta a nascer legivel: no Supabase, tabela nova em
--- `public` recebe os grants padrao para anon e authenticated, e sem RLS isso
--- basta para a chave que esta no navegador ler a tabela inteira.
--- Um Postgres local nao reproduz esses grants padrao, entao o furo passaria no
--- teste e apareceria so em producao.
-alter table desbloqueios enable row level security;
-revoke all on desbloqueios from anon, authenticated;
+    -- RECRIAR A TABELA ZEROU O RLS que 0002_rls.sql tinha ligado. Sem estas
+    -- duas linhas, `desbloqueios` volta a nascer legivel: no Supabase, tabela
+    -- nova em `public` recebe os grants padrao para anon e authenticated, e sem
+    -- RLS isso basta para a chave que esta no navegador ler a tabela inteira.
+    -- Um Postgres local nao reproduz esses grants, entao o furo passaria no
+    -- teste e apareceria so em producao.
+    alter table desbloqueios enable row level security;
+    revoke all on desbloqueios from anon, authenticated;
+  end if;
+end $$;
 
 -- ---------------------------------------------------------------------------
 -- LEADS
@@ -203,14 +225,14 @@ revoke all on desbloqueios from anon, authenticated;
 alter table leads
   -- Dado interno de calibracao. NUNCA exibido na vitrine: quantos
   -- empreendimentos a pessoa marcou e assunto meu, nao do corretor.
-  add column qtd_interesses integer not null default 0,
+  add column if not exists qtd_interesses integer not null default 0,
 
   -- Marcou zero empreendimentos e aceitou contato de outras opcoes.
-  add column quer_contato_geral boolean,
+  add column if not exists quer_contato_geral boolean,
 
   -- O preco agora vive no interesse, porque e o interesse que se vende.
   -- Sai daqui em vez de ficar como peso morto enganoso.
-  drop column preco;
+  drop column if exists preco;
 
 -- ---------------------------------------------------------------------------
 -- VIEW DA VITRINE, agora sobre INTERESSES

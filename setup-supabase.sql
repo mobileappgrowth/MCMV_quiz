@@ -4,13 +4,15 @@
 -- #  Fonte da verdade: supabase/migrations/*.sql
 -- #  Regenerado por: npm run sql > setup-supabase.sql
 -- #
--- #  Existe para quem nao tem terminal: abra este arquivo, copie TUDO, cole no
--- #  SQL Editor do Supabase e rode uma vez. Nao precisa rodar em partes.
+-- #  COLE TUDO NO SQL EDITOR DO SUPABASE E RODE. Quantas vezes precisar.
 -- #
--- #  JA APLICOU UMA VERSAO ANTERIOR? Rode so a migration nova
--- #  (supabase/migrations/0004_motor.sql). Rodar este arquivo inteiro de novo
--- #  falha no primeiro CREATE TYPE, porque os tipos ja existem.
+-- #  E seguro rodar por cima de um banco que ja tem dados: tipos, tabelas,
+-- #  colunas e indices so sao criados se faltarem, e a unica operacao
+-- #  destrutiva (a troca de `desbloqueios` no 0005) e guardada para acontecer
+-- #  uma vez so. Verificado com tres passadas sobre um banco com venda
+-- #  registrada: zero erros, zero dado perdido.
 -- ############################################################################
+
 -- ============================================================
 -- SETUP DO BANCO -- gerado por `npm run sql`
 -- Cole tudo no SQL Editor do Supabase e rode uma vez.
@@ -26,17 +28,33 @@
 -- ============================================================================
 
 -- Tipos fechados. Um valor errado vira erro de banco, nao linha suja.
-create type enquadramento_mcmv as enum (
-  'mcmv_faixa1', 'mcmv_faixa2', 'mcmv_faixa3', 'fora_mcmv'
-);
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'enquadramento_mcmv') then
+    create type enquadramento_mcmv as enum (
+      'mcmv_faixa1', 'mcmv_faixa2', 'mcmv_faixa3', 'fora_mcmv'
+    );
+  end if;
+end $$;
 
-create type lead_status as enum (
-  'novo', 'verificado', 'descartado', 'vendido'
-);
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'lead_status') then
+    create type lead_status as enum (
+      'novo', 'verificado', 'descartado', 'vendido'
+    );
+  end if;
+end $$;
 
-create type situacao_nome as enum ('sim', 'nao', 'nao_sei');
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'situacao_nome') then
+    create type situacao_nome as enum ('sim', 'nao', 'nao_sei');
+  end if;
+end $$;
 
-create type tipo_transacao as enum ('recarga', 'consumo');
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'tipo_transacao') then
+    create type tipo_transacao as enum ('recarga', 'consumo');
+  end if;
+end $$;
 
 
 -- ---------------------------------------------------------------------------
@@ -45,7 +63,7 @@ create type tipo_transacao as enum ('recarga', 'consumo');
 -- depois qual versao exata cada pessoa aceitou. IP e user agent sao lidos no
 -- servidor, nunca enviados pelo navegador.
 -- ---------------------------------------------------------------------------
-create table consentimentos (
+create table if not exists consentimentos (
   id           uuid primary key default gen_random_uuid(),
   texto_versao text not null,
   ip           text,
@@ -58,7 +76,7 @@ create table consentimentos (
 -- leads
 -- nome e telefone sao as colunas sensiveis. Nunca aparecem na view da vitrine.
 -- ---------------------------------------------------------------------------
-create table leads (
+create table if not exists leads (
   id                 uuid primary key default gen_random_uuid(),
   criado_em          timestamptz not null default now(),
 
@@ -92,8 +110,8 @@ create table leads (
 );
 
 -- A vitrine lista sempre por status + idade.
-create index leads_status_criado_em_idx on leads (status, criado_em desc);
-create index leads_cidade_idx on leads (cidade);
+create index if not exists leads_status_criado_em_idx on leads (status, criado_em desc);
+create index if not exists leads_cidade_idx on leads (cidade);
 
 
 -- ---------------------------------------------------------------------------
@@ -102,7 +120,7 @@ create index leads_cidade_idx on leads (cidade);
 -- email no JWT, e as policies comparam com esta coluna. Sem coluna extra,
 -- sem sincronizacao para dar errado.
 -- ---------------------------------------------------------------------------
-create table corretores (
+create table if not exists corretores (
   id        uuid primary key default gen_random_uuid(),
   nome      text not null,
   telefone  text,
@@ -116,7 +134,7 @@ create table corretores (
 );
 
 -- Comparacao de email no login e case-insensitive.
-create unique index corretores_email_lower_idx on corretores (lower(email));
+create unique index if not exists corretores_email_lower_idx on corretores (lower(email));
 
 
 -- ---------------------------------------------------------------------------
@@ -125,7 +143,7 @@ create unique index corretores_email_lower_idx on corretores (lower(email));
 -- clicando no mesmo lead no mesmo instante resultam em um insert e um erro de
 -- unique violation. Nunca em dois desbloqueios.
 -- ---------------------------------------------------------------------------
-create table desbloqueios (
+create table if not exists desbloqueios (
   id          uuid primary key default gen_random_uuid(),
   lead_id     uuid not null unique references leads (id),
   corretor_id uuid not null references corretores (id),
@@ -133,7 +151,7 @@ create table desbloqueios (
   criado_em   timestamptz not null default now()
 );
 
-create index desbloqueios_corretor_id_idx on desbloqueios (corretor_id, criado_em desc);
+create index if not exists desbloqueios_corretor_id_idx on desbloqueios (corretor_id, criado_em desc);
 
 
 -- ---------------------------------------------------------------------------
@@ -141,7 +159,7 @@ create index desbloqueios_corretor_id_idx on desbloqueios (corretor_id, criado_e
 -- Livro-caixa append-only. Soma = saldo real do corretor.
 -- recarga: valor positivo. consumo: valor negativo.
 -- ---------------------------------------------------------------------------
-create table transacoes_credito (
+create table if not exists transacoes_credito (
   id          uuid primary key default gen_random_uuid(),
   corretor_id uuid not null references corretores (id),
   valor       numeric(10, 2) not null,
@@ -150,7 +168,7 @@ create table transacoes_credito (
   criado_em   timestamptz not null default now()
 );
 
-create index transacoes_credito_corretor_id_idx on transacoes_credito (corretor_id, criado_em desc);
+create index if not exists transacoes_credito_corretor_id_idx on transacoes_credito (corretor_id, criado_em desc);
 
 
 -- ---------------------------------------------------------------------------
@@ -158,7 +176,7 @@ create index transacoes_credito_corretor_id_idx on transacoes_credito (corretor_
 -- O que o corretor reporta depois de ligar. E o dado que diz se a verificacao
 -- esta funcionando.
 -- ---------------------------------------------------------------------------
-create table feedbacks (
+create table if not exists feedbacks (
   id             uuid primary key default gen_random_uuid(),
   desbloqueio_id uuid not null references desbloqueios (id),
   atendeu        boolean,
@@ -169,7 +187,7 @@ create table feedbacks (
   criado_em      timestamptz not null default now()
 );
 
-create index feedbacks_desbloqueio_id_idx on feedbacks (desbloqueio_id);
+create index if not exists feedbacks_desbloqueio_id_idx on feedbacks (desbloqueio_id);
 
 
 -- >>>>> 0002_rls.sql >>>>>
@@ -242,37 +260,55 @@ revoke all on consentimentos     from anon, authenticated;
 -- dos fundos em volta do RLS.
 -- ============================================================================
 
-create view vitrine with (security_invoker = true) as
-select
-  l.id,
-  l.criado_em,
-  l.cidade,
-  l.bairro,
-  l.quartos,
-  l.garagem,
-  l.faixa_tamanho,
-  l.enquadramento,
-  l.renda_faixa,
-  l.renda_formal,
-  l.renda_composta,
-  l.nome_limpo,
-  l.fgts_tempo,
-  l.ja_financiou,
-  l.entrada_disponivel,
-  l.prazo_compra,
-  l.preco,
-  l.verificado_em
-  -- l.nome      <- AUSENTE DE PROPOSITO
-  -- l.telefone  <- AUSENTE DE PROPOSITO
-from leads l
-where l.status = 'verificado'
-  and not exists (
-    select 1 from desbloqueios d where d.lead_id = l.id
-  );
+-- GUARDA DE IDEMPOTENCIA
+--
+-- Esta versao da view seleciona leads.preco, coluna que a migration 0005
+-- remove quando o preco passa a viver no interesse. Rodar o historico completo
+-- uma segunda vez quebraria aqui.
+--
+-- Ela e substituida por 0004 e depois por 0005 de qualquer forma: existe como
+-- registro do que a vitrine era nesta altura, nao como estado final.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_name = 'leads' and column_name = 'preco'
+  ) then
+    drop view if exists vitrine;
 
--- Mesma postura das tabelas: os roles publicos nao tem privilegio nenhum.
--- A vitrine e lida por codigo de servidor com service_role.
-revoke all on vitrine from anon, authenticated;
+  create view vitrine with (security_invoker = true) as
+  select
+    l.id,
+    l.criado_em,
+    l.cidade,
+    l.bairro,
+    l.quartos,
+    l.garagem,
+    l.faixa_tamanho,
+    l.enquadramento,
+    l.renda_faixa,
+    l.renda_formal,
+    l.renda_composta,
+    l.nome_limpo,
+    l.fgts_tempo,
+    l.ja_financiou,
+    l.entrada_disponivel,
+    l.prazo_compra,
+    l.preco,
+    l.verificado_em
+    -- l.nome      <- AUSENTE DE PROPOSITO
+    -- l.telefone  <- AUSENTE DE PROPOSITO
+  from leads l
+  where l.status = 'verificado'
+    and not exists (
+      select 1 from desbloqueios d where d.lead_id = l.id
+    );
+
+  -- Mesma postura das tabelas: os roles publicos nao tem privilegio nenhum.
+  -- A vitrine e lida por codigo de servidor com service_role.
+  revoke all on vitrine from anon, authenticated;
+  end if;
+end $$;
 
 
 -- >>>>> 0004_motor.sql >>>>>
@@ -289,45 +325,55 @@ revoke all on vitrine from anon, authenticated;
 -- Selo de qualificacao. Existe em duas formas: o declarado, que sai do quiz, e
 -- o verificado, que sou eu confirmando no telefone. So o verificado sustenta o
 -- preco cheio.
-create type selo_qualificacao as enum ('forte', 'medio', 'a_confirmar');
+do $$
+begin
+  if not exists (select 1 from pg_type where typname = 'selo_qualificacao') then
+    create type selo_qualificacao as enum ('forte', 'medio', 'a_confirmar');
+  end if;
+end $$;
 
 -- Formalidade da renda em tres niveis. O booleano renda_formal continua
 -- existindo e passa a ser derivado deste: o cartao da vitrine mostra "formal ou
 -- informal", mas a pontuacao precisa separar MEI/autonomo comprovado de
 -- informal sem comprovacao -- 15 pontos de diferenca.
-create type vinculo_renda as enum (
-  'clt_servidor_aposentado',
-  'mei_autonomo_comprovado',
-  'informal'
-);
+do $$
+begin
+  if not exists (select 1 from pg_type where typname = 'vinculo_renda') then
+    create type vinculo_renda as enum (
+      'clt_servidor_aposentado',
+      'mei_autonomo_comprovado',
+      'informal'
+    );
+  end if;
+end $$;
 
 alter table leads
   -- Entrada nova do quiz: saldo do FGTS em faixa. O motor precisa do valor,
   -- nao so do tempo -- tanto no poder de compra quanto no criterio de 5 mil.
-  add column fgts_saldo text,
+  add column if not exists fgts_saldo text,
 
   -- Entrada nova do quiz: tres niveis de formalidade.
-  add column vinculo_renda vinculo_renda,
+  add column if not exists vinculo_renda vinculo_renda,
 
   -- Pergunta extra, so para quem declara restricao de nome.
-  add column regularizacao_andamento boolean,
+  add column if not exists regularizacao_andamento boolean,
 
   -- Saidas do motor. Gravadas para a decisao ser explicavel depois.
-  add column pontuacao smallint,
-  add column selo_declarado selo_qualificacao,
-  add column selo_verificado selo_qualificacao,
-  add column poder_de_compra numeric(12, 2),
+  add column if not exists pontuacao smallint,
+  add column if not exists selo_declarado selo_qualificacao,
+  add column if not exists selo_verificado selo_qualificacao,
+  add column if not exists poder_de_compra numeric(12, 2),
 
   -- Versao da regra que produziu as saidas acima. Sem isto, recalibrar os
   -- pesos torna os leads antigos inexplicaveis.
-  add column regra_versao text,
+  add column if not exists regra_versao text,
 
   -- Qual eliminatorio descartou o lead. Sem isto, "a regra esta matando lead
   -- bom?" fica sem resposta -- e lead descartado por engano e dinheiro de
   -- anuncio no lixo.
-  add column motivo_descarte text;
+  add column if not exists motivo_descarte text;
 
-create index leads_motivo_descarte_idx on leads (motivo_descarte)
+create index if not exists leads_motivo_descarte_idx on leads (motivo_descarte)
   where motivo_descarte is not null;
 
 -- ---------------------------------------------------------------------------
@@ -340,41 +386,52 @@ create index leads_motivo_descarte_idx on leads (motivo_descarte)
 --   poder_de_compra  -- e triagem, nao simulacao. Exibido, viraria "valor
 --                       aprovado", e aprovacao e da Caixa.
 -- ---------------------------------------------------------------------------
-drop view if exists vitrine;
+-- GUARDA DE IDEMPOTENCIA: mesma razao do 0003 -- esta versao ainda seleciona
+-- leads.preco, que o 0005 remove. Substituida pelo 0005 de qualquer forma.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_name = 'leads' and column_name = 'preco'
+  ) then
 
-create view vitrine with (security_invoker = true) as
-select
-  l.id,
-  l.criado_em,
-  l.cidade,
-  l.bairro,
-  l.quartos,
-  l.garagem,
-  l.faixa_tamanho,
-  l.enquadramento,
-  l.renda_faixa,
-  l.renda_formal,
-  l.renda_composta,
-  l.nome_limpo,
-  l.fgts_tempo,
-  l.ja_financiou,
-  l.entrada_disponivel,
-  l.prazo_compra,
-  l.preco,
-  l.verificado_em,
-  l.selo_declarado,
-  l.selo_verificado
-  -- l.nome             <- AUSENTE DE PROPOSITO
-  -- l.telefone         <- AUSENTE DE PROPOSITO
-  -- l.pontuacao        <- AUSENTE DE PROPOSITO
-  -- l.poder_de_compra  <- AUSENTE DE PROPOSITO
-from leads l
-where l.status = 'verificado'
-  and not exists (
-    select 1 from desbloqueios d where d.lead_id = l.id
-  );
+  drop view if exists vitrine;
 
-revoke all on vitrine from anon, authenticated;
+  create view vitrine with (security_invoker = true) as
+  select
+    l.id,
+    l.criado_em,
+    l.cidade,
+    l.bairro,
+    l.quartos,
+    l.garagem,
+    l.faixa_tamanho,
+    l.enquadramento,
+    l.renda_faixa,
+    l.renda_formal,
+    l.renda_composta,
+    l.nome_limpo,
+    l.fgts_tempo,
+    l.ja_financiou,
+    l.entrada_disponivel,
+    l.prazo_compra,
+    l.preco,
+    l.verificado_em,
+    l.selo_declarado,
+    l.selo_verificado
+    -- l.nome             <- AUSENTE DE PROPOSITO
+    -- l.telefone         <- AUSENTE DE PROPOSITO
+    -- l.pontuacao        <- AUSENTE DE PROPOSITO
+    -- l.poder_de_compra  <- AUSENTE DE PROPOSITO
+  from leads l
+  where l.status = 'verificado'
+    and not exists (
+      select 1 from desbloqueios d where d.lead_id = l.id
+    );
+
+  revoke all on vitrine from anon, authenticated;
+  end if;
+end $$;
 
 
 -- >>>>> 0005_interesses.sql >>>>>
@@ -398,17 +455,25 @@ revoke all on vitrine from anon, authenticated;
 -- Catalogo cadastrado a mao. Alimenta a tela de resultado do quiz, entao
 -- precisa existir antes de rodar midia.
 -- ---------------------------------------------------------------------------
-create type status_obra as enum ('lancamento', 'obras', 'pronto');
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'status_obra') then
+    create type status_obra as enum ('lancamento', 'obras', 'pronto');
+  end if;
+end $$;
 
-create type status_publicacao as enum (
-  'rascunho',    -- invisivel
-  'em_revisao',  -- aguardando minha aprovacao
-  'publicado',   -- entra no match do quiz
-  'pausado',     -- sai do match; interesses existentes ficam na carencia
-  'arquivado'    -- sai de tudo
-);
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'status_publicacao') then
+    create type status_publicacao as enum (
+      'rascunho',    -- invisivel
+      'em_revisao',  -- aguardando minha aprovacao
+      'publicado',   -- entra no match do quiz
+      'pausado',     -- sai do match, mas os interesses ficam na carencia
+      'arquivado'    -- sai de tudo
+    );
+  end if;
+end $$;
 
-create table empreendimentos (
+create table if not exists empreendimentos (
   id            uuid primary key default gen_random_uuid(),
   nome          text not null,
   construtora   text not null,
@@ -458,9 +523,9 @@ create table empreendimentos (
     check (preco_de is null or preco_ate is null or preco_ate >= preco_de)
 );
 
-create index empreendimentos_match_idx
+create index if not exists empreendimentos_match_idx
   on empreendimentos (status_publicacao, cidade);
-create index empreendimentos_dono_idx
+create index if not exists empreendimentos_dono_idx
   on empreendimentos (dono_corretor_id)
   where dono_corretor_id is not null;
 
@@ -470,7 +535,7 @@ create index empreendimentos_dono_idx
 -- Uma linha por campo alterado. Serve para responder a uma construtora que
 -- questione o que foi publicado: o que estava no ar, quando, e quem mudou.
 -- ---------------------------------------------------------------------------
-create table empreendimentos_log (
+create table if not exists empreendimentos_log (
   id               uuid primary key default gen_random_uuid(),
   empreendimento_id uuid not null references empreendimentos (id),
   campo            text not null,
@@ -480,7 +545,7 @@ create table empreendimentos_log (
   criado_em        timestamptz not null default now()
 );
 
-create index empreendimentos_log_emp_idx
+create index if not exists empreendimentos_log_emp_idx
   on empreendimentos_log (empreendimento_id, criado_em desc);
 
 -- ---------------------------------------------------------------------------
@@ -503,7 +568,7 @@ create index empreendimentos_log_emp_idx
 -- Dois corretores clicando ao mesmo tempo continuam resultando em um sucesso e
 -- uma violacao de constraint. Regra de banco, nao de aplicacao.
 -- ---------------------------------------------------------------------------
-create table interesses (
+create table if not exists interesses (
   id               uuid primary key default gen_random_uuid(),
   lead_id          uuid not null references leads (id),
   empreendimento_id uuid references empreendimentos (id),
@@ -518,15 +583,15 @@ create table interesses (
   consentimento_id uuid references consentimentos (id)
 );
 
-create unique index interesses_lead_empreendimento_idx
+create unique index if not exists interesses_lead_empreendimento_idx
   on interesses (lead_id, empreendimento_id)
   where empreendimento_id is not null;
 
-create unique index interesses_lead_geral_idx
+create unique index if not exists interesses_lead_geral_idx
   on interesses (lead_id)
   where empreendimento_id is null;
 
-create index interesses_empreendimento_idx
+create index if not exists interesses_empreendimento_idx
   on interesses (empreendimento_id, criado_em desc);
 
 -- ---------------------------------------------------------------------------
@@ -547,33 +612,47 @@ create index interesses_empreendimento_idx
 -- ---------------------------------------------------------------------------
 drop view if exists vitrine;
 
-alter table feedbacks drop constraint feedbacks_desbloqueio_id_fkey;
+-- GUARDA DE IDEMPOTENCIA: so troca se a tabela ainda estiver na forma antiga.
+--
+-- Sem ela, colar este arquivo uma segunda vez APAGARIA os desbloqueios ja
+-- vendidos -- e desbloqueio apagado e dinheiro cobrado sem rastro de entrega.
+-- Com volume baixo e SQL colado a mao num editor web, rodar duas vezes nao e
+-- hipotese remota: e questao de tempo.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_name = 'desbloqueios' and column_name = 'lead_id'
+  ) then
+    alter table feedbacks drop constraint if exists feedbacks_desbloqueio_id_fkey;
 
-drop table desbloqueios;
+    drop table desbloqueios;
 
-create table desbloqueios (
-  id           uuid primary key default gen_random_uuid(),
-  interesse_id uuid not null unique references interesses (id),
-  corretor_id  uuid not null references corretores (id),
-  preco_pago   numeric(10, 2) not null,
-  criado_em    timestamptz not null default now()
-);
+    create table desbloqueios (
+      id           uuid primary key default gen_random_uuid(),
+      interesse_id uuid not null unique references interesses (id),
+      corretor_id  uuid not null references corretores (id),
+      preco_pago   numeric(10, 2) not null,
+      criado_em    timestamptz not null default now()
+    );
 
-create index desbloqueios_corretor_id_idx
-  on desbloqueios (corretor_id, criado_em desc);
+    create index desbloqueios_corretor_id_idx
+      on desbloqueios (corretor_id, criado_em desc);
 
-alter table feedbacks
-  add constraint feedbacks_desbloqueio_id_fkey
-  foreign key (desbloqueio_id) references desbloqueios (id);
+    alter table feedbacks
+      add constraint feedbacks_desbloqueio_id_fkey
+      foreign key (desbloqueio_id) references desbloqueios (id);
 
--- RECRIAR A TABELA ZEROU O RLS que 0002_rls.sql tinha ligado. Sem estas duas
--- linhas, `desbloqueios` volta a nascer legivel: no Supabase, tabela nova em
--- `public` recebe os grants padrao para anon e authenticated, e sem RLS isso
--- basta para a chave que esta no navegador ler a tabela inteira.
--- Um Postgres local nao reproduz esses grants padrao, entao o furo passaria no
--- teste e apareceria so em producao.
-alter table desbloqueios enable row level security;
-revoke all on desbloqueios from anon, authenticated;
+    -- RECRIAR A TABELA ZEROU O RLS que 0002_rls.sql tinha ligado. Sem estas
+    -- duas linhas, `desbloqueios` volta a nascer legivel: no Supabase, tabela
+    -- nova em `public` recebe os grants padrao para anon e authenticated, e sem
+    -- RLS isso basta para a chave que esta no navegador ler a tabela inteira.
+    -- Um Postgres local nao reproduz esses grants, entao o furo passaria no
+    -- teste e apareceria so em producao.
+    alter table desbloqueios enable row level security;
+    revoke all on desbloqueios from anon, authenticated;
+  end if;
+end $$;
 
 -- ---------------------------------------------------------------------------
 -- LEADS
@@ -584,14 +663,14 @@ revoke all on desbloqueios from anon, authenticated;
 alter table leads
   -- Dado interno de calibracao. NUNCA exibido na vitrine: quantos
   -- empreendimentos a pessoa marcou e assunto meu, nao do corretor.
-  add column qtd_interesses integer not null default 0,
+  add column if not exists qtd_interesses integer not null default 0,
 
   -- Marcou zero empreendimentos e aceitou contato de outras opcoes.
-  add column quer_contato_geral boolean,
+  add column if not exists quer_contato_geral boolean,
 
   -- O preco agora vive no interesse, porque e o interesse que se vende.
   -- Sai daqui em vez de ficar como peso morto enganoso.
-  drop column preco;
+  drop column if exists preco;
 
 -- ---------------------------------------------------------------------------
 -- VIEW DA VITRINE, agora sobre INTERESSES

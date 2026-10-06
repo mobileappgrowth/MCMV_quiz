@@ -76,7 +76,17 @@ npm run sql
 ```
 
 Imprime as migrations concatenadas na ordem certa. Cole no **SQL Editor** do
-Supabase e rode uma vez. Le os arquivos de verdade, entao nunca fica
+Supabase e rode.
+
+**Pode rodar o arquivo inteiro quantas vezes quiser.** As migrations sao
+idempotentes: tipos, tabelas, colunas e indices so sao criados se faltarem, e a
+troca destrutiva de `desbloqueios` (que o 0005 faz) e guardada para so acontecer
+uma vez. Verificado com tres passadas seguidas sobre um banco com venda
+registrada: zero erros, zero dado perdido.
+
+Isso importa porque voce cola SQL a mao num editor web e nao tem como saber com
+certeza o que ja rodou. A resposta passa a ser sempre a mesma: cole tudo de
+novo. Le os arquivos de verdade, entao nunca fica
 desatualizado em relacao a `supabase/migrations/`.
 
 ### 3. Verificar

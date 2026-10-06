@@ -4,17 +4,33 @@
 -- ============================================================================
 
 -- Tipos fechados. Um valor errado vira erro de banco, nao linha suja.
-create type enquadramento_mcmv as enum (
-  'mcmv_faixa1', 'mcmv_faixa2', 'mcmv_faixa3', 'fora_mcmv'
-);
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'enquadramento_mcmv') then
+    create type enquadramento_mcmv as enum (
+      'mcmv_faixa1', 'mcmv_faixa2', 'mcmv_faixa3', 'fora_mcmv'
+    );
+  end if;
+end $$;
 
-create type lead_status as enum (
-  'novo', 'verificado', 'descartado', 'vendido'
-);
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'lead_status') then
+    create type lead_status as enum (
+      'novo', 'verificado', 'descartado', 'vendido'
+    );
+  end if;
+end $$;
 
-create type situacao_nome as enum ('sim', 'nao', 'nao_sei');
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'situacao_nome') then
+    create type situacao_nome as enum ('sim', 'nao', 'nao_sei');
+  end if;
+end $$;
 
-create type tipo_transacao as enum ('recarga', 'consumo');
+do $$ begin
+  if not exists (select 1 from pg_type where typname = 'tipo_transacao') then
+    create type tipo_transacao as enum ('recarga', 'consumo');
+  end if;
+end $$;
 
 
 -- ---------------------------------------------------------------------------
@@ -23,7 +39,7 @@ create type tipo_transacao as enum ('recarga', 'consumo');
 -- depois qual versao exata cada pessoa aceitou. IP e user agent sao lidos no
 -- servidor, nunca enviados pelo navegador.
 -- ---------------------------------------------------------------------------
-create table consentimentos (
+create table if not exists consentimentos (
   id           uuid primary key default gen_random_uuid(),
   texto_versao text not null,
   ip           text,
@@ -36,7 +52,7 @@ create table consentimentos (
 -- leads
 -- nome e telefone sao as colunas sensiveis. Nunca aparecem na view da vitrine.
 -- ---------------------------------------------------------------------------
-create table leads (
+create table if not exists leads (
   id                 uuid primary key default gen_random_uuid(),
   criado_em          timestamptz not null default now(),
 
@@ -70,8 +86,8 @@ create table leads (
 );
 
 -- A vitrine lista sempre por status + idade.
-create index leads_status_criado_em_idx on leads (status, criado_em desc);
-create index leads_cidade_idx on leads (cidade);
+create index if not exists leads_status_criado_em_idx on leads (status, criado_em desc);
+create index if not exists leads_cidade_idx on leads (cidade);
 
 
 -- ---------------------------------------------------------------------------
@@ -80,7 +96,7 @@ create index leads_cidade_idx on leads (cidade);
 -- email no JWT, e as policies comparam com esta coluna. Sem coluna extra,
 -- sem sincronizacao para dar errado.
 -- ---------------------------------------------------------------------------
-create table corretores (
+create table if not exists corretores (
   id        uuid primary key default gen_random_uuid(),
   nome      text not null,
   telefone  text,
@@ -94,7 +110,7 @@ create table corretores (
 );
 
 -- Comparacao de email no login e case-insensitive.
-create unique index corretores_email_lower_idx on corretores (lower(email));
+create unique index if not exists corretores_email_lower_idx on corretores (lower(email));
 
 
 -- ---------------------------------------------------------------------------
@@ -103,7 +119,7 @@ create unique index corretores_email_lower_idx on corretores (lower(email));
 -- clicando no mesmo lead no mesmo instante resultam em um insert e um erro de
 -- unique violation. Nunca em dois desbloqueios.
 -- ---------------------------------------------------------------------------
-create table desbloqueios (
+create table if not exists desbloqueios (
   id          uuid primary key default gen_random_uuid(),
   lead_id     uuid not null unique references leads (id),
   corretor_id uuid not null references corretores (id),
@@ -111,7 +127,7 @@ create table desbloqueios (
   criado_em   timestamptz not null default now()
 );
 
-create index desbloqueios_corretor_id_idx on desbloqueios (corretor_id, criado_em desc);
+create index if not exists desbloqueios_corretor_id_idx on desbloqueios (corretor_id, criado_em desc);
 
 
 -- ---------------------------------------------------------------------------
@@ -119,7 +135,7 @@ create index desbloqueios_corretor_id_idx on desbloqueios (corretor_id, criado_e
 -- Livro-caixa append-only. Soma = saldo real do corretor.
 -- recarga: valor positivo. consumo: valor negativo.
 -- ---------------------------------------------------------------------------
-create table transacoes_credito (
+create table if not exists transacoes_credito (
   id          uuid primary key default gen_random_uuid(),
   corretor_id uuid not null references corretores (id),
   valor       numeric(10, 2) not null,
@@ -128,7 +144,7 @@ create table transacoes_credito (
   criado_em   timestamptz not null default now()
 );
 
-create index transacoes_credito_corretor_id_idx on transacoes_credito (corretor_id, criado_em desc);
+create index if not exists transacoes_credito_corretor_id_idx on transacoes_credito (corretor_id, criado_em desc);
 
 
 -- ---------------------------------------------------------------------------
@@ -136,7 +152,7 @@ create index transacoes_credito_corretor_id_idx on transacoes_credito (corretor_
 -- O que o corretor reporta depois de ligar. E o dado que diz se a verificacao
 -- esta funcionando.
 -- ---------------------------------------------------------------------------
-create table feedbacks (
+create table if not exists feedbacks (
   id             uuid primary key default gen_random_uuid(),
   desbloqueio_id uuid not null references desbloqueios (id),
   atendeu        boolean,
@@ -147,4 +163,4 @@ create table feedbacks (
   criado_em      timestamptz not null default now()
 );
 
-create index feedbacks_desbloqueio_id_idx on feedbacks (desbloqueio_id);
+create index if not exists feedbacks_desbloqueio_id_idx on feedbacks (desbloqueio_id);

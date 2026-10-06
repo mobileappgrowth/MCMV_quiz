@@ -24,34 +24,52 @@
 -- dos fundos em volta do RLS.
 -- ============================================================================
 
-create view vitrine with (security_invoker = true) as
-select
-  l.id,
-  l.criado_em,
-  l.cidade,
-  l.bairro,
-  l.quartos,
-  l.garagem,
-  l.faixa_tamanho,
-  l.enquadramento,
-  l.renda_faixa,
-  l.renda_formal,
-  l.renda_composta,
-  l.nome_limpo,
-  l.fgts_tempo,
-  l.ja_financiou,
-  l.entrada_disponivel,
-  l.prazo_compra,
-  l.preco,
-  l.verificado_em
-  -- l.nome      <- AUSENTE DE PROPOSITO
-  -- l.telefone  <- AUSENTE DE PROPOSITO
-from leads l
-where l.status = 'verificado'
-  and not exists (
-    select 1 from desbloqueios d where d.lead_id = l.id
-  );
+-- GUARDA DE IDEMPOTENCIA
+--
+-- Esta versao da view seleciona leads.preco, coluna que a migration 0005
+-- remove quando o preco passa a viver no interesse. Rodar o historico completo
+-- uma segunda vez quebraria aqui.
+--
+-- Ela e substituida por 0004 e depois por 0005 de qualquer forma: existe como
+-- registro do que a vitrine era nesta altura, nao como estado final.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_name = 'leads' and column_name = 'preco'
+  ) then
+    drop view if exists vitrine;
 
--- Mesma postura das tabelas: os roles publicos nao tem privilegio nenhum.
--- A vitrine e lida por codigo de servidor com service_role.
-revoke all on vitrine from anon, authenticated;
+  create view vitrine with (security_invoker = true) as
+  select
+    l.id,
+    l.criado_em,
+    l.cidade,
+    l.bairro,
+    l.quartos,
+    l.garagem,
+    l.faixa_tamanho,
+    l.enquadramento,
+    l.renda_faixa,
+    l.renda_formal,
+    l.renda_composta,
+    l.nome_limpo,
+    l.fgts_tempo,
+    l.ja_financiou,
+    l.entrada_disponivel,
+    l.prazo_compra,
+    l.preco,
+    l.verificado_em
+    -- l.nome      <- AUSENTE DE PROPOSITO
+    -- l.telefone  <- AUSENTE DE PROPOSITO
+  from leads l
+  where l.status = 'verificado'
+    and not exists (
+      select 1 from desbloqueios d where d.lead_id = l.id
+    );
+
+  -- Mesma postura das tabelas: os roles publicos nao tem privilegio nenhum.
+  -- A vitrine e lida por codigo de servidor com service_role.
+  revoke all on vitrine from anon, authenticated;
+  end if;
+end $$;
