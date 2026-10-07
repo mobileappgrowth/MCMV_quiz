@@ -55,9 +55,16 @@ cadastrado pelo Albert nao aparecem para corretor nenhum. Atras de
 `INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS` em `lib/config.ts`, revertivel numa
 linha.
 
-**`PRECO_PRODUTO_POR_CIDADE` esta zerado.** Nenhum valor foi inventado. Com
-zero, o motor nao avalia capacidade: nao elimina ninguem e nao da ponto nenhum.
-O /admin avisa em vermelho enquanto estiver assim.
+**`PRECO_PRODUTO_POR_CIDADE` fica em branco, por decisao do Albert** (7 de
+outubro): nao chutar preco numa regua de eliminatorio, porque lead morto por
+numero inventado some sem passar pela fila. Com zero, o motor nao avalia
+capacidade -- nao elimina ninguem por isso e nao da os 20 pontos dela, entao o
+maximo vira 80 e Forte exige perfil quase perfeito. Nao e pendencia: o /admin
+mostra isso como estado, em ambar, nao como alarme. O numero a colocar, quando
+houver catalogo, e o preco cheio do imovel de entrada que ele realmente vende
+em cada cidade -- na pratica o `preco_de` do empreendimento mais barato dali.
+Nao confundir com `TETO_PRECO_MCMV`, que e o teto do programa por decreto e so
+valida o cadastro de empreendimento.
 
 **O admin abre `/painel` em modo vistoria.** A pedido do Albert, 6 de outubro.
 Ve a vitrine inteira (sem o filtro de dono, entao tambem os interesses do

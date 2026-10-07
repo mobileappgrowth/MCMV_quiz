@@ -107,19 +107,23 @@ export default async function Admin({
 
   return (
     <main className="mx-auto flex max-w-[1200px] flex-col gap-4 p-5 pb-12">
-      {/* Sem o preco do produto, o motor nao avalia capacidade: nao elimina
-          ninguem por isso e nao da ponto nenhum de capacidade. Falha para o
-          lado seguro, mas todo mundo sai com selo mais baixo do que merece. */}
+      {/* ESTADO DELIBERADO, nao pendencia: o Albert escolheu deixar
+          PRECO_PRODUTO_POR_CIDADE em branco ate o catalogo existir, em vez de
+          chutar um numero numa regua de eliminatorio. Por isso o aviso e ambar
+          e descritivo -- um alarme vermelho todo dia por uma decisao tomada
+          vira ruido, e ruido ensina a ignorar avisos de verdade. */}
       {!precosConfigurados() && (
-        <div className="rounded-lg bg-vermelho-tenue p-4">
-          <p className="font-bold text-vermelho">
-            O preco do produto nao esta configurado.
+        <div className="rounded-lg bg-amarelo-tenue p-4">
+          <p className="font-bold">
+            O motor esta rodando sem avaliar capacidade.
           </p>
           <p className="mt-1 text-sm/[1.45] text-apagado-escuro">
-            Preencha PRECO_PRODUTO_POR_CIDADE em lib/config.ts. Enquanto
-            estiver zerado, o motor nao avalia capacidade: ninguem e eliminado
-            por esse criterio, e ninguem ganha os pontos dele -- os selos saem
-            mais baixos do que deveriam.
+            PRECO_PRODUTO_POR_CIDADE esta em branco, entao ninguem e eliminado
+            por capacidade e os 20 pontos dela nao sao dados a ninguem -- o
+            maximo possivel vira 80, e selo Forte passa a exigir perfil quase
+            perfeito. Quem decide o selo que vale e voce, na ligacao. Quando
+            tiver catalogo, o numero e o preco do imovel de entrada que voce
+            realmente vende em cada cidade.
           </p>
         </div>
       )}
