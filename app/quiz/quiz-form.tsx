@@ -82,8 +82,13 @@ export function QuizForm() {
   const noContato = passo === ultimoPasso
 
   return (
-    <div className="flex min-h-screen justify-center bg-fundo-fora">
-      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-white">
+    <div className="flex min-h-screen justify-center bg-fundo-fora sm:items-center sm:p-6">
+      {/* No celular a coluna ocupa a tela inteira, como um aplicativo. A partir
+          de sm ela vira um cartao centrado com altura minima fixa: sem isso o
+          quiz no desktop era uma tira branca com um vazio de meia tela empurrando
+          o "Continuar" para o rodape. A altura minima tambem mantem o botao
+          sempre no mesmo lugar entre uma pergunta de duas opcoes e uma de cinco. */}
+      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-white sm:min-h-[620px] sm:overflow-hidden sm:rounded-2xl sm:shadow-[0_20px_40px_-20px_rgba(15,35,64,0.3)]">
         {/* ---------------------------------------------------------------- */}
         {/* CABECALHO E PROGRESSO                                            */}
         {/* ---------------------------------------------------------------- */}

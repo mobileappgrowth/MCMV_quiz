@@ -34,8 +34,8 @@ const PASSOS = [
 
 export default function Obrigado() {
   return (
-    <div className="flex min-h-screen justify-center bg-fundo-fora">
-      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-white">
+    <div className="flex min-h-screen justify-center bg-fundo-fora sm:items-center sm:p-6">
+      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-white sm:min-h-0 sm:overflow-hidden sm:rounded-2xl sm:shadow-[0_20px_40px_-20px_rgba(15,35,64,0.3)]">
         <header className="flex flex-col gap-7 bg-marinho px-5 pt-5 pb-10 text-white">
           <Marca claro />
           <div

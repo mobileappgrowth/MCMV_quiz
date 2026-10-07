@@ -60,7 +60,7 @@ export function CardEmpreendimento({
   ].filter(Boolean)
 
   return (
-    <article className="overflow-hidden rounded-[10px] border border-linha bg-white">
+    <article className="flex h-full flex-col overflow-hidden rounded-[10px] border border-linha bg-white">
       {/* Caixa de proporcao fixa: o card nao quebra, qualquer que seja a foto. */}
       <div
         className="flex aspect-video w-full items-center justify-center"
@@ -85,7 +85,7 @@ export function CardEmpreendimento({
         )}
       </div>
 
-      <div className="p-4">
+      <div className="flex flex-1 flex-col p-4">
         <h3 className="text-[18px] font-extrabold">{emp.nome ?? 'Sem nome'}</h3>
         <p className="text-sm font-medium text-apagado">
           {emp.construtora ?? 'Sem construtora'}
@@ -129,7 +129,11 @@ export function CardEmpreendimento({
           </p>
         )}
 
-        {children}
+        {/* O que vem de fora (o checkbox da tela de resultado) e empurrado para
+            o rodape do cartao: numa grade de duas colunas, cartoes de alturas
+            diferentes deixariam os checkboxes em alturas diferentes, e a pessoa
+            perde a linha de acao. */}
+        {children && <div className="mt-auto">{children}</div>}
       </div>
     </article>
   )

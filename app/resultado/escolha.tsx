@@ -62,26 +62,31 @@ export function Escolha({
   const n = marcados.size
   const temOpcoes = opcoes.length > 0
 
+  // Aqui a tela deixa de ser uma coluna de celular: o resultado e uma lista de
+  // cartoes, e no desktop duas colunas poupam metade da rolagem. O cabecalho
+  // marinho atravessa a tela inteira, como no painel.
   return (
-    <div className="flex min-h-screen justify-center bg-fundo-fora">
-      <div className="flex w-full max-w-[480px] flex-col bg-white">
-        <header className="bg-marinho px-5 pt-5 pb-7 text-white">
+    <div className="min-h-screen bg-fundo-fora">
+      <header className="bg-marinho text-white">
+        <div className="mx-auto max-w-[900px] px-5 pt-5 pb-7">
           <div className="mb-6">
             <Marca claro />
           </div>
-          <h1 className="text-[27px]/[1.2] font-extrabold tracking-[-0.01em] text-pretty">
+          <h1 className="max-w-[640px] text-[27px]/[1.2] font-extrabold tracking-[-0.01em] text-pretty sm:text-[32px]/[1.15]">
             {temOpcoes
               ? 'Encontramos opcoes para o seu perfil'
               : 'Nao encontramos opcoes no momento'}
           </h1>
-          <p className="mt-2.5 text-[15px]/[1.5] text-sobre-marinho-claro">
+          <p className="mt-2.5 max-w-[560px] text-[15px]/[1.5] text-sobre-marinho-claro">
             {temOpcoes
               ? 'Marque aqueles sobre os quais voce quer receber contato. Pode marcar quantos quiser, ou nenhum.'
               : `Ainda nao temos empreendimentos cadastrados que sirvam para o seu perfil em ${cidade}.`}
           </p>
-        </header>
+        </div>
+      </header>
 
-        <main className="flex flex-col gap-4 px-5 py-6 pb-44">
+        <main className="mx-auto flex max-w-[900px] flex-col gap-4 px-5 py-6 pb-44">
+          <div className="grid gap-4 sm:grid-cols-2">
           {opcoes.map((e) => {
             const marcado = marcados.has(e.id)
             return (
@@ -120,6 +125,7 @@ export function Escolha({
               </CardEmpreendimento>
             )
           })}
+          </div>
 
           {/* A pergunta de contato geral aparece quando nada esta marcado. */}
           {n === 0 && (
@@ -177,24 +183,25 @@ export function Escolha({
         {/* ---------------------------------------------------------------- */}
         {/* BARRA FIXA                                                        */}
         {/* ---------------------------------------------------------------- */}
-        <div className="fixed inset-x-0 bottom-0 border-t border-linha bg-white p-4">
-          <div className="mx-auto max-w-[440px]">
-            <p className="mb-2.5 text-center text-sm font-bold">
-              {n === 0
-                ? querGeral
-                  ? 'Um corretor da regiao vai entrar em contato'
-                  : 'Nenhum empreendimento marcado'
-                : `Voce vai receber contato de ${n} ${n === 1 ? 'empresa' : 'empresas'}`}
-            </p>
-            <button
-              type="button"
-              onClick={enviar}
-              disabled={enviando}
-              className="w-full rounded-lg bg-amarelo py-4 text-base font-extrabold text-marinho hover:bg-amarelo-hover disabled:opacity-50"
-            >
-              {enviando ? 'Enviando...' : 'Confirmar'}
-            </button>
-          </div>
+      <div className="fixed inset-x-0 bottom-0 border-t border-linha bg-white p-4">
+        {/* No celular o contador fica acima do botao; no desktop os dois ficam
+            na mesma linha, porque ali a barra inteira cabe no olhar. */}
+        <div className="mx-auto flex max-w-[900px] flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-center text-sm font-bold sm:text-left">
+            {n === 0
+              ? querGeral
+                ? 'Um corretor da regiao vai entrar em contato'
+                : 'Nenhum empreendimento marcado'
+              : `Voce vai receber contato de ${n} ${n === 1 ? 'empresa' : 'empresas'}`}
+          </p>
+          <button
+            type="button"
+            onClick={enviar}
+            disabled={enviando}
+            className="w-full rounded-lg bg-amarelo py-4 text-base font-extrabold text-marinho hover:bg-amarelo-hover disabled:opacity-50 sm:w-auto sm:px-10"
+          >
+            {enviando ? 'Enviando...' : 'Confirmar'}
+          </button>
         </div>
       </div>
     </div>
