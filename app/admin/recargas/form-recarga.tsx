@@ -68,10 +68,10 @@ export function FormRecarga({
       </label>
 
       <label className="mb-3 block">
-        <span className="mb-1 block text-sm font-bold">Referencia</span>
+        <span className="mb-1 block text-sm font-bold">Referência</span>
         <span className="mb-1 block text-xs text-apagado">
-          Data do PIX, ultimos digitos, o que te ajude a achar isto daqui a dois
-          meses. &quot;Recarga&quot; nao e referencia.
+          Data do PIX, últimos dígitos, o que te ajude a achar isto daqui a
+          dois meses. &quot;Recarga&quot; não é referência.
         </span>
         <input
           type="text"

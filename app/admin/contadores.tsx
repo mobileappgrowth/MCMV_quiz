@@ -52,12 +52,12 @@ export async function Contadores() {
     ['Interesses gerados', String(totalInteresses)],
     ['Interesses vendidos', String(vendas.length)],
     ['Taxa de desbloqueio', `${taxa.toFixed(1)}%`],
-    ['Receita do mes', reais(receitaDoMes)],
+    ['Receita do mês', reais(receitaDoMes)],
   ]
 
   return (
     <section className="rounded-[10px] border border-linha bg-white p-5">
-      <h2 className="mb-3 text-[17px] font-extrabold">Numeros</h2>
+      <h2 className="mb-3 text-[17px] font-extrabold">Números</h2>
       {/* Grade, nao lista: sete numeros em coluna viram sete linhas de leitura;
           em grade o olho pega os sete de uma vez. Continua sendo texto -- a
           especificacao pede sem grafico, e grafico com dezenas de linhas por
@@ -73,9 +73,9 @@ export async function Contadores() {
         ))}
       </dl>
       <p className="mt-3 text-xs/[1.45] text-apagado">
-        A taxa de desbloqueio e a que mais importa. Interesse que fica na
-        vitrine e nao vende quer dizer preco alto ou perfil que nao serve para
-        quem esta olhando -- e isso nao aparece nos outros numeros.
+        A taxa de desbloqueio é a que mais importa. Interesse que fica na
+        vitrine e não vende quer dizer preço alto ou perfil que não serve para
+        quem está olhando — e isso não aparece nos outros números.
       </p>
     </section>
   )

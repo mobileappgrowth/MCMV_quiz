@@ -54,7 +54,7 @@ export default async function EditarEmpreendimento({
       <p className="mb-6 text-sm text-apagado">
         {interesses ?? 0} {interesses === 1 ? 'interesse gerado' : 'interesses gerados'}
         {' · '}
-        {HORAS_CARENCIA_PAUSADO}h de carencia ao pausar
+        {HORAS_CARENCIA_PAUSADO}h de carência ao pausar
       </p>
 
       <ControlePublicacao
@@ -66,8 +66,8 @@ export default async function EditarEmpreendimento({
 
       {arquivado ? (
         <p className="mt-8 rounded-[10px] border border-linha bg-white p-5 text-sm/[1.45] text-apagado-escuro">
-          Arquivado nao e editavel. O cadastro permanece de proposito: apagar
-          quebraria a rastreabilidade dos interesses ja gerados e cobrados.
+          Arquivado não é editável. O cadastro permanece de propósito: apagar
+          quebraria a rastreabilidade dos interesses já gerados e cobrados.
         </p>
       ) : (
         <div className="mt-8">
@@ -98,7 +98,7 @@ export default async function EditarEmpreendimento({
       {/* O log existe para responder a uma construtora que questione o que foi
           publicado: o que estava no ar, quando, e o que mudou. */}
       <section className="mt-10 rounded-[10px] border border-linha bg-white p-5">
-        <h2 className="mb-3 text-[17px] font-extrabold">Historico</h2>
+        <h2 className="mb-3 text-[17px] font-extrabold">Histórico</h2>
         {(log?.length ?? 0) === 0 && (
           <p className="text-sm text-apagado">Nada registrado ainda.</p>
         )}

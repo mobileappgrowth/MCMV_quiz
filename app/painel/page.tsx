@@ -66,8 +66,8 @@ export default async function Painel({
         <h1 className="text-[13px] font-bold tracking-[0.04em] text-apagado">
           {interesses.length}{' '}
           {interesses.length === 1
-            ? 'interesse disponivel'
-            : 'interesses disponiveis'}
+            ? 'interesse disponível'
+            : 'interesses disponíveis'}
         </h1>
 
         {interesses.length === 0 && (
@@ -76,7 +76,7 @@ export default async function Painel({
             {DIAS_NA_VITRINE} dias e saem assim que outro corretor revela o
             contato.{' '}
             {comprador
-              ? 'Voce ve os interesses dos seus empreendimentos e os da vitrine geral.'
+              ? 'Você vê os interesses dos seus empreendimentos e os da vitrine geral.'
               : 'Na vistoria aparecem todos, inclusive os dos empreendimentos sem dono.'}
           </p>
         )}

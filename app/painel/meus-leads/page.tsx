@@ -68,8 +68,8 @@ export default async function MeusLeads() {
 
         {(compras?.length ?? 0) === 0 && (
           <p className="rounded-[10px] border-[1.5px] border-dashed border-tracejado px-6 py-8 text-base/[1.5] text-apagado">
-            Voce ainda nao revelou nenhum contato. Os que revelar aparecem aqui,
-            com nome, WhatsApp e o formulario de retorno.
+            Você ainda não revelou nenhum contato. Os que revelar aparecem
+            aqui, com nome, WhatsApp e o formulário de retorno.
           </p>
         )}
 

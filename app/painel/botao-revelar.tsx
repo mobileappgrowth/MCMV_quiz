@@ -65,8 +65,8 @@ export function BotaoRevelar({
     const primeiro = contato.nome.trim().split(/\s+/)[0]
     const sobre = contato.empreendimento_nome
       ? `sobre o ${contato.empreendimento_nome}`
-      : 'sobre as opcoes de imovel que voce procura'
-    const mensagem = `Oi, ${primeiro}! Aqui e ${nomeCorretor}. Voce pediu contato ${sobre}. Posso te passar as informacoes?`
+      : 'sobre as opções de imóvel que você procura'
+    const mensagem = `Oi, ${primeiro}! Aqui é ${nomeCorretor}. Você pediu contato ${sobre}. Posso te passar as informações?`
 
     return (
       <div className="rounded-lg border border-verde">
@@ -160,8 +160,8 @@ export function BotaoRevelar({
             </dl>
 
             <p className="text-sm/[1.45] text-apagado-escuro">
-              O credito sai agora e nao tem estorno. Em troca, este interesse
-              passa a ser so seu: sai da vitrine de todos os outros corretores.
+              O crédito sai agora e não tem estorno. Em troca, este interesse
+              passa a ser só seu: sai da vitrine de todos os outros corretores.
             </p>
 
             <div className="flex gap-2.5">
@@ -193,7 +193,7 @@ export function BotaoRevelar({
                     href="/painel/recarga"
                     className="mt-2 block rounded-lg border-2 border-campo p-3 text-center text-sm font-bold"
                   >
-                    Recarregar creditos
+                    Recarregar créditos
                   </Link>
                 )}
               </div>

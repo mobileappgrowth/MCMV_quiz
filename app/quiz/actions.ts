@@ -48,11 +48,11 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
   if (nome.length < 2) return { erro: 'Informe seu nome.' }
   if (!cidade) return { erro: 'Informe a cidade de interesse.' }
   if (respostas.consentimento !== 'sim') {
-    return { erro: 'E necessario aceitar o compartilhamento dos dados para continuar.' }
+    return { erro: 'É necessário aceitar o compartilhamento dos dados para continuar.' }
   }
 
   const telefone = normalizarTelefone(respostas.telefone ?? '')
-  if (!telefone) return { erro: 'Informe um WhatsApp valido, com DDD.' }
+  if (!telefone) return { erro: 'Informe um WhatsApp válido, com DDD.' }
 
   // --- consentimento: prova de qual texto foi aceito, por quem e de onde ---
   const cabecalhos = await headers()
@@ -73,7 +73,7 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
 
   if (erroConsentimento || !consentimento) {
     console.error('[salvarLead] falha ao gravar consentimento:', erroConsentimento)
-    return { erro: 'Nao conseguimos registrar seu cadastro. Tente novamente.' }
+    return { erro: 'Não conseguimos registrar seu cadastro. Tente novamente.' }
   }
 
   // --- motor de qualificacao ---
@@ -128,7 +128,7 @@ export async function salvarLead(respostas: RespostasQuiz): Promise<ResultadoEnv
 
   if (erroLead || !lead) {
     console.error('[salvarLead] falha ao gravar lead:', erroLead)
-    return { erro: 'Nao conseguimos registrar seu cadastro. Tente novamente.' }
+    return { erro: 'Não conseguimos registrar seu cadastro. Tente novamente.' }
   }
 
   // ---------------------------------------------------------------------

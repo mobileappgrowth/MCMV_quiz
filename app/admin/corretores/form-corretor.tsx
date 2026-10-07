@@ -16,7 +16,7 @@ export function FormCorretor() {
     executar(async () => {
       const r = await cadastrarCorretor(campos)
       if (r.ok) {
-        setAviso({ tipo: 'ok', texto: `${campos.nome} cadastrado. Ja pode entrar pelo /login.` })
+        setAviso({ tipo: 'ok', texto: `${campos.nome} cadastrado. Já pode entrar pelo /login.` })
         setCampos(VAZIO)
       } else {
         setAviso({ tipo: 'erro', texto: r.erro })
@@ -41,7 +41,7 @@ export function FormCorretor() {
   return (
     <form onSubmit={enviar} className="rounded-[10px] border border-linha bg-white p-5">
       {campo('nome', 'Nome')}
-      {campo('email', 'Email (e por onde ele entra)', 'email')}
+      {campo('email', 'Email (é por onde ele entra)', 'email')}
       {campo('telefone', 'Telefone', 'tel')}
       {campo('creci', 'CRECI')}
 

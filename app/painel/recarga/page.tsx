@@ -8,7 +8,7 @@ import { BarraPainel } from '../barra'
 export const dynamic = 'force-dynamic'
 
 const PASSOS = [
-  'Faca um PIX do valor que quiser para a chave abaixo.',
+  'Faça um PIX do valor que quiser para a chave abaixo.',
   'Mande o comprovante no WhatsApp.',
   'Eu credito e o saldo aparece aqui.',
 ]
@@ -29,7 +29,7 @@ export default async function Recarga() {
 
         <div>
           <h1 className="text-[28px] font-extrabold tracking-[-0.01em]">
-            Recarregar creditos
+            Recarregar créditos
           </h1>
           <p className="text-[15px] font-medium text-apagado">
             Saldo atual: {reais(Number(corretor.creditos))}
@@ -67,7 +67,7 @@ export default async function Recarga() {
 
         <a
           href={`https://wa.me/${PIX.whatsapp_suporte}?text=${encodeURIComponent(
-            `Oi! Fiz um PIX para recarregar meus creditos. Sou ${corretor.nome} (${corretor.email}).`
+            `Oi! Fiz um PIX para recarregar meus créditos. Sou ${corretor.nome} (${corretor.email}).`
           )}`}
           target="_blank"
           rel="noopener"
@@ -82,7 +82,7 @@ export default async function Recarga() {
           Um interesse verificado em empreendimento custa a partir de{' '}
           {reais(PRECOS.empreendimento.verificado_antigo)} (
           {reais(PRECOS.empreendimento.verificado_fresco)} nas primeiras horas).
-          Perfil so declarado,{' '}
+          Perfil só declarado,{' '}
           {reais(PRECOS.empreendimento.nao_verificado)}. O selo do motor ajusta
           o valor para mais ou para menos.
         </p>

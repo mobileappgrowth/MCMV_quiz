@@ -36,11 +36,11 @@ export function LoginForm() {
       !process.env.NEXT_PUBLIC_SUPABASE_URL ||
       !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     ) {
-      setErro('O aplicativo esta sem a configuracao do Supabase.')
+      setErro('O aplicativo está sem a configuração do Supabase.')
       setDetalhe(
-        'As variaveis NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY ' +
-          'precisam estar nas variaveis de BUILD (nao so nas de execucao), e o ' +
-          'build precisa ser refeito depois de salva-las.'
+        'As variáveis NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY ' +
+          'precisam estar nas variáveis de BUILD (não só nas de execução), e o ' +
+          'build precisa ser refeito depois de salvá-las.'
       )
       setEstado('inicial')
       return
@@ -62,27 +62,27 @@ export function LoginForm() {
         const msg = error.message ?? ''
 
         if (error.code === 'otp_disabled' || /signups not allowed/i.test(msg)) {
-          setErro('Este email nao esta cadastrado.')
+          setErro('Este email não está cadastrado.')
           setDetalhe(
-            'O login nao cria contas. Peca ao administrador para cadastrar, ou ' +
-              '-- se voce e o administrador -- crie o usuario em Supabase > ' +
+            'O login não cria contas. Peça ao administrador para cadastrar, ou ' +
+              '— se você é o administrador — crie o usuário em Supabase > ' +
               'Authentication > Users > Add user, com Auto Confirm ligado.'
           )
         } else if (status === 429 || /rate limit/i.test(msg)) {
           setErro('Limite de envio de emails atingido.')
           setDetalhe(
-            'O servico de email embutido do Supabase tem limite baixo por hora. ' +
-              'Espere alguns minutos, ou configure um SMTP proprio em ' +
+            'O serviço de email embutido do Supabase tem limite baixo por hora. ' +
+              'Espere alguns minutos, ou configure um SMTP próprio em ' +
               'Authentication > Emails.'
           )
         } else if (/redirect/i.test(msg)) {
-          setErro('A URL de redirecionamento nao esta liberada.')
+          setErro('A URL de redirecionamento não está liberada.')
           setDetalhe(
             `Adicione ${window.location.origin}/auth/callback em Supabase > ` +
               'Authentication > URL Configuration > Redirect URLs.'
           )
         } else {
-          setErro('Nao conseguimos enviar o link.')
+          setErro('Não conseguimos enviar o link.')
           setDetalhe(msg)
         }
         setEstado('inicial')

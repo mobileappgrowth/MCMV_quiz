@@ -71,7 +71,7 @@ export const INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS = false
 export const RENDA_FAIXAS = [
   {
     valor: 'ate_2850',
-    rotulo: 'Ate R$ 2.850',
+    rotulo: 'Até R$ 2.850',
     curto: 'Faixa 1',
     enquadramento: 'mcmv_faixa1',
   },
@@ -100,11 +100,11 @@ export const RENDA_FAIXAS = [
 // mesma versao: e exatamente isso que permite provar depois qual redacao cada
 // pessoa aceitou. Versoes antigas continuam registradas em consentimentos.
 export const CONSENTIMENTO = {
-  versao: 'v1',
+  versao: 'v2',
   texto:
-    'Os dados serao compartilhados com corretores e imobiliarias parceiras da ' +
-    'regiao para apresentacao de imoveis, e podem ser removidos a qualquer ' +
-    'momento por solicitacao.',
+    'Os dados serão compartilhados com corretores e imobiliárias parceiras da ' +
+    'região para apresentação de imóveis, e podem ser removidos a qualquer ' +
+    'momento por solicitação.',
 } as const
 
 // --- RECARGA DE CREDITO (PIX manual) -------------------------------------
@@ -213,7 +213,7 @@ export const RENDA_PISO: Record<string, number> = {
 }
 
 export const ENTRADA_FAIXAS = [
-  { valor: 'nada', rotulo: 'Nao tenho entrada', piso: 0 },
+  { valor: 'nada', rotulo: 'Não tenho entrada', piso: 0 },
   { valor: 'ate_5k', rotulo: 'Até R$ 5 mil', piso: 0 },
   { valor: '5k_15k', rotulo: 'R$ 5 mil a R$ 15 mil', piso: 5000 },
   { valor: '15k_30k', rotulo: 'R$ 15 mil a R$ 30 mil', piso: 15000 },
@@ -221,7 +221,7 @@ export const ENTRADA_FAIXAS = [
 ] as const
 
 export const FGTS_SALDO_FAIXAS = [
-  { valor: 'nao_tenho', rotulo: 'Nao tenho FGTS', piso: 0 },
+  { valor: 'nao_tenho', rotulo: 'Não tenho FGTS', piso: 0 },
   { valor: 'ate_5k', rotulo: 'Até R$ 5 mil', piso: 0 },
   { valor: '5k_15k', rotulo: 'R$ 5 mil a R$ 15 mil', piso: 5000 },
   { valor: '15k_30k', rotulo: 'R$ 15 mil a R$ 30 mil', piso: 15000 },
@@ -231,13 +231,13 @@ export const FGTS_SALDO_FAIXAS = [
 export const VINCULO_RENDA_FAIXAS = [
   {
     valor: 'clt_servidor_aposentado',
-    rotulo: 'Carteira assinada, servidor publico ou aposentado',
+    rotulo: 'Carteira assinada, servidor público ou aposentado',
   },
   {
     valor: 'mei_autonomo_comprovado',
-    rotulo: 'MEI ou autonomo ha mais de 6 meses',
+    rotulo: 'MEI ou autônomo há mais de 6 meses',
   },
-  { valor: 'informal', rotulo: 'Informal, sem comprovacao' },
+  { valor: 'informal', rotulo: 'Informal, sem comprovação' },
 ] as const
 
 /** O produto mais barato da regiao. 0 quando nenhuma cidade foi configurada. */
@@ -289,17 +289,17 @@ export const MIN_RESULTADOS_DESEJADO = 3
 //
 // Mesma regra de sempre: ao mudar o texto, INCREMENTE a versao.
 export const CONSENTIMENTO_INTERESSES = {
-  versao: 'interesses_v1',
+  versao: 'interesses_v2',
   texto:
-    'Quero receber contato de corretores e imobiliarias sobre os ' +
-    'empreendimentos que marquei, e posso pedir a remocao dos meus dados a ' +
+    'Quero receber contato de corretores e imobiliárias sobre os ' +
+    'empreendimentos que marquei, e posso pedir a remoção dos meus dados a ' +
     'qualquer momento.',
 } as const
 
 // Texto do consentimento da vitrine geral, para quem nao marcou nenhum.
 export const CONSENTIMENTO_CONTATO_GERAL = {
-  versao: 'contato_geral_v1',
+  versao: 'contato_geral_v2',
   texto:
-    'Quero que um corretor da regiao entre em contato comigo com outras ' +
-    'opcoes, e posso pedir a remocao dos meus dados a qualquer momento.',
+    'Quero que um corretor da região entre em contato comigo com outras ' +
+    'opções, e posso pedir a remoção dos meus dados a qualquer momento.',
 } as const

@@ -257,9 +257,9 @@ export function rotuloSelo(selo: Selo | string | null): string {
 export function rotuloMotivo(motivo: string | null): string {
   switch (motivo) {
     case 'cidade_fora_da_area':
-      return 'Cidade fora da area de atuacao'
+      return 'Cidade fora da área de atuação'
     case 'renda_abaixo_do_minimo':
-      return 'Renda abaixo do minimo'
+      return 'Renda abaixo do mínimo'
     case 'capacidade_abaixo_do_minimo':
       return 'Poder de compra abaixo do corte'
     default:

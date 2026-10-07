@@ -26,12 +26,13 @@ export default async function Login({
               className="flex flex-col gap-1 rounded-lg bg-vermelho-tenue p-3.5"
             >
               <p className="text-sm font-bold text-vermelho">
-                O link de acesso nao funcionou.
+                O link de acesso não funcionou.
               </p>
               <p className="text-sm text-apagado-escuro">{erro}</p>
               <p className="text-[13px] text-apagado">
-                Links de acesso valem uma hora e servem uma vez so. Peca um novo
-                abaixo, e abra-o no mesmo aparelho e navegador em que pediu.
+                Links de acesso valem uma hora e servem uma vez só. Peça um
+                novo abaixo, e abra-o no mesmo aparelho e navegador em que
+                pediu.
               </p>
             </div>
           )}
@@ -40,9 +41,9 @@ export default async function Login({
         </div>
 
         <p className="text-center text-[13px] font-medium text-sobre-marinho">
-          Nao e corretor?{' '}
+          Não é corretor?{' '}
           <a href="/" className="underline">
-            Ver as opcoes de imovel
+            Ver as opções de imóvel
           </a>
         </p>
       </div>

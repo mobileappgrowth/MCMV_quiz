@@ -39,7 +39,7 @@ export type CardEmpreendimento = {
 }
 
 const ROTULO_OBRA: Record<string, string> = {
-  lancamento: 'Lancamento',
+  lancamento: 'Lançamento',
   obras: 'Em obras',
   pronto: 'Pronto para morar',
 }
@@ -117,7 +117,7 @@ export function CardEmpreendimento({
             {emp.preco_ate !== null && (
               <span className="font-normal whitespace-nowrap text-apagado">
                 {' '}
-                ate {reais(Number(emp.preco_ate))}
+                até {reais(Number(emp.preco_ate))}
               </span>
             )}
           </p>

@@ -74,13 +74,13 @@ export function Formulario({
   // Validacoes locais: avisam enquanto se digita, em vez de so na gravacao.
   const erroFaixa =
     precoDe !== null && precoAte !== null && precoAte < precoDe
-      ? 'O preco final nao pode ser menor que o inicial.'
+      ? 'O preço final não pode ser menor que o inicial.'
       : null
 
   const avisoMcmv =
     TETO_PRECO_MCMV > 0 && precoDe !== null && precoDe > TETO_PRECO_MCMV
       ? `Acima do teto do MCMV configurado (${reais(TETO_PRECO_MCMV)}). ` +
-        'Isso nao bloqueia: pode ser proposital, para o publico fora do programa.'
+        'Isso não bloqueia: pode ser proposital, para o público fora do programa.'
       : null
 
   function enviar(evento: React.FormEvent) {
@@ -154,16 +154,16 @@ export function Formulario({
   return (
     <form onSubmit={enviar} className="flex flex-col gap-4">
       <fieldset className="rounded-[10px] border border-linha bg-white p-5">
-        <legend className="mb-3 px-1 text-[17px] font-extrabold">1. Identificacao</legend>
+        <legend className="mb-3 px-1 text-[17px] font-extrabold">1. Identificação</legend>
         {campo('nome', 'Nome do empreendimento')}
         {campo('construtora', 'Construtora', {
           ajuda:
-            'Nome real. Divulgar e diferente de representar: nao sugira parceria que nao existe.',
+            'Nome real. Divulgar é diferente de representar: não sugira parceria que não existe.',
         })}
         {campo('cidade', 'Cidade')}
         {campo('bairro', 'Bairro')}
         {selecao('status', 'Status da obra', [
-          ['lancamento', 'Lancamento'],
+          ['lancamento', 'Lançamento'],
           ['obras', 'Em obras'],
           ['pronto', 'Pronto para morar'],
         ])}
@@ -178,10 +178,10 @@ export function Formulario({
           ['nao', 'Sem garagem'],
         ])}
         {campo('faixa_tamanho', 'Faixa de tamanho')}
-        {campo('preco_de', 'Preco a partir de (R$)', {
-          ajuda: 'So faixa. Nunca valor de unidade, tabela, parcela ou condicao.',
+        {campo('preco_de', 'Preço a partir de (R$)', {
+          ajuda: 'Só faixa. Nunca valor de unidade, tabela, parcela ou condição.',
         })}
-        {campo('preco_ate', 'Preco ate (R$)')}
+        {campo('preco_ate', 'Preço até (R$)')}
         {erroFaixa && (
           <p className="mb-3 rounded-lg bg-vermelho-tenue px-3.5 py-3 text-sm font-semibold text-vermelho">
             {erroFaixa}
@@ -198,10 +198,10 @@ export function Formulario({
         <legend className="mb-3 px-1 text-[17px] font-extrabold">3. Material</legend>
         {campo('foto_url', 'URL da foto', {
           ajuda:
-            'Material oficial da construtora ou producao propria. Nunca puxe imagem de site de terceiro: ser publico nao remove o direito autoral.',
+            'Material oficial da construtora ou produção própria. Nunca puxe imagem de site de terceiro: ser público não remove o direito autoral.',
         })}
         <label className="mb-3 block">
-          <span className="mb-1 block text-sm font-bold">Descricao</span>
+          <span className="mb-1 block text-sm font-bold">Descrição</span>
           <textarea
             value={campos.descricao}
             onChange={(e) => mudar('descricao', e.target.value)}
@@ -211,19 +211,19 @@ export function Formulario({
         </label>
         {campo('fonte_material', 'Fonte do material', {
           ajuda:
-            'De onde vieram foto e descricao. Obrigatorio para publicar: e a resposta a uma construtora que pergunte.',
+            'De onde vieram foto e descrição. Obrigatório para publicar: é a resposta a uma construtora que pergunte.',
         })}
-        {selecao('autorizacao', 'Houve autorizacao expressa da construtora?', [
+        {selecao('autorizacao', 'Houve autorização expressa da construtora?', [
           ['sim', 'Sim'],
           ['nao', 'Nao'],
         ])}
       </fieldset>
 
       <fieldset className="rounded-[10px] border border-linha bg-white p-5">
-        <legend className="mb-3 px-1 text-[17px] font-extrabold">Pre-visualizacao</legend>
+        <legend className="mb-3 px-1 text-[17px] font-extrabold">Pré-visualização</legend>
         <p className="mb-3 text-sm text-apagado">
-          E o mesmo componente da tela de resultado do quiz, nao uma imitacao. O
-          que voce ve aqui e o que a pessoa ve la.
+          É o mesmo componente da tela de resultado do quiz, não uma imitação.
+          O que você vê aqui é o que a pessoa vê lá.
         </p>
         <div className="max-w-sm">
           <CardEmpreendimento

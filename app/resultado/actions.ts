@@ -41,7 +41,7 @@ export async function salvarInteresses(
 
   if (!leadId) {
     return {
-      erro: 'Sua sessao expirou. Responda o quiz de novo para escolher os empreendimentos.',
+      erro: 'Sua sessão expirou. Responda o quiz de novo para escolher os empreendimentos.',
     }
   }
 
@@ -57,7 +57,7 @@ export async function salvarInteresses(
     }>()
 
   if (erroLead || !lead) {
-    return { erro: 'Nao encontramos seu cadastro. Responda o quiz de novo.' }
+    return { erro: 'Não encontramos seu cadastro. Responda o quiz de novo.' }
   }
 
   // Trava contra duplo envio: se ja gravou, nao grava de novo. O indice unico
@@ -91,7 +91,7 @@ export async function salvarInteresses(
 
   if (erroConsentimento || !consentimento) {
     console.error('[salvarInteresses] consentimento:', erroConsentimento)
-    return { erro: 'Nao conseguimos registrar sua escolha. Tente novamente.' }
+    return { erro: 'Não conseguimos registrar sua escolha. Tente novamente.' }
   }
 
   // --- os interesses ---
@@ -131,7 +131,7 @@ export async function salvarInteresses(
     const { error } = await supabaseAdmin().from('interesses').insert(linhas)
     if (error) {
       console.error('[salvarInteresses] interesses:', error)
-      return { erro: 'Nao conseguimos registrar sua escolha. Tente novamente.' }
+      return { erro: 'Não conseguimos registrar sua escolha. Tente novamente.' }
     }
   }
 

@@ -172,7 +172,7 @@ export async function listarInteresses(
 
   if (error) {
     console.error('[listarInteresses] falha na consulta:', error)
-    throw new Error('Nao foi possivel carregar a vitrine.')
+    throw new Error('Não foi possível carregar a vitrine.')
   }
 
   // Carencia do pausado, filtrada aqui e nao no SQL: o prazo e knob de negocio

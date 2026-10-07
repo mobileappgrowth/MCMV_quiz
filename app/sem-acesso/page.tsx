@@ -9,12 +9,12 @@ export default function SemAcesso() {
       <div className="mx-auto flex w-full max-w-[420px] flex-col gap-6">
         <Marca claro sufixo="Corretores" />
         <div className="flex flex-col gap-3 rounded-xl bg-white p-7">
-          <h1 className="text-2xl font-extrabold">Acesso ainda nao liberado</h1>
+          <h1 className="text-2xl font-extrabold">Acesso ainda não liberado</h1>
           <p className="text-apagado-escuro">
-            Seu login funcionou, mas sua conta de corretor ainda nao esta ativa.
+            Seu login funcionou, mas sua conta de corretor ainda não está ativa.
           </p>
           <p className="text-apagado-escuro">
-            Fale com o administrador para liberar. Nao precisa cadastrar de
+            Fale com o administrador para liberar. Não precisa cadastrar de
             novo.
           </p>
         </div>

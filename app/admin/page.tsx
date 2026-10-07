@@ -115,15 +115,15 @@ export default async function Admin({
       {!precosConfigurados() && (
         <div className="rounded-lg bg-amarelo-tenue p-4">
           <p className="font-bold">
-            O motor esta rodando sem avaliar capacidade.
+            O motor está rodando sem avaliar capacidade.
           </p>
           <p className="mt-1 text-sm/[1.45] text-apagado-escuro">
-            PRECO_PRODUTO_POR_CIDADE esta em branco, entao ninguem e eliminado
-            por capacidade e os 20 pontos dela nao sao dados a ninguem -- o
-            maximo possivel vira 80, e selo Forte passa a exigir perfil quase
-            perfeito. Quem decide o selo que vale e voce, na ligacao. Quando
-            tiver catalogo, o numero e o preco do imovel de entrada que voce
-            realmente vende em cada cidade.
+            PRECO_PRODUTO_POR_CIDADE está em branco, então ninguém é
+            eliminado por capacidade e os 20 pontos dela não são dados a
+            ninguém — o máximo possível vira 80, e selo Forte passa a exigir
+            perfil quase perfeito. Quem decide o selo que vale é você, na
+            ligação. Quando tiver catálogo, o número é o preço do imóvel de
+            entrada que você realmente vende em cada cidade.
           </p>
         </div>
       )}
@@ -155,7 +155,7 @@ export default async function Admin({
             {leads.map((l) => {
               const selecionado = l.id === aberto?.id
               const dias = diasDesde(l.criado_em)
-              const sub = `${[l.bairro, l.cidade].filter(Boolean).join(', ')} · ha ${dias} ${dias === 1 ? 'dia' : 'dias'}`
+              const sub = `${[l.bairro, l.cidade].filter(Boolean).join(', ')} · há ${dias} ${dias === 1 ? 'dia' : 'dias'}`
               return (
                 <li key={l.id}>
                   <Link
@@ -196,20 +196,20 @@ export default async function Admin({
                   pontuacao: aberto.pontuacao,
                   qualificacao: [
                     ['Quartos', aberto.quartos ? String(aberto.quartos) : '-'],
-                    ['Garagem', rotuloBooleano(aberto.garagem, 'Precisa', 'Nao precisa')],
+                    ['Garagem', rotuloBooleano(aberto.garagem, 'Precisa', 'Não precisa')],
                     ['Prazo', rotuloDe('prazo_compra', aberto.prazo_compra)],
                     ['Renda', rotuloDe('renda_faixa', aberto.renda_faixa)],
                     ['Enquadramento', aberto.enquadramento ?? '-'],
-                    ['Vinculo', rotuloDe('vinculo_renda', aberto.vinculo_renda)],
-                    ['Compoe renda', rotuloBooleano(aberto.renda_composta, 'Sim', 'Nao')],
+                    ['Vínculo', rotuloDe('vinculo_renda', aberto.vinculo_renda)],
+                    ['Compõe renda', rotuloBooleano(aberto.renda_composta, 'Sim', 'Não')],
                     ['Nome', rotuloDe('nome_limpo', aberto.nome_limpo)],
                     [
                       'Regularizando',
-                      rotuloBooleano(aberto.regularizacao_andamento, 'Sim', 'Ainda nao'),
+                      rotuloBooleano(aberto.regularizacao_andamento, 'Sim', 'Ainda não'),
                     ],
                     ['FGTS (tempo)', rotuloDe('fgts_tempo', aberto.fgts_tempo)],
                     ['FGTS (saldo)', rotuloDe('fgts_saldo', aberto.fgts_saldo)],
-                    ['Ja financiou', rotuloBooleano(aberto.ja_financiou, 'Sim', 'Nao')],
+                    ['Já financiou', rotuloBooleano(aberto.ja_financiou, 'Sim', 'Não')],
                     ['Entrada', rotuloDe('entrada_disponivel', aberto.entrada_disponivel)],
                   ],
                 }}
@@ -228,8 +228,8 @@ export default async function Admin({
         <section className="rounded-[10px] border border-linha bg-white p-5">
           <h2 className="text-[17px] font-extrabold">Descartados pelo motor</h2>
           <p className="mt-1 mb-3 text-sm text-apagado">
-            Nao passaram pelos eliminatorios e nao entraram na fila. Se um
-            motivo crescer demais, o parametro dele provavelmente esta errado.
+            Não passaram pelos eliminatórios e não entraram na fila. Se um
+            motivo crescer demais, o parâmetro dele provavelmente está errado.
           </p>
           <dl className="flex flex-col">
             {[...porMotivo.entries()]

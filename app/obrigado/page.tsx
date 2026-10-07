@@ -22,12 +22,12 @@ const PASSOS = [
     marca: '02',
     cor: 'text-link',
     titulo: 'Mensagem no WhatsApp',
-    texto: 'Fique de olho no numero que voce cadastrou.',
+    texto: 'Fique de olho no número que você cadastrou.',
   },
   {
     marca: '03',
     cor: 'text-sobre-marinho',
-    titulo: 'Contato do corretor da sua regiao',
+    titulo: 'Contato do corretor da sua região',
     texto: null,
   },
 ]
@@ -51,8 +51,8 @@ export default function Obrigado() {
 
         <main className="flex flex-col gap-5 px-5 py-7">
           <p className="text-[17px]/[1.5] text-apagado-escuro">
-            Vou entrar em contato pelo WhatsApp para entender melhor o que voce
-            procura e confirmar as informacoes.
+            Vou entrar em contato pelo WhatsApp para entender melhor o que você
+            procura e confirmar as informações.
           </p>
 
           <ol className="flex flex-col rounded-[10px] border-[1.5px] border-linha">
@@ -86,7 +86,7 @@ export default function Obrigado() {
           </ol>
 
           <p className="text-[15px] text-apagado">
-            Nao precisa fazer mais nada agora.
+            Não precisa fazer mais nada agora.
           </p>
         </main>
       </div>

@@ -74,13 +74,13 @@ export function Escolha({
           </div>
           <h1 className="max-w-[640px] text-[27px]/[1.2] font-extrabold tracking-[-0.01em] text-pretty sm:text-[32px]/[1.15]">
             {temOpcoes
-              ? 'Encontramos opcoes para o seu perfil'
-              : 'Nao encontramos opcoes no momento'}
+              ? 'Encontramos opções para o seu perfil'
+              : 'Não encontramos opções no momento'}
           </h1>
           <p className="mt-2.5 max-w-[560px] text-[15px]/[1.5] text-sobre-marinho-claro">
             {temOpcoes
-              ? 'Marque aqueles sobre os quais voce quer receber contato. Pode marcar quantos quiser, ou nenhum.'
-              : `Ainda nao temos empreendimentos cadastrados que sirvam para o seu perfil em ${cidade}.`}
+              ? 'Marque aqueles sobre os quais você quer receber contato. Pode marcar quantos quiser, ou nenhum.'
+              : `Ainda não temos empreendimentos cadastrados que sirvam para o seu perfil em ${cidade}.`}
           </p>
         </div>
       </header>
@@ -131,8 +131,8 @@ export function Escolha({
           {n === 0 && (
             <section className="rounded-[10px] border-[1.5px] border-linha p-4">
               <h2 className="mb-3 text-[17px]/[1.3] font-extrabold text-pretty">
-                Quer que um corretor da regiao entre em contato com outras
-                opcoes?
+                Quer que um corretor da região entre em contato com outras
+                opções?
               </h2>
               <label
                 className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-3.5 ${
@@ -190,9 +190,9 @@ export function Escolha({
           <p className="text-center text-sm font-bold sm:text-left">
             {n === 0
               ? querGeral
-                ? 'Um corretor da regiao vai entrar em contato'
+                ? 'Um corretor da região vai entrar em contato'
                 : 'Nenhum empreendimento marcado'
-              : `Voce vai receber contato de ${n} ${n === 1 ? 'empresa' : 'empresas'}`}
+              : `Você vai receber contato de ${n} ${n === 1 ? 'empresa' : 'empresas'}`}
           </p>
           <button
             type="button"

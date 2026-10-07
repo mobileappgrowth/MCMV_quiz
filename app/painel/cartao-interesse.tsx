@@ -53,7 +53,7 @@ export function CartaoInteresse({
 
   const atributos: [string, string][] = [
     ['Quartos', interesse.quartos ? String(interesse.quartos) : '-'],
-    ['Garagem', rotuloBooleano(interesse.garagem, 'Precisa', 'Nao precisa')],
+    ['Garagem', rotuloBooleano(interesse.garagem, 'Precisa', 'Não precisa')],
     ['Renda', rotuloDe('renda_faixa', interesse.renda_faixa)],
     [
       'Vinculo',
@@ -93,7 +93,7 @@ export function CartaoInteresse({
             <>
               <h2 className="text-[18px] font-extrabold">Busca aberta</h2>
               <p className="text-[13px] font-medium text-apagado">
-                Nao marcou empreendimento ·{' '}
+                Não marcou empreendimento ·{' '}
                 {interesse.bairro ? `${interesse.bairro}, ` : ''}
                 {interesse.cidade}
               </p>
@@ -131,7 +131,7 @@ export function CartaoInteresse({
 
       {emCarencia(interesse) && (
         <p className="border-b border-divisor bg-amarelo-tenue px-4 py-2 text-xs font-semibold text-apagado-escuro">
-          Este empreendimento saiu do ar. O interesse continua valido, mas sai
+          Este empreendimento saiu do ar. O interesse continua válido, mas sai
           da vitrine em breve.
         </p>
       )}
@@ -166,7 +166,7 @@ export function CartaoInteresse({
           <br />
           exclusivo
         </p>
-        <p className="sr-only">Nome e telefone liberados apos o desbloqueio.</p>
+        <p className="sr-only">Nome e telefone liberados após o desbloqueio.</p>
       </div>
 
       <div className="mt-auto p-3">
@@ -183,7 +183,7 @@ export function CartaoInteresse({
               Valeria {reais(preco)} para o corretor
             </p>
             <p className="mt-1 text-xs text-apagado">
-              Vistoria: aqui nao se compra. O contato esta na fila do /admin.
+              Vistoria: aqui não se compra. O contato está na fila do /admin.
             </p>
           </div>
         )}

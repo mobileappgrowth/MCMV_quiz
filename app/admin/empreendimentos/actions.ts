@@ -127,7 +127,7 @@ export async function criarEmpreendimento(
   const admin = await exigirAdmin()
 
   const linha = paraLinha(campos)
-  if (!linha.nome) return { ok: false, erro: 'O nome e obrigatorio ate para rascunho.' }
+  if (!linha.nome) return { ok: false, erro: 'O nome é obrigatório até para rascunho.' }
 
   const { data, error } = await supabaseAdmin()
     .from('empreendimentos')
@@ -162,9 +162,9 @@ export async function salvarEmpreendimento(
     .eq('id', id)
     .single()
 
-  if (erroBusca || !antes) return { ok: false, erro: 'Empreendimento nao encontrado.' }
+  if (erroBusca || !antes) return { ok: false, erro: 'Empreendimento não encontrado.' }
   if (antes.status_publicacao === 'arquivado') {
-    return { ok: false, erro: 'Empreendimento arquivado nao pode ser editado.' }
+    return { ok: false, erro: 'Empreendimento arquivado não pode ser editado.' }
   }
 
   const linha = paraLinha(campos)
@@ -204,9 +204,9 @@ export async function mudarPublicacao(
     .eq('id', id)
     .single()
 
-  if (erroBusca || !emp) return { ok: false, erro: 'Empreendimento nao encontrado.' }
+  if (erroBusca || !emp) return { ok: false, erro: 'Empreendimento não encontrado.' }
   if (emp.status_publicacao === 'arquivado') {
-    return { ok: false, erro: 'Arquivado e definitivo. Cadastre um novo, se precisar.' }
+    return { ok: false, erro: 'Arquivado é definitivo. Cadastre um novo, se precisar.' }
   }
 
   if (novo === 'publicado') {

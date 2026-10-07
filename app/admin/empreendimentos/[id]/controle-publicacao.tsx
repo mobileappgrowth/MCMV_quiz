@@ -53,14 +53,14 @@ export function ControlePublicacao({
   function ir(destino: string, pedeMotivo: boolean) {
     setErro(null)
     if (pedeMotivo && !motivo.trim()) {
-      setErro('Informe o motivo. Daqui a tres meses voce vai querer saber.')
+      setErro('Informe o motivo. Daqui a três meses você vai querer saber.')
       return
     }
     if (destino === 'arquivado') {
       const certeza = window.confirm(
-        'Arquivar e definitivo e nao tem volta.\n\n' +
-          'Os interesses ainda nao vendidos saem da vitrine na hora. Os ja ' +
-          'vendidos permanecem no historico e nao geram estorno.\n\nConfirmar?'
+        'Arquivar é definitivo e não tem volta.\n\n' +
+          'Os interesses ainda não vendidos saem da vitrine na hora. Os já ' +
+          'vendidos permanecem no histórico e não geram estorno.\n\nConfirmar?'
       )
       if (!certeza) return
     }
@@ -80,7 +80,7 @@ export function ControlePublicacao({
 
   return (
     <section className="rounded-[10px] border border-linha bg-white p-5">
-      <p className="mb-1 text-sm text-apagado">Estado da publicacao</p>
+      <p className="mb-1 text-sm text-apagado">Estado da publicação</p>
       <p className="mb-3 text-[17px] font-extrabold">{statusAtual}</p>
 
       {pausadoMotivo && statusAtual === 'pausado' && (
@@ -96,15 +96,15 @@ export function ControlePublicacao({
 
       {statusAtual === 'arquivado' ? (
         <p className="text-sm text-apagado">
-          Arquivado e definitivo. Se precisar dele de volta, cadastre um novo --
-          o historico deste fica intacto.
+          Arquivado é definitivo. Se precisar dele de volta, cadastre um novo
+          — o histórico deste fica intacto.
         </p>
       ) : (
         <>
           {(precisaMotivo || true) && (
             <label className="mb-3 block">
               <span className="mb-1 block text-sm font-bold">
-                Motivo {precisaMotivo ? '(obrigatorio para pausar e arquivar)' : ''}
+                Motivo {precisaMotivo ? '(obrigatório para pausar e arquivar)' : ''}
               </span>
               <input
                 type="text"

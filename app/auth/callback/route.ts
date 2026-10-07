@@ -55,9 +55,9 @@ export async function GET(request: NextRequest) {
     // chega ao servidor.
     return paraLogin(
       origin,
-      'O link nao trouxe credencial reconhecivel. Se o endereco tinha um "#" ' +
-        'no meio, o template de email do Supabase esta no fluxo implicito: ' +
-        'troque para o template padrao de Magic Link.'
+      'O link não trouxe credencial reconhecível. Se o endereço tinha um "#" ' +
+        'no meio, o template de email do Supabase está no fluxo implícito: ' +
+        'troque para o template padrão de Magic Link.'
     )
   }
 

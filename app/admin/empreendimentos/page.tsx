@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 
 const ROTULO_PUB: Record<string, string> = {
   rascunho: 'Rascunho',
-  em_revisao: 'Em revisao',
+  em_revisao: 'Em revisão',
   publicado: 'Publicado',
   pausado: 'Pausado',
   arquivado: 'Arquivado',
@@ -44,8 +44,9 @@ export default async function Empreendimentos() {
         {emps?.length ?? 0} empreendimentos
       </h1>
       <p className="mb-6 text-sm text-apagado">
-        {publicados.length} publicados. So os publicados aparecem na tela de
-        resultado do quiz, entao o catalogo precisa existir antes de rodar midia.
+        {publicados.length} publicados. Só os publicados aparecem na tela de
+        resultado do quiz, então o catálogo precisa existir antes de rodar
+        mídia.
       </p>
 
       <Link
@@ -90,15 +91,15 @@ export default async function Empreendimentos() {
             </div>
             {e.dono_corretor_id && (
               <p className="mt-1 text-xs text-apagado">
-                Estoque de corretor: a responsabilidade pelo conteudo e dele.
+                Estoque de corretor: a responsabilidade pelo conteúdo é dele.
               </p>
             )}
           </Link>
         ))}
         {emps?.length === 0 && (
           <p className="rounded-[10px] border-[1.5px] border-dashed border-tracejado px-6 py-8 text-apagado">
-            Nenhum empreendimento ainda. Sem catalogo, a tela de resultado do
-            quiz nao tem o que mostrar e todo mundo cai na vitrine geral.
+            Nenhum empreendimento ainda. Sem catálogo, a tela de resultado do
+            quiz não tem o que mostrar e todo mundo cai na vitrine geral.
           </p>
         )}
       </div>

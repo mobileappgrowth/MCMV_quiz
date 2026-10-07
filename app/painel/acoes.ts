@@ -27,14 +27,14 @@ function traduzir(mensagem: string): { erro: string; recarregar?: boolean } {
   if (mensagem.includes('JA_VENDIDO')) {
     return {
       erro:
-        'Outro corretor revelou este contato primeiro. Voce nao foi cobrado, e ' +
-        'o interesse ja saiu da sua vitrine.',
+        'Outro corretor revelou este contato primeiro. Você não foi cobrado, e ' +
+        'o interesse já saiu da sua vitrine.',
     }
   }
   if (mensagem.includes('SALDO_INSUFICIENTE')) {
     const saldo = mensagem.split('SALDO_INSUFICIENTE:')[1]
     return {
-      erro: `Saldo insuficiente${saldo ? ` (voce tem ${reais(Number(saldo))})` : ''}. Nada foi cobrado.`,
+      erro: `Saldo insuficiente${saldo ? ` (você tem ${reais(Number(saldo))})` : ''}. Nada foi cobrado.`,
       recarregar: true,
     }
   }
@@ -42,22 +42,22 @@ function traduzir(mensagem: string): { erro: string; recarregar?: boolean } {
     const novo = mensagem.split('PRECO_MUDOU:')[1]
     return {
       erro:
-        `O preco mudou para ${novo ? reais(Number(novo)) : 'outro valor'} desde que ` +
-        'a tela carregou -- em geral porque o perfil acabou de ser verificado. ' +
-        'Atualize a pagina e confirme de novo. Nada foi cobrado.',
+        `O preço mudou para ${novo ? reais(Number(novo)) : 'outro valor'} desde que ` +
+        'a tela carregou — em geral porque o perfil acabou de ser verificado. ' +
+        'Atualize a página e confirme de novo. Nada foi cobrado.',
     }
   }
   if (mensagem.includes('CORRETOR_INATIVO')) {
-    return { erro: 'Sua conta esta inativa. Fale com o administrador.' }
+    return { erro: 'Sua conta está inativa. Fale com o administrador.' }
   }
   if (mensagem.includes('INTERESSE_SEM_PRECO')) {
-    return { erro: 'Este interesse ainda nao tem preco definido.' }
+    return { erro: 'Este interesse ainda não tem preço definido.' }
   }
   if (mensagem.includes('INTERESSE_NAO_ENCONTRADO')) {
-    return { erro: 'Este interesse nao existe mais.' }
+    return { erro: 'Este interesse não existe mais.' }
   }
   console.error('[revelar] excecao nao prevista:', mensagem)
-  return { erro: 'Nao conseguimos concluir. Nada foi cobrado. Tente de novo.' }
+  return { erro: 'Não conseguimos concluir. Nada foi cobrado. Tente de novo.' }
 }
 
 export async function revelarContato(
@@ -94,9 +94,9 @@ export async function revelarContato(
     return {
       ok: false,
       erro:
-        'O desbloqueio foi registrado, mas nao conseguimos carregar o contato. ' +
-        'NAO tente de novo: o lead ja e seu e esta na aba Meus leads. Se nao ' +
-        'aparecer la, fale com o administrador.',
+        'O desbloqueio foi registrado, mas não conseguimos carregar o contato. ' +
+        'NÃO tente de novo: o lead já é seu e está na aba Meus leads. Se não ' +
+        'aparecer lá, fale com o administrador.',
     }
   }
 
@@ -147,7 +147,7 @@ export async function salvarFeedback(
     .eq('corretor_id', corretor.id)
     .maybeSingle()
 
-  if (!desbloqueio) return { ok: false, erro: 'Desbloqueio nao encontrado.' }
+  if (!desbloqueio) return { ok: false, erro: 'Desbloqueio não encontrado.' }
 
   const { error } = await supabaseAdmin().from('feedbacks').insert({
     desbloqueio_id: desbloqueioId,

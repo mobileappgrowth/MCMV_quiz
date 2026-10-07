@@ -37,20 +37,20 @@ export default async function Recargas() {
     <main className="mx-auto max-w-[900px] p-5 pb-12">
       <h1 className="mb-1 text-2xl font-extrabold tracking-[-0.01em]">Creditar corretor</h1>
       <p className="mb-6 text-sm text-apagado">
-        O corretor faz o PIX e manda o comprovante. Voce confere e credita aqui.
-        A transacao e o saldo mudam juntos -- nunca divergem.
+        O corretor faz o PIX e manda o comprovante. Você confere e credita
+        aqui. A transação e o saldo mudam juntos — nunca divergem.
       </p>
 
       <FormRecarga corretores={corretores ?? []} />
 
-      <h2 className="mt-10 mb-3 text-[17px] font-extrabold">Ultimos lancamentos</h2>
+      <h2 className="mt-10 mb-3 text-[17px] font-extrabold">Últimos lançamentos</h2>
       <div className="rounded-[10px] border border-linha bg-white px-5 text-sm">
         {ultimas?.map((t) => (
           <div key={t.id} className="flex justify-between gap-2 border-b border-divisor py-3 last:border-0">
             <div>
               <p className="font-medium">{t.corretores?.nome ?? 'Corretor removido'}</p>
               <p className="text-xs text-apagado">
-                {t.referencia ?? 'sem referencia'} ·{' '}
+                {t.referencia ?? 'sem referência'} ·{' '}
                 {new Date(t.criado_em).toLocaleString('pt-BR')}
               </p>
             </div>
@@ -65,7 +65,7 @@ export default async function Recargas() {
           </div>
         ))}
         {(ultimas?.length ?? 0) === 0 && (
-          <p className="py-3 text-apagado">Nenhum lancamento ainda.</p>
+          <p className="py-3 text-apagado">Nenhum lançamento ainda.</p>
         )}
       </div>
     </main>

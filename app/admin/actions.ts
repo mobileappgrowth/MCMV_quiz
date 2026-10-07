@@ -48,7 +48,7 @@ export async function verificarLead(
     .eq('id', leadId)
     .single()
 
-  if (erroBusca || !lead) return { ok: false, erro: 'Lead nao encontrado.' }
+  if (erroBusca || !lead) return { ok: false, erro: 'Lead não encontrado.' }
   if (lead.status !== 'novo') {
     return { ok: false, erro: `Lead ja esta como "${lead.status}".` }
   }
@@ -184,7 +184,7 @@ export async function cadastrarCorretor(dados: {
 
   if (nome.length < 2) return { ok: false, erro: 'Informe o nome do corretor.' }
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-    return { ok: false, erro: 'Email invalido.' }
+    return { ok: false, erro: 'Email inválido.' }
   }
 
   const { data: corretor, error: erroCorretor } = await supabaseAdmin()
@@ -203,7 +203,7 @@ export async function cadastrarCorretor(dados: {
   if (erroCorretor || !corretor) {
     // 23505 = unique_violation
     if (erroCorretor?.code === '23505') {
-      return { ok: false, erro: 'Ja existe um corretor com esse email.' }
+      return { ok: false, erro: 'Já existe um corretor com esse email.' }
     }
     console.error('[cadastrarCorretor] insert:', erroCorretor)
     return { ok: false, erro: 'Falha ao cadastrar o corretor.' }
@@ -221,7 +221,7 @@ export async function cadastrarCorretor(dados: {
     return {
       ok: false,
       erro:
-        'Falha ao criar o acesso. Se esse email ja existe na autenticacao do ' +
+        'Falha ao criar o acesso. Se esse email já existe na autenticação do ' +
         'Supabase, remova-o lá antes de cadastrar aqui.',
     }
   }
@@ -254,7 +254,7 @@ export async function creditarCorretor(
   if (!referencia.trim()) {
     return {
       ok: false,
-      erro: 'Informe a referencia (data do PIX, ultimos digitos, o que te ajude a achar depois).',
+      erro: 'Informe a referência (data do PIX, últimos dígitos, o que te ajude a achar depois).',
     }
   }
 
@@ -267,12 +267,12 @@ export async function creditarCorretor(
   if (error) {
     console.error('[creditarCorretor]', error)
     if (error.message?.includes('CORRETOR_NAO_ENCONTRADO')) {
-      return { ok: false, erro: 'Corretor nao encontrado.' }
+      return { ok: false, erro: 'Corretor não encontrado.' }
     }
     if (error.message?.includes('VALOR_INVALIDO')) {
-      return { ok: false, erro: 'Valor invalido.' }
+      return { ok: false, erro: 'Valor inválido.' }
     }
-    return { ok: false, erro: 'Falha ao creditar. Nada foi lancado.' }
+    return { ok: false, erro: 'Falha ao creditar. Nada foi lançado.' }
   }
 
   revalidatePath('/admin/recargas')

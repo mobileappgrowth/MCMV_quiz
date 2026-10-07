@@ -19,7 +19,7 @@ import { salvarFeedback } from '../acoes'
 const PERGUNTAS = [
   { campo: 'atendeu', rotulo: 'Atendeu?' },
   { campo: 'tem_renda', rotulo: 'Tem a renda?' },
-  { campo: 'tem_restricao', rotulo: 'Tem restricao?' },
+  { campo: 'tem_restricao', rotulo: 'Tem restrição?' },
   { campo: 'agendou_visita', rotulo: 'Agendou visita?' },
 ] as const
 
@@ -60,8 +60,8 @@ export function LinhaMeuLead({
   const primeiro = nome.trim().split(/\s+/)[0]
   const sobre = empreendimento
     ? `sobre o ${empreendimento}`
-    : 'sobre as opcoes de imovel que voce procura'
-  const mensagem = `Oi, ${primeiro}! Aqui e ${nomeCorretor}. Voce pediu contato ${sobre}. Posso te passar as informacoes?`
+    : 'sobre as opções de imóvel que você procura'
+  const mensagem = `Oi, ${primeiro}! Aqui é ${nomeCorretor}. Você pediu contato ${sobre}. Posso te passar as informações?`
 
   function enviar() {
     setErro(null)
@@ -77,7 +77,7 @@ export function LinhaMeuLead({
       <p className="flex flex-wrap justify-between gap-2 bg-verde-tenue px-5 py-2.5 text-[13px] font-bold text-verde-texto">
         <span>{empreendimento ?? 'Busca aberta'}</span>
         <span className="font-medium">
-          {reais(precoPago)} · captado ha {diasDesdeCaptacao}{' '}
+          {reais(precoPago)} · captado há {diasDesdeCaptacao}{' '}
           {diasDesdeCaptacao === 1 ? 'dia' : 'dias'}
         </span>
       </p>
@@ -117,15 +117,15 @@ export function LinhaMeuLead({
       {/* ------------------------------------------------------------------ */}
       {enviado ? (
         <p className="border-t border-divisor px-5 py-4 text-sm font-semibold text-verde">
-          Retorno registrado. Obrigado -- e com isso que eu calibro a
-          verificacao.
+          Retorno registrado. Obrigado — é com isso que eu calibro a
+          verificação.
         </p>
       ) : (
         <div className="flex flex-col gap-3 border-t border-divisor p-5">
           <div>
             <p className="text-[17px] font-extrabold">Como foi o contato?</p>
             <p className="text-sm text-apagado">
-              Seu retorno ajuda a melhorar a verificacao do proximo.
+              Seu retorno ajuda a melhorar a verificação do próximo.
             </p>
           </div>
 
@@ -154,7 +154,7 @@ export function LinhaMeuLead({
                           : 'border-2 border-campo font-semibold hover:border-sobre-marinho'
                       }`}
                     >
-                      {v ? 'Sim' : 'Nao'}
+                      {v ? 'Sim' : 'Não'}
                     </button>
                   ))}
                 </div>
@@ -166,7 +166,7 @@ export function LinhaMeuLead({
             value={comentario}
             onChange={(e) => setComentario(e.target.value)}
             rows={2}
-            placeholder="Comentario (opcional)"
+            placeholder="Comentário (opcional)"
             className="w-full resize-y rounded-lg border-2 border-campo p-3 text-sm outline-none focus:border-marinho"
           />
 

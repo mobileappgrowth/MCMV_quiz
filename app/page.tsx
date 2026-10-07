@@ -25,7 +25,7 @@ import { Marca } from '@/components/marca'
 // ============================================================================
 
 export const metadata = {
-  title: 'Minha Casa Minha Vida - Descubra se voce se enquadra',
+  title: 'Minha Casa Minha Vida - Descubra se você se enquadra',
 }
 
 const PASSOS = [
@@ -33,17 +33,17 @@ const PASSOS = [
     n: '01',
     titulo: 'Responda o quiz',
     texto:
-      'Renda, FGTS, quartos e onde voce quer morar. Um toque por pergunta.',
+      'Renda, FGTS, quartos e onde você quer morar. Um toque por pergunta.',
   },
   {
     n: '02',
     titulo: 'A gente confirma pelo WhatsApp',
-    texto: 'Uma conversa rapida para entender o que voce procura.',
+    texto: 'Uma conversa rápida para entender o que você procura.',
   },
   {
     n: '03',
-    titulo: 'Um corretor da sua regiao te atende',
-    texto: 'So um. Seu contato nao fica circulando por ai.',
+    titulo: 'Um corretor da sua região te atende',
+    texto: 'Só um. Seu contato não fica circulando por aí.',
   },
 ]
 
@@ -70,11 +70,11 @@ export default function Home() {
               Minha Casa Minha Vida
             </p>
             <h1 className="text-[34px]/[1.08] font-extrabold tracking-[-0.02em] text-pretty sm:text-[44px]/[1.08]">
-              Descubra se voce se enquadra e quanto precisa de entrada.
+              Descubra se você se enquadra e quanto precisa de entrada.
             </h1>
             <p className="max-w-[520px] text-[17px]/[1.5] text-sobre-marinho-claro text-pretty sm:text-lg/[1.5]">
-              Sao poucas perguntas, uma por tela. A gente confere tudo com voce
-              pelo WhatsApp e mostra opcoes com entrada baixa em{' '}
+              São poucas perguntas, uma por tela. A gente confere tudo com você
+              pelo WhatsApp e mostra opções com entrada baixa em{' '}
               {CIDADES_ROTULO}.
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-4">
@@ -82,7 +82,7 @@ export default function Home() {
                 href="/quiz"
                 className="rounded-lg bg-amarelo px-7 py-5 text-lg font-extrabold text-marinho hover:bg-amarelo-hover"
               >
-                Comecar agora →
+                Começar agora →
               </Link>
               <p className="text-sm font-medium text-sobre-marinho">
                 Leva cerca de 2 minutos · Sem custo
@@ -101,7 +101,7 @@ export default function Home() {
                 'repeating-linear-gradient(135deg, var(--color-foto) 0 10px, var(--color-foto-claro) 10px 20px)',
             }}
           >
-            foto: familia na frente do novo apartamento
+            foto: família na frente do novo apartamento
           </div>
         </div>
       </div>
@@ -135,10 +135,10 @@ export default function Home() {
           />
           <p className="text-base/[1.5] text-apagado-escuro text-pretty">
             <strong className="text-marinho">
-              Seus dados nao ficam publicos.
+              Seus dados não ficam públicos.
             </strong>{' '}
-            Compartilhamos seu contato so com um corretor parceiro da regiao, e
-            voce pode pedir para remover a qualquer momento.
+            Compartilhamos seu contato só com um corretor parceiro da região, e
+            você pode pedir para remover a qualquer momento.
           </p>
         </div>
       </div>
@@ -155,13 +155,13 @@ export default function Home() {
             href="/quiz"
             className="rounded-lg bg-marinho px-6 py-4 text-[17px] font-extrabold text-white hover:bg-marinho-hover"
           >
-            Comecar o quiz
+            Começar o quiz
           </Link>
         </div>
       </div>
 
       <footer className="mx-auto max-w-[1080px] px-5 py-6 text-[13px] text-apagado">
-        Servico independente de orientacao. Nao somos a Caixa nem orgao do
+        Serviço independente de orientação. Não somos a Caixa nem órgão do
         governo.
       </footer>
     </div>

@@ -72,11 +72,11 @@ export function linkWhatsApp(c: ContatoRevelado, nomeCorretor: string): string {
   const primeiroNome = c.nome.trim().split(/\s+/)[0]
   const sobre = c.empreendimento_nome
     ? `sobre o ${c.empreendimento_nome}`
-    : 'sobre as opcoes de imovel que voce procura'
+    : 'sobre as opções de imóvel que você procura'
 
   const mensagem =
-    `Oi, ${primeiroNome}! Aqui e ${nomeCorretor}. ` +
-    `Voce pediu contato ${sobre}. Posso te passar as informacoes?`
+    `Oi, ${primeiroNome}! Aqui é ${nomeCorretor}. ` +
+    `Você pediu contato ${sobre}. Posso te passar as informações?`
 
   return `https://wa.me/55${c.telefone}?text=${encodeURIComponent(mensagem)}`
 }

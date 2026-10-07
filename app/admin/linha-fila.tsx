@@ -39,7 +39,7 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
     setAviso(null)
     executar(async () => {
       const r = await acao()
-      if (!r.ok) setAviso(r.erro ?? 'Falha na operacao.')
+      if (!r.ok) setAviso(r.erro ?? 'Falha na operação.')
     })
   }
 
@@ -52,7 +52,7 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
             {lead.nome}
           </h2>
           <p className="text-sm font-medium text-apagado">
-            {lead.local} · captado ha {lead.dias}{' '}
+            {lead.local} · captado há {lead.dias}{' '}
             {lead.dias === 1 ? 'dia' : 'dias'} ·{' '}
             {lead.qtdInteresses === 0
               ? 'nenhum interesse'
@@ -91,12 +91,12 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
 
       <div className="flex flex-col gap-3 p-5">
         <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-bold">Notas da verificacao</span>
+          <span className="text-sm font-bold">Notas da verificação</span>
           <textarea
             value={nota}
             onChange={(e) => setNota(e.target.value)}
             rows={3}
-            placeholder="O que ela disse na ligacao."
+            placeholder="O que ela disse na ligação."
             className="w-full resize-y rounded-lg border-2 border-campo p-3 text-[15px] outline-none focus:border-marinho"
           />
         </label>
@@ -121,7 +121,7 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
             ))}
           </div>
           <p className="mt-1.5 text-xs text-apagado">
-            O realcado e o que o motor sugeriu. Quem decide e a ligacao.
+            O realçado é o que o motor sugeriu. Quem decide é a ligação.
           </p>
         </div>
 

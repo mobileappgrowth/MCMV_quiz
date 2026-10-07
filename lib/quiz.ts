@@ -49,8 +49,8 @@ function dentroDoPrograma(r: Record<string, string>): boolean {
 export const PASSOS_OPCOES: PassoOpcoes[] = [
   {
     campo: 'quartos',
-    tema: 'O imovel',
-    pergunta: 'Quantos quartos voce precisa?',
+    tema: 'O imóvel',
+    pergunta: 'Quantos quartos você precisa?',
     opcoes: [
       { valor: '1', rotulo: '1 quarto' },
       { valor: '2', rotulo: '2 quartos' },
@@ -59,11 +59,11 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'garagem',
-    tema: 'O imovel',
+    tema: 'O imóvel',
     pergunta: 'Precisa de garagem?',
     opcoes: [
       { valor: 'sim', rotulo: 'Sim, preciso' },
-      { valor: 'nao', rotulo: 'Nao e necessario' },
+      { valor: 'nao', rotulo: 'Não é necessário' },
     ],
   },
   {
@@ -72,23 +72,23 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
     pergunta: 'Quando pretende comprar?',
     opcoes: [
       { valor: 'imediato', rotulo: 'O quanto antes', curto: 'O quanto antes' },
-      { valor: 'ate_3_meses', rotulo: 'Nos proximos 3 meses', curto: 'Ate 3 meses' },
-      { valor: 'ate_6_meses', rotulo: 'Em até 6 meses', curto: 'Ate 6 meses' },
-      { valor: 'ate_1_ano', rotulo: 'Em até 1 ano', curto: 'Ate 1 ano' },
-      { valor: 'pesquisando', rotulo: 'So pesquisando por enquanto', curto: 'Pesquisando' },
+      { valor: 'ate_3_meses', rotulo: 'Nos próximos 3 meses', curto: 'Até 3 meses' },
+      { valor: 'ate_6_meses', rotulo: 'Em até 6 meses', curto: 'Até 6 meses' },
+      { valor: 'ate_1_ano', rotulo: 'Em até 1 ano', curto: 'Até 1 ano' },
+      { valor: 'pesquisando', rotulo: 'Só pesquisando por enquanto', curto: 'Pesquisando' },
     ],
   },
   {
     campo: 'renda_faixa',
     tema: 'Sua renda',
-    pergunta: 'Qual a renda da familia por mes?',
-    ajuda: 'Somando todos que vao entrar no financiamento.',
+    pergunta: 'Qual a renda da família por mês?',
+    ajuda: 'Somando todos que vão entrar no financiamento.',
     opcoes: RENDA_FAIXAS.map((f) => ({ valor: f.valor, rotulo: f.rotulo })),
   },
   {
     campo: 'vinculo_renda',
     tema: 'Sua renda',
-    pergunta: 'Como e essa renda?',
+    pergunta: 'Como é essa renda?',
     opcoes: VINCULO_RENDA_FAIXAS.map((f) => ({
       valor: f.valor,
       rotulo: f.rotulo,
@@ -98,49 +98,49 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
     campo: 'renda_composta',
     tema: 'Sua renda',
     pergunta: 'Vai compor renda com outra pessoa?',
-    ajuda: 'Conjuge, pai, mae, irmao.',
+    ajuda: 'Cônjuge, pai, mãe, irmão.',
     visivelSe: dentroDoPrograma,
     opcoes: [
       { valor: 'sim', rotulo: 'Sim' },
-      { valor: 'nao', rotulo: 'Nao, so a minha renda' },
+      { valor: 'nao', rotulo: 'Não, só a minha renda' },
     ],
   },
   {
     campo: 'nome_limpo',
-    tema: 'Seu credito',
-    pergunta: 'Como esta o seu nome hoje?',
+    tema: 'Seu crédito',
+    pergunta: 'Como está o seu nome hoje?',
     opcoes: [
       { valor: 'sim', rotulo: 'Limpo' },
-      { valor: 'nao', rotulo: 'Com restricao' },
-      { valor: 'nao_sei', rotulo: 'Nao sei' },
+      { valor: 'nao', rotulo: 'Com restrição' },
+      { valor: 'nao_sei', rotulo: 'Não sei' },
     ],
     notas: {
       nao_sei:
-        'Tudo bem nao saber. Isso nao impede o atendimento -- a gente confere ' +
-        'junto com voce na hora da conversa.',
+        'Tudo bem não saber. Isso não impede o atendimento — a gente confere ' +
+        'junto com você na hora da conversa.',
     },
   },
   {
     campo: 'regularizacao_andamento',
-    tema: 'Seu credito',
-    pergunta: 'Voce ja esta regularizando essa pendencia?',
-    ajuda: 'Acordo em andamento, parcelamento, ou ja quitado esperando baixa.',
+    tema: 'Seu crédito',
+    pergunta: 'Você já está regularizando essa pendência?',
+    ajuda: 'Acordo em andamento, parcelamento, ou já quitado esperando baixa.',
     // So para quem declarou restricao. Perguntar isso a quem disse "limpo"
     // seria constrangedor e inutil.
     visivelSe: (r) => r.nome_limpo === 'nao',
     opcoes: [
-      { valor: 'sim', rotulo: 'Sim, ja estou resolvendo' },
-      { valor: 'nao', rotulo: 'Ainda nao' },
+      { valor: 'sim', rotulo: 'Sim, já estou resolvendo' },
+      { valor: 'nao', rotulo: 'Ainda não' },
     ],
   },
   {
     campo: 'fgts_tempo',
     tema: 'Seu FGTS',
-    pergunta: 'Quanto tempo de FGTS voce tem?',
+    pergunta: 'Quanto tempo de FGTS você tem?',
     ajuda: 'Tempo somado de carteira assinada.',
     visivelSe: dentroDoPrograma,
     opcoes: [
-      { valor: 'nao_tenho', rotulo: 'Nao tenho FGTS' },
+      { valor: 'nao_tenho', rotulo: 'Não tenho FGTS' },
       { valor: 'menos_1_ano', rotulo: 'Menos de 1 ano' },
       { valor: '1_a_3_anos', rotulo: 'Entre 1 e 3 anos' },
       { valor: 'mais_3_anos', rotulo: 'Mais de 3 anos' },
@@ -150,7 +150,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
     campo: 'fgts_saldo',
     tema: 'Seu FGTS',
     pergunta: 'E quanto tem de saldo no FGTS?',
-    ajuda: 'Da para ver no aplicativo do FGTS. Um valor aproximado ja ajuda.',
+    ajuda: 'Dá para ver no aplicativo do FGTS. Um valor aproximado já ajuda.',
     // Nao faz sentido perguntar saldo a quem acabou de dizer que nao tem FGTS.
     visivelSe: (r) => dentroDoPrograma(r) && r.fgts_tempo !== 'nao_tenho',
     opcoes: FGTS_SALDO_FAIXAS.map((f) => ({
@@ -160,11 +160,11 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'ja_financiou',
-    tema: 'Seu historico',
-    pergunta: 'Ja financiou um imovel antes?',
+    tema: 'Seu histórico',
+    pergunta: 'Já financiou um imóvel antes?',
     opcoes: [
-      { valor: 'nao', rotulo: 'Nao, seria o primeiro' },
-      { valor: 'sim', rotulo: 'Sim, ja financiei' },
+      { valor: 'nao', rotulo: 'Não, seria o primeiro' },
+      { valor: 'sim', rotulo: 'Sim, já financiei' },
     ],
   },
   {

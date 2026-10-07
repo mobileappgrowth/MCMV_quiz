@@ -17,8 +17,8 @@ export default async function Corretores() {
     <main className="mx-auto max-w-[900px] p-5 pb-12">
       <h1 className="mb-1 text-2xl font-extrabold tracking-[-0.01em]">Cadastrar corretor</h1>
       <p className="mb-6 text-sm text-apagado">
-        O cadastro cria o acesso e a conta. Sem passar por aqui, o corretor nao
-        consegue entrar: o login nao cria contas sozinho.
+        O cadastro cria o acesso e a conta. Sem passar por aqui, o corretor
+        não consegue entrar: o login não cria contas sozinho.
       </p>
 
       <FormCorretor />

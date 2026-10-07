@@ -188,7 +188,7 @@ export function QuizForm() {
 
             {noContato && (
               <BotaoAvancar onClick={enviar} desabilitado={enviando}>
-                {enviando ? 'Enviando...' : 'Quero ver as opcoes'}
+                {enviando ? 'Enviando...' : 'Quero ver as opções'}
               </BotaoAvancar>
             )}
           </div>
@@ -272,8 +272,8 @@ function TelaLocalizacao({
     <div>
       <Titulo
         tema="O lugar"
-        pergunta="Onde voce quer morar?"
-        ajuda="Informe a cidade. O bairro e opcional, mas ajuda a achar o imovel certo."
+        pergunta="Onde você quer morar?"
+        ajuda="Informe a cidade. O bairro é opcional, mas ajuda a achar o imóvel certo."
       />
       <div className="flex flex-col gap-4">
         <Campo
@@ -360,9 +360,9 @@ function TelaContato({
   return (
     <div>
       <Titulo
-        tema="Quase la"
-        pergunta="Para onde mando as opcoes?"
-        ajuda="Vamos falar com voce pelo WhatsApp antes de qualquer visita."
+        tema="Quase lá"
+        pergunta="Para onde mando as opções?"
+        ajuda="Vamos falar com você pelo WhatsApp antes de qualquer visita."
       />
 
       <div className="flex flex-col gap-4">

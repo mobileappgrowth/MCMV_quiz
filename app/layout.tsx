@@ -2,9 +2,9 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Minha Casa Minha Vida - Descubra se voce se enquadra',
+  title: 'Minha Casa Minha Vida - Descubra se você se enquadra',
   description:
-    'Responda poucas perguntas e descubra as opcoes de financiamento com entrada baixa na sua cidade.',
+    'Responda poucas perguntas e descubra as opções de financiamento com entrada baixa na sua cidade.',
 }
 
 export const viewport: Viewport = {
