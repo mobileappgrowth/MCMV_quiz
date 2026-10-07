@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next'
+import { CIDADES_ROTULO } from '@/lib/config'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Minha Casa Minha Vida - Descubra se você se enquadra',
+  title: `Imóveis do Minha Casa Minha Vida em ${CIDADES_ROTULO}`,
   description:
-    'Responda poucas perguntas e descubra as opções de financiamento com entrada baixa na sua cidade.',
+    'Responda poucas perguntas e veja os empreendimentos do programa que combinam com o seu perfil. Um corretor da região entra em contato.',
 }
 
 export const viewport: Viewport = {

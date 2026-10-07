@@ -11,6 +11,19 @@ import { Marca } from '@/components/marca'
 // pronto e a tipografia vem do nosso dominio.
 //
 // O QUE ELA NAO PROMETE, E POR QUE:
+//   enquadramento     -- "Descubra se voce se enquadra e quanto precisa de
+//                        entrada" foi o titulo ate 7 de outubro, e mentia duas
+//                        vezes. O produto nunca diz a pessoa se ela se
+//                        enquadra: pontuacao e enquadramento jamais aparecem
+//                        para o lead, e dizer que alguem se enquadra e
+//                        "pre-aprovado" com outras palavras. E "quanto precisa
+//                        de entrada" e um numero que nao existe -- o
+//                        poder_de_compra e triagem interna, e a especificacao
+//                        proibe exibi-lo.
+//   financiamento     -- a description do <head> dizia "opcoes de
+//                        financiamento". Orientar sobre condicao de
+//                        financiamento e atividade de correspondente bancario,
+//                        que nao somos.
 //   "pre-aprovado"    -- aprovacao e da Caixa. O termo nao aparece em lugar
 //                        nenhum do projeto.
 //   numero de perguntas -- o quiz ramifica, entao o total muda por pessoa.
@@ -25,7 +38,7 @@ import { Marca } from '@/components/marca'
 // ============================================================================
 
 export const metadata = {
-  title: 'Minha Casa Minha Vida - Descubra se você se enquadra',
+  title: `Imóveis do Minha Casa Minha Vida em ${CIDADES_ROTULO}`,
 }
 
 const PASSOS = [
@@ -70,12 +83,13 @@ export default function Home() {
               Minha Casa Minha Vida
             </p>
             <h1 className="text-[34px]/[1.08] font-extrabold tracking-[-0.02em] text-pretty sm:text-[44px]/[1.08]">
-              Descubra se você se enquadra e quanto precisa de entrada.
+              Os imóveis do Minha Casa Minha Vida que cabem no seu bolso em{' '}
+              {CIDADES_ROTULO}.
             </h1>
             <p className="max-w-[520px] text-[17px]/[1.5] text-sobre-marinho-claro text-pretty sm:text-lg/[1.5]">
-              São poucas perguntas, uma por tela. A gente confere tudo com você
-              pelo WhatsApp e mostra opções com entrada baixa em{' '}
-              {CIDADES_ROTULO}.
+              São poucas perguntas, uma por tela. No fim você vê os
+              empreendimentos compatíveis com o que respondeu e escolhe sobre
+              quais quer falar. Um corretor da região entra em contato.
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-4">
               <Link
@@ -149,7 +163,7 @@ export default function Home() {
       <div className="bg-amarelo">
         <div className="mx-auto flex max-w-[1080px] flex-wrap items-center justify-between gap-5 px-5 py-10">
           <p className="text-[24px] font-extrabold text-marinho sm:text-[26px]">
-            Pronto para descobrir?
+            Pronto para ver as opções?
           </p>
           <Link
             href="/quiz"
