@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#e9e8e4;font-family:'Figtree',sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit}a:hover{opacity:.8}*{box-sizing:border-box}</style>
+</helmet>
+<section style="padding:56px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:6px;max-width:900px">
+<div style="font:600 13px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:#6b6a65">Rodada 1 · Direções visuais</div>
+<div style="font:700 34px 'Space Grotesk',sans-serif;color:#1a1a18;letter-spacing:-.02em">Três caminhos para o MCMV: quiz, vitrine e fila</div>
+<div style="font:400 16px/1.5 'Figtree',sans-serif;color:#4a4945;text-wrap:pretty">Mesmo conteúdo real do código, três linguagens. Escolha uma (ou misture: "quiz do 1a, admin do 1c") e eu construo o protótipo clicável completo nela.</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+
+<div id="1a" style="display:flex;flex-direction:column;gap:20px;background:#f6f1e8;padding:32px;border-radius:4px">
+<div style="display:flex;align-items:center;gap:12px"><div style="font:700 13px 'JetBrains Mono',monospace;background:#1a1a18;color:#fff;padding:4px 10px;border-radius:3px">1a</div><div style="font:700 20px 'Bricolage Grotesque',sans-serif;color:#2a1d14">Casa quente</div><div style="font:400 14px 'Figtree';color:#7a6a5c">Creme, terracota, cantos macios. Conversa como gente.</div></div>
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+<div style="width:360px;height:740px;background:#fffaf2;border-radius:28px;box-shadow:0 1px 0 #e6dccb,0 20px 40px -20px rgba(80,40,10,.25);overflow:hidden;display:flex;flex-direction:column;padding:20px 20px 24px;font-family:'Figtree',sans-serif;color:#2a1d14">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><div style="font:800 18px 'Bricolage Grotesque';letter-spacing:-.02em;color:#c4532d">MCMV</div><div style="font:500 13px 'Figtree';color:#8a7a6b">5 de 12</div></div>
+<div style="display:flex;gap:4px;margin-bottom:32px"><div style="flex:5;height:6px;border-radius:3px;background:#c4532d"></div><div style="flex:7;height:6px;border-radius:3px;background:#efe3d2"></div></div>
+<div style="font:700 28px/1.15 'Bricolage Grotesque';letter-spacing:-.02em;margin-bottom:8px;text-wrap:pretty">Qual a renda da família por mês?</div>
+<div style="font:400 16px/1.4 'Figtree';color:#7a6a5c;margin-bottom:24px">Somando todos que vão entrar no financiamento.</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="padding:18px;border-radius:16px;background:#fff;border:1.5px solid #ead9c4;font:500 17px 'Figtree'">Até R$ 2.850</div>
+<div style="padding:18px;border-radius:16px;background:#fbe6db;border:2px solid #c4532d;font:600 17px 'Figtree';display:flex;justify-content:space-between;align-items:center">R$ 2.851 a R$ 4.700<div style="width:22px;height:22px;border-radius:50%;background:#c4532d;color:#fff;font:700 13px 'Figtree';display:flex;align-items:center;justify-content:center">✓</div></div>
+<div style="padding:18px;border-radius:16px;background:#fff;border:1.5px solid #ead9c4;font:500 17px 'Figtree'">R$ 4.701 a R$ 8.600</div>
+<div style="padding:18px;border-radius:16px;background:#fff;border:1.5px solid #ead9c4;font:500 17px 'Figtree'">Acima de R$ 8.600</div>
+</div>
+<div style="flex:1"></div>
+<div style="display:flex;align-items:center;gap:10px;padding:14px;border-radius:14px;background:#f3ebdf;font:400 13px/1.4 'Figtree';color:#7a6a5c;margin-bottom:12px"><div style="width:8px;height:8px;border-radius:50%;background:#5a8a4a;flex-shrink:0"></div>Ninguém vê seus dados antes de você falar com a gente.</div>
+<div style="text-align:center;font:500 15px 'Figtree';color:#8a7a6b;padding:12px">← Voltar</div>
+</div>
+<div style="width:360px;height:740px;background:#fffaf2;border-radius:28px;box-shadow:0 1px 0 #e6dccb,0 20px 40px -20px rgba(80,40,10,.25);overflow:hidden;display:flex;flex-direction:column;font-family:'Figtree',sans-serif;color:#2a1d14">
+<div style="padding:20px;background:#2a1d14;color:#fffaf2;display:flex;justify-content:space-between;align-items:center"><div><div style="font:400 12px 'Figtree';color:#c9b7a3">Seu saldo</div><div style="font:700 24px 'Bricolage Grotesque'">R$ 210,00</div></div><div style="padding:12px 16px;border-radius:12px;background:#c4532d;font:600 14px 'Figtree'">+ Recarregar</div></div>
+<div style="padding:16px 20px 8px;display:flex;gap:8px;overflow:hidden"><div style="padding:9px 14px;border-radius:20px;background:#2a1d14;color:#fff;font:500 13px 'Figtree';white-space:nowrap">Campinas</div><div style="padding:9px 14px;border-radius:20px;border:1.5px solid #ead9c4;font:500 13px 'Figtree';white-space:nowrap">Faixa 2</div><div style="padding:9px 14px;border-radius:20px;border:1.5px solid #ead9c4;font:500 13px 'Figtree';white-space:nowrap">Bairro</div></div>
+<div style="padding:8px 20px 12px;font:600 15px 'Figtree'">8 leads disponíveis</div>
+<div style="margin:0 16px;padding:18px;border-radius:20px;background:#fff;border:1.5px solid #ead9c4;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px"><div><div style="font:700 19px 'Bricolage Grotesque';letter-spacing:-.01em">Jardim Florença</div><div style="font:400 14px 'Figtree';color:#7a6a5c">Campinas · há 14 horas</div></div><div style="padding:5px 10px;border-radius:20px;background:#e5efdf;color:#3d6b2e;font:600 12px 'Figtree';white-space:nowrap">✓ Verificado</div></div>
+<div style="display:flex;flex-wrap:wrap;gap:6px"><div style="padding:6px 10px;border-radius:8px;background:#f6efe4;font:500 13px 'Figtree'">Faixa 2 · R$ 2,8–4,7 mil</div><div style="padding:6px 10px;border-radius:8px;background:#f6efe4;font:500 13px 'Figtree'">Carteira assinada</div><div style="padding:6px 10px;border-radius:8px;background:#f6efe4;font:500 13px 'Figtree'">Nome limpo</div><div style="padding:6px 10px;border-radius:8px;background:#f6efe4;font:500 13px 'Figtree'">2 quartos</div><div style="padding:6px 10px;border-radius:8px;background:#f6efe4;font:500 13px 'Figtree'">FGTS 1–3 anos</div><div style="padding:6px 10px;border-radius:8px;background:#f6efe4;font:500 13px 'Figtree'">Compra em 3 meses</div></div>
+<div style="padding:14px;border-radius:14px;background:repeating-linear-gradient(135deg,#f3ebdf 0 8px,#efe5d6 8px 16px);display:flex;flex-direction:column;gap:8px"><div style="font:500 12px 'Figtree';color:#8a7a6b">Contato liberado após desbloqueio</div><div style="width:130px;height:12px;border-radius:6px;background:#dccdb9"></div><div style="width:170px;height:12px;border-radius:6px;background:#dccdb9"></div></div>
+<div style="padding:16px;border-radius:14px;background:#c4532d;color:#fff;text-align:center;font:700 16px 'Figtree'">Desbloquear por R$ 70,00</div>
+</div>
+<div style="margin:12px 16px 0;padding:18px;border-radius:20px;background:#fff;border:1.5px solid #ead9c4;opacity:.6"><div style="font:700 19px 'Bricolage Grotesque'">Vila Industrial</div><div style="font:400 14px 'Figtree';color:#7a6a5c">Campinas · há 2 dias</div></div>
+</div>
+<div style="width:760px;background:#fffaf2;border-radius:16px;box-shadow:0 1px 0 #e6dccb,0 20px 40px -20px rgba(80,40,10,.25);overflow:hidden;font-family:'Figtree',sans-serif;color:#2a1d14">
+<div style="padding:16px 24px;border-bottom:1.5px solid #efe3d2;display:flex;align-items:center;gap:24px"><div style="font:800 18px 'Bricolage Grotesque';color:#c4532d">MCMV <span style="color:#8a7a6b;font-weight:500">admin</span></div><div style="font:600 14px 'Figtree';padding:8px 12px;border-radius:10px;background:#f3ebdf">Fila · 12</div><div style="font:500 14px 'Figtree';color:#8a7a6b">Corretores</div></div>
+<div style="padding:24px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font:700 26px 'Bricolage Grotesque';letter-spacing:-.02em">12 leads para ligar</div><div style="font:400 13px 'Figtree';color:#8a7a6b">R$ 70 até 72h · R$ 45 depois</div></div>
+<div style="padding:20px;border-radius:18px;background:#fff;border:1.5px solid #ead9c4;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:16px"><div><div style="font:700 20px 'Bricolage Grotesque'">Maria Aparecida Souza</div><div style="font:400 14px 'Figtree';color:#7a6a5c">Jardim Florença, Campinas · há 6 horas</div></div><div style="padding:12px 16px;border-radius:12px;background:#e5efdf;color:#3d6b2e;font:600 15px 'Figtree'">WhatsApp (19) 98765-4321</div></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">Renda</div><div style="font:600 13px 'Figtree'">R$ 2.851–4.700</div></div>
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">Vínculo</div><div style="font:600 13px 'Figtree'">Carteira</div></div>
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">Nome</div><div style="font:600 13px 'Figtree'">Limpo</div></div>
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">FGTS</div><div style="font:600 13px 'Figtree'">1 a 3 anos</div></div>
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">Quartos</div><div style="font:600 13px 'Figtree'">2</div></div>
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">Entrada</div><div style="font:600 13px 'Figtree'">R$ 5–15 mil</div></div>
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">Prazo</div><div style="font:600 13px 'Figtree'">3 meses</div></div>
+<div style="padding:10px;border-radius:10px;background:#f6efe4"><div style="font:400 11px 'Figtree';color:#8a7a6b">Já financiou</div><div style="font:600 13px 'Figtree'">Não</div></div>
+</div>
+<div style="padding:12px 14px;border-radius:12px;border:1.5px solid #ead9c4;font:400 14px 'Figtree';color:#a8998a">O que ela disse na ligação…</div>
+<div style="display:flex;gap:8px"><div style="flex:1;padding:14px;border-radius:12px;background:#3d6b2e;color:#fff;text-align:center;font:700 15px 'Figtree'">Verificado · R$ 70,00</div><div style="padding:14px 18px;border-radius:12px;border:1.5px solid #ead9c4;font:500 15px 'Figtree'">Salvar nota</div><div style="padding:14px 18px;border-radius:12px;color:#b03a2e;font:500 15px 'Figtree'">Descartar</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="1b" style="display:flex;flex-direction:column;gap:20px;background:#eef1f5;padding:32px;border-radius:4px">
+<div style="display:flex;align-items:center;gap:12px"><div style="font:700 13px 'JetBrains Mono',monospace;background:#1a1a18;color:#fff;padding:4px 10px;border-radius:3px">1b</div><div style="font:800 20px 'Public Sans',sans-serif;color:#0f2340">Chave na mão</div><div style="font:400 14px 'Public Sans';color:#5a6b80">Azul-marinho e amarelo. Claro, confiável, sem frescura.</div></div>
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+<div style="width:360px;height:740px;background:#fff;border-radius:28px;box-shadow:0 20px 40px -20px rgba(15,35,64,.3);overflow:hidden;display:flex;flex-direction:column;font-family:'Public Sans',sans-serif;color:#0f2340">
+<div style="background:#0f2340;color:#fff;padding:20px 20px 28px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><div style="display:flex;align-items:center;gap:8px"><div style="width:22px;height:22px;background:#ffc93c;transform:rotate(45deg);border-radius:3px"></div><div style="font:800 17px 'Public Sans';letter-spacing:.02em">MCMV</div></div><div style="font:600 13px 'Public Sans';color:#ffc93c">5/12</div></div>
+<div style="height:8px;background:#28406a;border-radius:4px"><div style="width:42%;height:8px;background:#ffc93c;border-radius:4px"></div></div>
+</div>
+<div style="padding:24px 20px;display:flex;flex-direction:column;flex:1">
+<div style="font:600 13px 'Public Sans';color:#2f6fd6;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Sua renda</div>
+<div style="font:800 26px/1.2 'Public Sans';letter-spacing:-.01em;margin-bottom:8px;text-wrap:pretty">Qual a renda da família por mês?</div>
+<div style="font:400 16px/1.45 'Public Sans';color:#5a6b80;margin-bottom:22px">Somando todos que vão entrar no financiamento.</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div style="padding:17px 16px;border-radius:8px;border:2px solid #d6dde8;font:600 17px 'Public Sans';display:flex;align-items:center;gap:12px"><div style="width:20px;height:20px;border-radius:50%;border:2px solid #b5c0d0"></div>Até R$ 2.850</div>
+<div style="padding:17px 16px;border-radius:8px;border:2px solid #0f2340;background:#fff6dc;font:700 17px 'Public Sans';display:flex;align-items:center;gap:12px"><div style="width:20px;height:20px;border-radius:50%;border:6px solid #0f2340"></div>R$ 2.851 a R$ 4.700</div>
+<div style="padding:17px 16px;border-radius:8px;border:2px solid #d6dde8;font:600 17px 'Public Sans';display:flex;align-items:center;gap:12px"><div style="width:20px;height:20px;border-radius:50%;border:2px solid #b5c0d0"></div>R$ 4.701 a R$ 8.600</div>
+<div style="padding:17px 16px;border-radius:8px;border:2px solid #d6dde8;font:600 17px 'Public Sans';display:flex;align-items:center;gap:12px"><div style="width:20px;height:20px;border-radius:50%;border:2px solid #b5c0d0"></div>Acima de R$ 8.600</div>
+</div>
+<div style="flex:1"></div>
+<div style="display:flex;gap:10px"><div style="padding:16px 18px;border-radius:8px;border:2px solid #d6dde8;font:600 16px 'Public Sans'">Voltar</div><div style="flex:1;padding:16px;border-radius:8px;background:#ffc93c;text-align:center;font:800 16px 'Public Sans'">Continuar</div></div>
+</div>
+</div>
+<div style="width:360px;height:740px;background:#f4f6f9;border-radius:28px;box-shadow:0 20px 40px -20px rgba(15,35,64,.3);overflow:hidden;display:flex;flex-direction:column;font-family:'Public Sans',sans-serif;color:#0f2340">
+<div style="background:#0f2340;color:#fff;padding:20px;display:flex;justify-content:space-between;align-items:center"><div><div style="font:500 12px 'Public Sans';color:#9fb0c8">Saldo</div><div style="font:800 24px 'Public Sans'">R$ 210,00</div><div style="font:500 12px 'Public Sans';color:#ffc93c">dá para 3 leads</div></div><div style="padding:12px 16px;border-radius:8px;background:#ffc93c;color:#0f2340;font:800 14px 'Public Sans'">Recarregar</div></div>
+<div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#fff;border-bottom:1px solid #dfe5ee"><div style="padding:11px 12px;border-radius:6px;border:1.5px solid #d6dde8;font:600 13px 'Public Sans'">Campinas ▾</div><div style="padding:11px 12px;border-radius:6px;border:1.5px solid #d6dde8;font:600 13px 'Public Sans'">Faixa 2 ▾</div></div>
+<div style="padding:14px 16px 10px;font:700 14px 'Public Sans';color:#5a6b80">8 LEADS DISPONÍVEIS</div>
+<div style="margin:0 12px;background:#fff;border-radius:10px;border:1px solid #dfe5ee;overflow:hidden">
+<div style="padding:16px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #eef1f5"><div><div style="font:800 18px 'Public Sans'">Jardim Florença</div><div style="font:500 13px 'Public Sans';color:#5a6b80">Campinas</div></div><div style="text-align:right"><div style="display:inline-block;padding:4px 8px;border-radius:4px;background:#ffc93c;font:800 11px 'Public Sans';letter-spacing:.04em">FRESCO · 14H</div><div style="font:600 12px 'Public Sans';color:#1f8a4c;margin-top:4px">✓ Verificado por ligação</div></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #eef1f5">
+<div style="padding:12px 16px;border-right:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Renda</div><div style="font:700 14px 'Public Sans'">Faixa 2</div></div>
+<div style="padding:12px 16px;border-right:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Nome</div><div style="font:700 14px 'Public Sans'">Limpo</div></div>
+<div style="padding:12px 16px"><div style="font:500 11px 'Public Sans';color:#5a6b80">FGTS</div><div style="font:700 14px 'Public Sans'">1–3 anos</div></div>
+<div style="padding:12px 16px;border-right:1px solid #eef1f5;border-top:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Vínculo</div><div style="font:700 14px 'Public Sans'">Carteira</div></div>
+<div style="padding:12px 16px;border-right:1px solid #eef1f5;border-top:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Quartos</div><div style="font:700 14px 'Public Sans'">2</div></div>
+<div style="padding:12px 16px;border-top:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Prazo</div><div style="font:700 14px 'Public Sans'">3 meses</div></div>
+</div>
+<div style="padding:14px 16px;display:flex;align-items:center;gap:12px;background:#f4f6f9"><div style="width:36px;height:36px;border-radius:50%;background:#dfe5ee"></div><div style="display:flex;flex-direction:column;gap:6px"><div style="width:120px;height:10px;background:#d6dde8;border-radius:2px"></div><div style="width:150px;height:10px;background:#d6dde8;border-radius:2px"></div></div></div>
+<div style="padding:12px"><div style="padding:15px;border-radius:8px;background:#0f2340;color:#fff;text-align:center;font:800 16px 'Public Sans'">Desbloquear · R$ 70,00</div></div>
+</div>
+<div style="margin:10px 12px 0;padding:16px;background:#fff;border-radius:10px;border:1px solid #dfe5ee;display:flex;justify-content:space-between"><div style="font:800 18px 'Public Sans'">Vila Industrial</div><div style="font:600 12px 'Public Sans';color:#5a6b80">2 dias · R$ 45</div></div>
+</div>
+<div style="width:760px;background:#fff;border-radius:10px;box-shadow:0 20px 40px -20px rgba(15,35,64,.3);overflow:hidden;font-family:'Public Sans',sans-serif;color:#0f2340;display:grid;grid-template-columns:200px 1fr">
+<div style="background:#0f2340;color:#fff;padding:20px 16px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:18px"><div style="width:18px;height:18px;background:#ffc93c;transform:rotate(45deg);border-radius:2px"></div><div style="font:800 15px 'Public Sans'">MCMV Admin</div></div><div style="padding:10px 12px;border-radius:6px;background:#28406a;font:700 14px 'Public Sans';display:flex;justify-content:space-between">Fila<span style="background:#ffc93c;color:#0f2340;padding:0 7px;border-radius:10px;font-size:12px">12</span></div><div style="padding:10px 12px;font:500 14px 'Public Sans';color:#9fb0c8">Corretores</div><div style="padding:10px 12px;font:500 14px 'Public Sans';color:#9fb0c8">Recargas</div></div>
+<div style="padding:24px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:center"><div style="font:800 22px 'Public Sans'">Fila de verificação</div><div style="font:500 13px 'Public Sans';color:#5a6b80">mais antigo primeiro</div></div>
+<div style="border:1px solid #dfe5ee;border-radius:8px;overflow:hidden">
+<div style="padding:16px;display:flex;justify-content:space-between;align-items:center;background:#fff6dc;border-bottom:1px solid #f0e2b5"><div><div style="font:800 18px 'Public Sans'">Maria Aparecida Souza</div><div style="font:500 13px 'Public Sans';color:#5a6b80">Jardim Florença, Campinas · há 6h</div></div><div style="padding:10px 14px;border-radius:6px;background:#1f8a4c;color:#fff;font:700 14px 'Public Sans';white-space:nowrap;flex-shrink:0">(19) 98765-4321</div></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr))">
+<div style="padding:10px 16px;border-bottom:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Renda</div><div style="font:700 13px 'Public Sans';white-space:nowrap">2.851–4.700</div></div>
+<div style="padding:10px 16px;border-bottom:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Vínculo</div><div style="font:700 13px 'Public Sans'">Carteira</div></div>
+<div style="padding:10px 16px;border-bottom:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">Nome</div><div style="font:700 13px 'Public Sans'">Limpo</div></div>
+<div style="padding:10px 16px;border-bottom:1px solid #eef1f5"><div style="font:500 11px 'Public Sans';color:#5a6b80">FGTS</div><div style="font:700 13px 'Public Sans'">1 a 3 anos</div></div>
+<div style="padding:10px 16px"><div style="font:500 11px 'Public Sans';color:#5a6b80">Quartos</div><div style="font:700 13px 'Public Sans'">2 · garagem</div></div>
+<div style="padding:10px 16px"><div style="font:500 11px 'Public Sans';color:#5a6b80">Entrada</div><div style="font:700 13px 'Public Sans'">R$ 5–15 mil</div></div>
+<div style="padding:10px 16px"><div style="font:500 11px 'Public Sans';color:#5a6b80">Prazo</div><div style="font:700 13px 'Public Sans'">3 meses</div></div>
+<div style="padding:10px 16px"><div style="font:500 11px 'Public Sans';color:#5a6b80">Já financiou</div><div style="font:700 13px 'Public Sans'">Não</div></div>
+</div>
+<div style="padding:12px 16px;border-top:1px solid #eef1f5;display:flex;gap:8px;align-items:center"><div style="flex:1;padding:11px 12px;border-radius:6px;border:1.5px solid #d6dde8;font:400 14px 'Public Sans';color:#9aa7b8">Notas da ligação…</div><div style="padding:11px 16px;border-radius:6px;background:#1f8a4c;color:#fff;font:800 14px 'Public Sans'">Verificar · R$ 70</div><div style="padding:11px 14px;border-radius:6px;border:1.5px solid #e4b4ae;color:#b03a2e;font:700 14px 'Public Sans'">Descartar</div></div>
+</div>
+<div style="border:1px solid #dfe5ee;border-radius:8px;padding:14px 16px;display:flex;justify-content:space-between;color:#5a6b80;font:600 14px 'Public Sans'"><span style="color:#0f2340">José Carlos Lima</span><span>Sumaré · 9h</span></div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="1c" style="display:flex;flex-direction:column;gap:20px;background:#111110;padding:32px;border-radius:4px">
+<div style="display:flex;align-items:center;gap:12px"><div style="font:700 13px 'JetBrains Mono',monospace;background:#d4f25c;color:#111;padding:4px 10px;border-radius:3px">1c</div><div style="font:700 20px 'Space Grotesk',sans-serif;color:#fff">Mercado claro</div><div style="font:400 14px 'Space Grotesk';color:#8f8e88">Quiz claro e amigável; painel e admin escuros, com cara de terminal de mercado.</div></div>
+<div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+<div style="width:360px;height:740px;background:#fbfbf8;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;padding:22px 20px 24px;font-family:'Space Grotesk',sans-serif;color:#111110">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:28px"><div style="font:700 17px 'Space Grotesk';letter-spacing:-.02em">MCMV<span style="color:#7aa317">.</span></div><div style="font:500 12px 'JetBrains Mono';color:#6b6a65">05 / 12</div></div>
+<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;margin-bottom:36px"><div style="height:4px;background:#111"></div><div style="height:4px;background:#111"></div><div style="height:4px;background:#111"></div><div style="height:4px;background:#111"></div><div style="height:4px;background:#111"></div><div style="height:4px;background:#e2e1dc"></div><div style="height:4px;background:#e2e1dc"></div><div style="height:4px;background:#e2e1dc"></div><div style="height:4px;background:#e2e1dc"></div><div style="height:4px;background:#e2e1dc"></div><div style="height:4px;background:#e2e1dc"></div><div style="height:4px;background:#e2e1dc"></div></div>
+<div style="font:600 32px/1.08 'Space Grotesk';letter-spacing:-.035em;margin-bottom:10px;text-wrap:pretty">Qual a renda da família por mês?</div>
+<div style="font:400 16px/1.45 'Space Grotesk';color:#6b6a65;margin-bottom:26px">Somando todos que vão entrar no financiamento.</div>
+<div style="display:flex;flex-direction:column;border-top:1.5px solid #111">
+<div style="padding:19px 4px;border-bottom:1px solid #e2e1dc;font:500 18px 'Space Grotesk';display:flex;justify-content:space-between">Até R$ 2.850<span style="color:#b5b4ae">→</span></div>
+<div style="padding:19px 12px;margin:0 -8px;background:#d4f25c;border-bottom:1px solid #111;font:600 18px 'Space Grotesk';display:flex;justify-content:space-between">R$ 2.851 a R$ 4.700<span>●</span></div>
+<div style="padding:19px 4px;border-bottom:1px solid #e2e1dc;font:500 18px 'Space Grotesk';display:flex;justify-content:space-between">R$ 4.701 a R$ 8.600<span style="color:#b5b4ae">→</span></div>
+<div style="padding:19px 4px;border-bottom:1px solid #e2e1dc;font:500 18px 'Space Grotesk';display:flex;justify-content:space-between">Acima de R$ 8.600<span style="color:#b5b4ae">→</span></div>
+</div>
+<div style="flex:1"></div>
+<div style="font:500 14px 'Space Grotesk';color:#6b6a65;padding:12px 0">← Voltar</div>
+</div>
+<div style="width:360px;height:740px;background:#1a1a18;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;font-family:'Space Grotesk',sans-serif;color:#f2f1ec;border:1px solid #2a2a27">
+<div style="padding:20px;display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #2a2a27"><div><div style="font:500 11px 'JetBrains Mono';color:#8f8e88;letter-spacing:.06em">SALDO</div><div style="font:600 28px 'Space Grotesk';letter-spacing:-.02em">R$ 210<span style="color:#8f8e88">,00</span></div></div><div style="padding:11px 14px;border-radius:6px;background:#d4f25c;color:#111;font:700 14px 'Space Grotesk'">Recarregar</div></div>
+<div style="padding:12px 20px;display:flex;gap:16px;font:500 12px 'JetBrains Mono';color:#8f8e88;border-bottom:1px solid #2a2a27"><span style="color:#d4f25c">CAMPINAS ×</span><span>FAIXA 2 ×</span><span>+ FILTRO</span></div>
+<div style="padding:14px 20px 10px;display:flex;justify-content:space-between;font:500 12px 'JetBrains Mono';color:#8f8e88"><span>8 DISPONÍVEIS</span><span>MAIS NOVOS ↓</span></div>
+<div style="margin:0 12px;padding:16px;border-radius:10px;background:#222220;border:1px solid #333330;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font:600 20px 'Space Grotesk';letter-spacing:-.02em">Jardim Florença</div><div style="font:400 13px 'Space Grotesk';color:#8f8e88">Campinas · SP</div></div><div style="text-align:right"><div style="font:600 22px 'JetBrains Mono';color:#d4f25c">14h</div><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">DESDE CAPTAÇÃO</div></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#333330;border-radius:6px;overflow:hidden">
+<div style="padding:10px;background:#222220"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">RENDA</div><div style="font:500 14px 'Space Grotesk'">Faixa 2 · 2,8–4,7k</div></div>
+<div style="padding:10px;background:#222220"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">NOME</div><div style="font:500 14px 'Space Grotesk';color:#d4f25c">Limpo</div></div>
+<div style="padding:10px;background:#222220"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">VÍNCULO</div><div style="font:500 14px 'Space Grotesk'">Carteira</div></div>
+<div style="padding:10px;background:#222220"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">FGTS</div><div style="font:500 14px 'Space Grotesk'">1–3 anos</div></div>
+<div style="padding:10px;background:#222220"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">QUARTOS</div><div style="font:500 14px 'Space Grotesk'">2</div></div>
+<div style="padding:10px;background:#222220"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">PRAZO</div><div style="font:500 14px 'Space Grotesk'">3 meses</div></div>
+</div>
+<div style="padding:12px;border-radius:6px;border:1px dashed #44443f;display:flex;justify-content:space-between;align-items:center"><div style="display:flex;flex-direction:column;gap:6px"><div style="width:110px;height:9px;background:#333330;border-radius:2px"></div><div style="width:140px;height:9px;background:#333330;border-radius:2px"></div></div><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">✓ VERIFICADO</div></div>
+<div style="padding:15px;border-radius:6px;background:#f2f1ec;color:#111;display:flex;justify-content:space-between;font:700 15px 'Space Grotesk'"><span>Desbloquear</span><span style="font-family:'JetBrains Mono'">R$ 70,00</span></div>
+</div>
+<div style="margin:10px 12px 0;padding:14px 16px;border-radius:10px;border:1px solid #2a2a27;display:flex;justify-content:space-between;font:500 15px 'Space Grotesk'"><span>Vila Industrial</span><span style="font-family:'JetBrains Mono';color:#8f8e88;font-size:13px">2d · R$ 45</span></div>
+</div>
+<div style="width:760px;background:#1a1a18;border-radius:10px;overflow:hidden;font-family:'Space Grotesk',sans-serif;color:#f2f1ec;border:1px solid #2a2a27">
+<div style="padding:14px 20px;border-bottom:1px solid #2a2a27;display:flex;align-items:center;gap:20px;font:500 13px 'JetBrains Mono'"><span style="font:700 15px 'Space Grotesk'">MCMV<span style="color:#d4f25c">.</span>admin</span><span style="color:#d4f25c">FILA [12]</span><span style="color:#8f8e88">CORRETORES [7]</span><span style="color:#8f8e88">RECARGAS [2]</span></div>
+<div style="display:grid;grid-template-columns:240px 1fr;min-height:400px">
+<div style="border-right:1px solid #2a2a27;display:flex;flex-direction:column">
+<div style="padding:12px 16px;background:#222220;border-left:3px solid #d4f25c"><div style="font:600 14px 'Space Grotesk'">Maria Aparecida S.</div><div style="font:400 11px 'JetBrains Mono';color:#8f8e88">CAMPINAS · 6H · R$70</div></div>
+<div style="padding:12px 16px;border-bottom:1px solid #2a2a27"><div style="font:500 14px 'Space Grotesk';color:#c8c7c1">José Carlos Lima</div><div style="font:400 11px 'JetBrains Mono';color:#8f8e88">SUMARÉ · 9H · R$70</div></div>
+<div style="padding:12px 16px;border-bottom:1px solid #2a2a27"><div style="font:500 14px 'Space Grotesk';color:#c8c7c1">Ana Paula Ribeiro</div><div style="font:400 11px 'JetBrains Mono';color:#8f8e88">HORTOLÂNDIA · 1D · R$70</div></div>
+<div style="padding:12px 16px;border-bottom:1px solid #2a2a27"><div style="font:500 14px 'Space Grotesk';color:#c8c7c1">Rogério Santos</div><div style="font:400 11px 'JetBrains Mono';color:#e8a04a">CAMPINAS · 3D · R$45</div></div>
+</div>
+<div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font:600 24px 'Space Grotesk';letter-spacing:-.02em">Maria Aparecida Souza</div><div style="font:400 13px 'Space Grotesk';color:#8f8e88">Jardim Florença, Campinas</div></div><div style="padding:10px 14px;border-radius:6px;border:1px solid #d4f25c;color:#d4f25c;font:500 14px 'JetBrains Mono'">(19) 98765-4321 ↗</div></div>
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:#333330;border-radius:6px;overflow:hidden">
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">RENDA</div><div style="font:500 13px 'Space Grotesk'">2.851–4.700</div></div>
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">ENQUADR.</div><div style="font:500 13px 'Space Grotesk'">Faixa 2</div></div>
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">NOME</div><div style="font:500 13px 'Space Grotesk'">Limpo</div></div>
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">FGTS</div><div style="font:500 13px 'Space Grotesk'">1–3 anos</div></div>
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">VÍNCULO</div><div style="font:500 13px 'Space Grotesk'">Carteira</div></div>
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">ENTRADA</div><div style="font:500 13px 'Space Grotesk'">5–15 mil</div></div>
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">PRAZO</div><div style="font:500 13px 'Space Grotesk'">3 meses</div></div>
+<div style="padding:10px;background:#1a1a18"><div style="font:500 10px 'JetBrains Mono';color:#8f8e88">QUARTOS</div><div style="font:500 13px 'Space Grotesk'">2 + garagem</div></div>
+</div>
+<div style="padding:12px;border-radius:6px;border:1px solid #333330;font:400 13px 'JetBrains Mono';color:#6b6a65;height:64px">notas da ligação_</div>
+<div style="display:flex;gap:8px"><div style="flex:1;padding:13px;border-radius:6px;background:#d4f25c;color:#111;display:flex;justify-content:space-between;font:700 14px 'Space Grotesk'"><span>Verificado</span><span style="font-family:'JetBrains Mono'">R$ 70 · ⏎</span></div><div style="padding:13px 16px;border-radius:6px;border:1px solid #333330;font:500 14px 'Space Grotesk'">Descartar <span style="font-family:'JetBrains Mono';color:#8f8e88">D</span></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</section>
+</x-dc>
+</body>
+</html>
