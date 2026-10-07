@@ -14,6 +14,8 @@ import { Marca } from '@/components/marca'
 
 const ITENS = [
   { href: '/admin', rotulo: 'Fila', exato: true },
+  // O arquivo: todos os leads, em qualquer estado, com contato.
+  { href: '/admin/leads', rotulo: 'Leads' },
   { href: '/admin/empreendimentos', rotulo: 'Empreendimentos' },
   { href: '/admin/corretores', rotulo: 'Corretores' },
   { href: '/admin/recargas', rotulo: 'Recargas' },

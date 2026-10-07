@@ -75,6 +75,15 @@ interesse. As acoes que movem dinheiro seguem exigindo corretor cadastrado, no
 servidor. Nome e telefone continuam fora da consulta para todo mundo, admin
 incluido -- quem precisa do telefone e a fila do /admin.
 
+**O admin tem uma tela de leads alem da fila** (`/admin/leads`), a pedido do
+Albert, 7 de outubro. A fila mostra so `status = novo`; depois de aprovar ou
+descartar, o lead sumia da vista para sempre. A tela nova e o arquivo: todos os
+leads em qualquer estado, com nome, telefone, o que a pessoa respondeu, o selo
+declarado e o verificado, e o motivo do descarte. Permite devolver um
+descartado para a fila -- o motor descarta sozinho, e se um parametro estiver
+mal calibrado esse botao e o resgate. Verificado nao volta: a aprovacao ja
+subiu o preco de todos os interesses do lead.
+
 ---
 ## Contexto
 

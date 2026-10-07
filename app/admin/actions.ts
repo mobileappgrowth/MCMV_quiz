@@ -142,6 +142,43 @@ export async function descartarLead(leadId: string): Promise<Resultado> {
   return { ok: true }
 }
 
+/**
+ * Devolve um lead descartado para a fila.
+ *
+ * Existe porque o motor descarta SOZINHO, antes de voce ver qualquer coisa:
+ * cidade fora da area, renda abaixo do minimo, capacidade abaixo do corte. Se
+ * um parametro estiver mal calibrado, ele mata lead bom que voce pagou anuncio
+ * para trazer -- e sem isto aqui nao haveria como resgatar.
+ *
+ * So aceita `descartado`. Verificado nao volta: a aprovacao ja subiu o preco
+ * de todos os interesses do lead, e desfazer isso depois de um corretor ter
+ * visto o preco novo seria mexer no que ja esta a venda.
+ */
+export async function devolverParaFila(leadId: string): Promise<Resultado> {
+  await exigirAdmin()
+
+  const { error, count } = await supabaseAdmin()
+    .from('leads')
+    .update(
+      { status: 'novo', motivo_descarte: null },
+      { count: 'exact' }
+    )
+    .eq('id', leadId)
+    .eq('status', 'descartado')
+
+  if (error) {
+    console.error('[devolverParaFila]', error)
+    return { ok: false, erro: 'Falha ao devolver o lead para a fila.' }
+  }
+  if (count === 0) {
+    return { ok: false, erro: 'So lead descartado volta para a fila.' }
+  }
+
+  revalidatePath('/admin')
+  revalidatePath('/admin/leads')
+  return { ok: true }
+}
+
 export async function salvarNota(leadId: string, nota: string): Promise<Resultado> {
   await exigirAdmin()
 
@@ -156,6 +193,7 @@ export async function salvarNota(leadId: string, nota: string): Promise<Resultad
   }
 
   revalidatePath('/admin')
+  revalidatePath('/admin/leads')
   return { ok: true }
 }
 
