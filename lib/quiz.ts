@@ -28,7 +28,8 @@ export type PassoOpcoes = {
   tema: string
   pergunta: string
   ajuda?: string
-  opcoes: { valor: string; rotulo: string }[]
+  /** `curto` e usado no cartao da vitrine, onde o rotulo inteiro nao cabe. */
+  opcoes: { valor: string; rotulo: string; curto?: string }[]
   /**
    * Resposta -> linha tranquilizadora. Quando a resposta escolhida tem nota, a
    * tela NAO avanca sozinha: mostra a nota e um botao de continuar. E o unico
@@ -70,11 +71,11 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
     tema: 'Seu prazo',
     pergunta: 'Quando pretende comprar?',
     opcoes: [
-      { valor: 'imediato', rotulo: 'O quanto antes' },
-      { valor: 'ate_3_meses', rotulo: 'Nos proximos 3 meses' },
-      { valor: 'ate_6_meses', rotulo: 'Em até 6 meses' },
-      { valor: 'ate_1_ano', rotulo: 'Em até 1 ano' },
-      { valor: 'pesquisando', rotulo: 'So pesquisando por enquanto' },
+      { valor: 'imediato', rotulo: 'O quanto antes', curto: 'O quanto antes' },
+      { valor: 'ate_3_meses', rotulo: 'Nos proximos 3 meses', curto: 'Ate 3 meses' },
+      { valor: 'ate_6_meses', rotulo: 'Em até 6 meses', curto: 'Ate 6 meses' },
+      { valor: 'ate_1_ano', rotulo: 'Em até 1 ano', curto: 'Ate 1 ano' },
+      { valor: 'pesquisando', rotulo: 'So pesquisando por enquanto', curto: 'Pesquisando' },
     ],
   },
   {
@@ -201,6 +202,18 @@ export function rotuloDe(campo: string, valor: string | null): string {
   if (valor === null) return '-'
   const passo = PASSOS_OPCOES.find((p) => p.campo === campo)
   return passo?.opcoes.find((o) => o.valor === valor)?.rotulo ?? valor
+}
+
+/**
+ * Como rotuloDe, mas prefere a forma curta quando existe. E o que o cartao da
+ * vitrine usa: "Ate 3 meses" cabe numa celula de grade, "Nos proximos 3 meses"
+ * vira tres linhas e estica o cartao inteiro.
+ */
+export function rotuloCurto(campo: string, valor: string | null): string {
+  if (valor === null) return '-'
+  const passo = PASSOS_OPCOES.find((p) => p.campo === campo)
+  const opcao = passo?.opcoes.find((o) => o.valor === valor)
+  return opcao?.curto ?? opcao?.rotulo ?? valor
 }
 
 /** Rotulo para colunas booleanas, ja traduzidas pelo banco. */

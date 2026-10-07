@@ -11,6 +11,9 @@ import { salvarFeedback } from '../acoes'
 // resposta: um padrao pre-marcado viraria ruido no dado, e o dado aqui e o que
 // diz se o motor esta calibrado -- depois de 50 leads, cruzar o selo com
 // agendou_visita mostra se os pesos estao certos.
+//
+// O telefone em fonte monoespacada de proposito: numero para ler e digitar,
+// nao texto. Com Public Sans, 1 e l confundem na pressa.
 // ============================================================================
 
 const PERGUNTAS = [
@@ -70,37 +73,70 @@ export function LinhaMeuLead({
   }
 
   return (
-    <article className="border border-gray-400 p-4">
-      <p className="text-xs text-gray-600">
-        {empreendimento ?? 'Busca aberta'} · {reais(precoPago)} ·{' '}
-        {diasDesdeCaptacao} {diasDesdeCaptacao === 1 ? 'dia' : 'dias'} de captado
+    <article className="overflow-hidden rounded-[10px] border border-linha bg-white">
+      <p className="flex flex-wrap justify-between gap-2 bg-verde-tenue px-5 py-2.5 text-[13px] font-bold text-verde-texto">
+        <span>{empreendimento ?? 'Busca aberta'}</span>
+        <span className="font-medium">
+          {reais(precoPago)} · captado ha {diasDesdeCaptacao}{' '}
+          {diasDesdeCaptacao === 1 ? 'dia' : 'dias'}
+        </span>
       </p>
-      <h2 className="mt-1 font-bold">{nome}</h2>
-      <p className="text-lg">{telefone}</p>
-      <p className="mb-3 text-sm text-gray-600">{local}</p>
 
-      <a
-        href={`https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`}
-        target="_blank"
-        rel="noopener"
-        className="mb-4 block bg-green-700 p-4 text-center font-medium text-white"
-      >
-        Abrir no WhatsApp
-      </a>
+      <div className="flex flex-col gap-4 p-5">
+        <div>
+          <h2 className="text-[24px] font-extrabold tracking-[-0.01em]">
+            {nome}
+          </h2>
+          <p className="text-sm font-medium text-apagado">{local}</p>
+        </div>
 
+        <p className="font-mono text-[22px] font-semibold tracking-[-0.01em]">
+          {telefone}
+        </p>
+
+        <div className="flex flex-wrap gap-2.5">
+          <a
+            href={`https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`}
+            target="_blank"
+            rel="noopener"
+            className="flex-[2_1_220px] rounded-lg bg-verde p-4 text-center font-extrabold text-white hover:bg-verde-hover"
+          >
+            Chamar no WhatsApp
+          </a>
+          <a
+            href={`tel:${telefone}`}
+            className="flex-[1_1_120px] rounded-lg border-2 border-campo p-4 text-center font-extrabold hover:border-sobre-marinho"
+          >
+            Ligar
+          </a>
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* RETORNO                                                            */}
+      {/* ------------------------------------------------------------------ */}
       {enviado ? (
-        <p className="border-t border-gray-200 pt-3 text-sm text-green-700">
+        <p className="border-t border-divisor px-5 py-4 text-sm font-semibold text-verde">
           Retorno registrado. Obrigado -- e com isso que eu calibro a
           verificacao.
         </p>
       ) : (
-        <div className="border-t border-gray-200 pt-3">
-          <p className="mb-2 text-sm font-medium">Como foi?</p>
-          <div className="mb-3 flex flex-col gap-2">
+        <div className="flex flex-col gap-3 border-t border-divisor p-5">
+          <div>
+            <p className="text-[17px] font-extrabold">Como foi o contato?</p>
+            <p className="text-sm text-apagado">
+              Seu retorno ajuda a melhorar a verificacao do proximo.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-2">
             {PERGUNTAS.map((p) => (
-              <div key={p.campo} className="flex items-center justify-between gap-2">
-                <span className="text-sm">{p.rotulo}</span>
-                <div className="flex gap-1">
+              <div
+                key={p.campo}
+                className="flex items-center justify-between gap-2"
+              >
+                <span className="text-sm font-medium">{p.rotulo}</span>
+                <div className="flex gap-1.5">
                   {[true, false].map((v) => (
                     <button
                       key={String(v)}
@@ -111,10 +147,11 @@ export function LinhaMeuLead({
                           [p.campo]: r[p.campo] === v ? null : v,
                         }))
                       }
-                      className={`border px-4 py-2 text-sm ${
+                      aria-pressed={respostas[p.campo] === v}
+                      className={`rounded-lg px-4 py-2.5 text-sm ${
                         respostas[p.campo] === v
-                          ? 'border-gray-800 bg-gray-800 text-white'
-                          : 'border-gray-400'
+                          ? 'bg-marinho font-bold text-white'
+                          : 'border-2 border-campo font-semibold hover:border-sobre-marinho'
                       }`}
                     >
                       {v ? 'Sim' : 'Nao'}
@@ -130,20 +167,23 @@ export function LinhaMeuLead({
             onChange={(e) => setComentario(e.target.value)}
             rows={2}
             placeholder="Comentario (opcional)"
-            className="mb-3 w-full border border-gray-400 p-2 text-sm"
+            className="w-full resize-y rounded-lg border-2 border-campo p-3 text-sm outline-none focus:border-marinho"
           />
 
           <button
             type="button"
             onClick={enviar}
             disabled={ocupado}
-            className="w-full border border-gray-700 p-3 text-sm font-medium disabled:opacity-50"
+            className="rounded-lg border-2 border-campo p-3.5 text-sm font-bold hover:border-sobre-marinho disabled:opacity-50"
           >
             {ocupado ? 'Enviando...' : 'Enviar retorno'}
           </button>
 
           {erro && (
-            <p role="alert" className="mt-2 text-sm text-red-700">
+            <p
+              role="alert"
+              className="rounded-lg bg-vermelho-tenue px-3.5 py-3 text-sm font-semibold text-vermelho"
+            >
               {erro}
             </p>
           )}

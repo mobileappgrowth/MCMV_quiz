@@ -1,54 +1,92 @@
 import Link from 'next/link'
 import { exigirCorretor } from '@/lib/auth'
-import { PIX } from '@/lib/config'
+import { PIX, PRECOS } from '@/lib/config'
 import { reais } from '@/lib/preco'
+import { BarraPainel } from '../barra'
 
 // Recarga e PIX manual, aprovada no admin. Sem gateway de pagamento.
 export const dynamic = 'force-dynamic'
+
+const PASSOS = [
+  'Faca um PIX do valor que quiser para a chave abaixo.',
+  'Mande o comprovante no WhatsApp.',
+  'Eu credito e o saldo aparece aqui.',
+]
 
 export default async function Recarga() {
   const corretor = await exigirCorretor()
 
   return (
-    <main className="mx-auto max-w-md p-4">
-      <Link href="/painel" className="text-sm text-blue-700 underline">
-        Voltar para a vitrine
-      </Link>
+    <div className="min-h-screen bg-fundo">
+      <BarraPainel
+        corretor={{ nome: corretor.nome, creditos: Number(corretor.creditos) }}
+      />
 
-      <h1 className="mt-6 mb-1 text-2xl font-bold">Recarregar creditos</h1>
-      <p className="mb-6 text-sm text-gray-600">
-        Saldo atual: {reais(Number(corretor.creditos))}
-      </p>
+      <main className="mx-auto flex max-w-[560px] flex-col gap-4.5 p-5 pb-12">
+        <Link href="/painel" className="text-sm font-semibold text-link">
+          ← Voltar para a vitrine
+        </Link>
 
-      <ol className="mb-6 flex flex-col gap-3 text-sm">
-        <li>
-          <strong>1.</strong> Faca um PIX do valor que quiser para a chave abaixo.
-        </li>
-        <li>
-          <strong>2.</strong> Me mande o comprovante no WhatsApp.
-        </li>
-        <li>
-          <strong>3.</strong> Eu credito e o saldo aparece aqui.
-        </li>
-      </ol>
+        <div>
+          <h1 className="text-[28px] font-extrabold tracking-[-0.01em]">
+            Recarregar creditos
+          </h1>
+          <p className="text-[15px] font-medium text-apagado">
+            Saldo atual: {reais(Number(corretor.creditos))}
+          </p>
+        </div>
 
-      <div className="mb-4 border border-gray-400 p-4">
-        <p className="mb-1 text-xs text-gray-600">Chave PIX</p>
-        <p className="mb-3 font-mono text-lg break-all">{PIX.chave}</p>
-        <p className="text-xs text-gray-600">Favorecido</p>
-        <p className="font-medium">{PIX.nome_favorecido}</p>
-      </div>
+        <ol className="overflow-hidden rounded-xl border border-linha bg-white">
+          {PASSOS.map((texto, i) => (
+            <li
+              key={texto}
+              className={`flex gap-3.5 px-5 py-4 ${
+                i < PASSOS.length - 1 ? 'border-b border-divisor' : ''
+              }`}
+            >
+              <span className="font-mono text-[13px] font-semibold text-link">
+                0{i + 1}
+              </span>
+              <span className="text-[15px] font-medium">{texto}</span>
+            </li>
+          ))}
+        </ol>
 
-      <a
-        href={`https://wa.me/${PIX.whatsapp_suporte}?text=${encodeURIComponent(
-          `Oi! Fiz um PIX para recarregar meus creditos. Sou ${corretor.nome} (${corretor.email}).`
-        )}`}
-        target="_blank"
-        rel="noopener"
-        className="block bg-green-700 p-4 text-center font-medium text-white"
-      >
-        Mandar comprovante no WhatsApp
-      </a>
-    </main>
+        <div className="flex flex-col gap-3.5 rounded-xl bg-marinho p-5 text-white">
+          <div>
+            <p className="text-xs font-medium text-sobre-marinho">Chave PIX</p>
+            <p className="font-mono text-xl font-semibold break-all">
+              {PIX.chave}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs font-medium text-sobre-marinho">Favorecido</p>
+            <p className="font-bold">{PIX.nome_favorecido}</p>
+          </div>
+        </div>
+
+        <a
+          href={`https://wa.me/${PIX.whatsapp_suporte}?text=${encodeURIComponent(
+            `Oi! Fiz um PIX para recarregar meus creditos. Sou ${corretor.nome} (${corretor.email}).`
+          )}`}
+          target="_blank"
+          rel="noopener"
+          className="rounded-lg bg-verde p-4 text-center font-extrabold text-white hover:bg-verde-hover"
+        >
+          Mandar comprovante no WhatsApp
+        </a>
+
+        {/* O que o credito compra. Sem isto, "recarregue" e um pedido de
+            dinheiro sem unidade de medida. */}
+        <p className="text-sm/[1.5] text-apagado">
+          Um interesse verificado em empreendimento custa a partir de{' '}
+          {reais(PRECOS.empreendimento.verificado_antigo)} (
+          {reais(PRECOS.empreendimento.verificado_fresco)} nas primeiras horas).
+          Perfil so declarado,{' '}
+          {reais(PRECOS.empreendimento.nao_verificado)}. O selo do motor ajusta
+          o valor para mais ou para menos.
+        </p>
+      </main>
+    </div>
   )
 }

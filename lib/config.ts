@@ -65,11 +65,34 @@ export const INTERESSES_SEM_DONO_VISIVEIS_PARA_TODOS = false
 // As faixas do programa mudam por decreto. Ajuste os rotulos aqui e o
 // enquadramento passa a ser derivado da nova regra automaticamente.
 // A ordem desta lista e a ordem dos botoes na pergunta 5 do quiz.
+// `curto` e o rotulo do chip de filtro no painel, onde o valor por extenso nao
+// cabe. O `rotulo` continua sendo o que a pessoa le no quiz -- ali o valor
+// precisa aparecer, porque e o que ela esta respondendo.
 export const RENDA_FAIXAS = [
-  { valor: 'ate_2850', rotulo: 'Ate R$ 2.850', enquadramento: 'mcmv_faixa1' },
-  { valor: '2851_4700', rotulo: 'R$ 2.851 a R$ 4.700', enquadramento: 'mcmv_faixa2' },
-  { valor: '4701_8600', rotulo: 'R$ 4.701 a R$ 8.600', enquadramento: 'mcmv_faixa3' },
-  { valor: 'acima_8600', rotulo: 'Acima de R$ 8.600', enquadramento: 'fora_mcmv' },
+  {
+    valor: 'ate_2850',
+    rotulo: 'Ate R$ 2.850',
+    curto: 'Faixa 1',
+    enquadramento: 'mcmv_faixa1',
+  },
+  {
+    valor: '2851_4700',
+    rotulo: 'R$ 2.851 a R$ 4.700',
+    curto: 'Faixa 2',
+    enquadramento: 'mcmv_faixa2',
+  },
+  {
+    valor: '4701_8600',
+    rotulo: 'R$ 4.701 a R$ 8.600',
+    curto: 'Faixa 3',
+    enquadramento: 'mcmv_faixa3',
+  },
+  {
+    valor: 'acima_8600',
+    rotulo: 'Acima de R$ 8.600',
+    curto: 'Fora do MCMV',
+    enquadramento: 'fora_mcmv',
+  },
 ] as const
 
 // --- CONSENTIMENTO -------------------------------------------------------

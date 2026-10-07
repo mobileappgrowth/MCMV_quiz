@@ -1,7 +1,8 @@
-import Link from 'next/link'
 import { exigirCorretor } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { diasDesde, reais } from '@/lib/preco'
+import { listarInteresses } from '../dados'
+import { BarraPainel, Abas } from '../barra'
 import { LinhaMeuLead } from './linha'
 
 // ============================================================================
@@ -30,44 +31,49 @@ type Compra = {
 export default async function MeusLeads() {
   const corretor = await exigirCorretor()
 
-  const { data: compras } = await supabaseAdmin()
-    .from('desbloqueios')
-    .select(
-      'id, preco_pago, criado_em, ' +
-        'interesses(id, criado_em, leads(nome, telefone, cidade, bairro), empreendimentos(nome)), ' +
-        'feedbacks(id)'
-    )
-    .eq('corretor_id', corretor.id)
-    .order('criado_em', { ascending: false })
-    .returns<Compra[]>()
+  const [{ data: compras }, naVitrine] = await Promise.all([
+    supabaseAdmin()
+      .from('desbloqueios')
+      .select(
+        'id, preco_pago, criado_em, ' +
+          'interesses(id, criado_em, leads(nome, telefone, cidade, bairro), empreendimentos(nome)), ' +
+          'feedbacks(id)'
+      )
+      .eq('corretor_id', corretor.id)
+      .order('criado_em', { ascending: false })
+      .returns<Compra[]>(),
+    listarInteresses(corretor.id),
+  ])
 
   const total = (compras ?? []).reduce((s, c) => s + Number(c.preco_pago), 0)
 
   return (
-    <div className="mx-auto max-w-md pb-10">
-      <header className="border-b border-gray-300 p-4">
-        <nav className="mb-3 flex gap-4 text-sm">
-          <Link href="/painel" className="text-blue-700 underline">
-            Vitrine
-          </Link>
-          <span className="font-medium">Meus leads</span>
-        </nav>
-        <p className="text-sm text-gray-600">
+    <div className="min-h-screen bg-fundo">
+      <BarraPainel
+        corretor={{ nome: corretor.nome, creditos: Number(corretor.creditos) }}
+      />
+
+      <main className="mx-auto flex max-w-[720px] flex-col gap-4.5 p-5 pb-12">
+        <Abas
+          atual="meus"
+          vitrine={naVitrine.length}
+          meus={compras?.length ?? 0}
+        />
+
+        <p className="text-[13px] font-bold tracking-[0.04em] text-apagado">
           {compras?.length ?? 0}{' '}
           {compras?.length === 1 ? 'contato revelado' : 'contatos revelados'} ·{' '}
           {reais(total)} investidos
         </p>
-      </header>
 
-      <main className="p-4">
         {(compras?.length ?? 0) === 0 && (
-          <p className="text-gray-600">
+          <p className="rounded-[10px] border-[1.5px] border-dashed border-tracejado px-6 py-8 text-base/[1.5] text-apagado">
             Voce ainda nao revelou nenhum contato. Os que revelar aparecem aqui,
-            com o formulario de retorno.
+            com nome, WhatsApp e o formulario de retorno.
           </p>
         )}
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3.5">
           {compras?.map((c) =>
             c.interesses?.leads ? (
               <LinhaMeuLead

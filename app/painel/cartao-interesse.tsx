@@ -1,6 +1,7 @@
 import { diasDesde, reais } from '@/lib/preco'
-import { rotuloDe, rotuloBooleano } from '@/lib/quiz'
+import { rotuloDe, rotuloCurto, rotuloBooleano } from '@/lib/quiz'
 import { rotuloSelo } from '@/lib/motor'
+import { HORAS_FRESCO } from '@/lib/config'
 import { emCarencia, type InteresseVitrine } from './dados'
 import { BotaoRevelar } from './botao-revelar'
 
@@ -47,6 +48,8 @@ export function CartaoInteresse({
   const selo = interesse.selo_verificado ?? interesse.selo_declarado
 
   const temEmpreendimento = interesse.empreendimento_id !== null
+  const horas = (Date.now() - new Date(interesse.criado_em).getTime()) / 3_600_000
+  const fresco = horas < HORAS_FRESCO
 
   const atributos: [string, string][] = [
     ['Quartos', interesse.quartos ? String(interesse.quartos) : '-'],
@@ -57,109 +60,134 @@ export function CartaoInteresse({
       rotuloBooleano(interesse.renda_formal, 'Carteira assinada', 'Informal'),
     ],
     ['Nome', rotuloDe('nome_limpo', interesse.nome_limpo)],
-    ['Prazo', rotuloDe('prazo_compra', interesse.prazo_compra)],
+    ['Prazo', rotuloCurto('prazo_compra', interesse.prazo_compra)],
   ]
 
   return (
-    <article className="border border-gray-400 p-4">
+    <article className="flex flex-col overflow-hidden rounded-[10px] border border-linha bg-white">
       {/* O que a pessoa pediu. E a primeira coisa que o corretor precisa ver:
           decide se o lead serve para o estoque dele antes de olhar o perfil. */}
-      <div className="mb-3 border-b border-gray-200 pb-3">
-        {temEmpreendimento ? (
-          <>
-            <h2 className="font-bold">{interesse.empreendimento_nome}</h2>
-            <p className="text-sm text-gray-600">
-              {interesse.construtora}
-              {interesse.empreendimento_bairro
-                ? ` · ${interesse.empreendimento_bairro}`
-                : ''}
-              {interesse.empreendimento_cidade
-                ? `, ${interesse.empreendimento_cidade}`
-                : ''}
-            </p>
-            {interesse.preco_de !== null && (
-              <p className="text-sm text-gray-600">
-                A partir de {reais(Number(interesse.preco_de))}
+      <div className="flex justify-between gap-2 border-b border-divisor p-4">
+        <div className="min-w-0">
+          {temEmpreendimento ? (
+            <>
+              <h2 className="text-[18px] font-extrabold">
+                {interesse.empreendimento_nome}
+              </h2>
+              <p className="text-[13px] font-medium text-apagado">
+                {interesse.construtora}
+                {interesse.empreendimento_bairro
+                  ? ` · ${interesse.empreendimento_bairro}`
+                  : ''}
+                {interesse.empreendimento_cidade
+                  ? `, ${interesse.empreendimento_cidade}`
+                  : ''}
               </p>
-            )}
-            {emCarencia(interesse) && (
-              <p className="mt-2 border border-amber-700 px-2 py-1 text-xs text-amber-800">
-                Este empreendimento saiu do ar. O interesse continua valido, mas
-                sai da vitrine em breve.
+              {interesse.preco_de !== null && (
+                <p className="text-[13px] font-medium text-apagado">
+                  A partir de {reais(Number(interesse.preco_de))}
+                </p>
+              )}
+            </>
+          ) : (
+            <>
+              <h2 className="text-[18px] font-extrabold">Busca aberta</h2>
+              <p className="text-[13px] font-medium text-apagado">
+                Nao marcou empreendimento ·{' '}
+                {interesse.bairro ? `${interesse.bairro}, ` : ''}
+                {interesse.cidade}
               </p>
-            )}
-          </>
-        ) : (
-          <>
-            <h2 className="font-bold">Busca aberta</h2>
-            <p className="text-sm text-gray-600">
-              Nao marcou empreendimento. Aceitou contato sobre outras opcoes em{' '}
-              {interesse.bairro ? `${interesse.bairro}, ` : ''}
-              {interesse.cidade}.
-            </p>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
 
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <p className="text-xs text-gray-600">
-          Captado ha {dias} {dias === 1 ? 'dia' : 'dias'}
-        </p>
-        {selo && (
-          <span
-            className={`shrink-0 border px-2 py-1 text-center text-xs font-medium ${
-              verificado
-                ? 'border-green-700 text-green-700'
-                : 'border-gray-500 text-gray-600'
-            }`}
-          >
-            {rotuloSelo(selo)}
-            <span className="block text-[10px] font-normal">
-              {verificado ? 'perfil verificado' : 'perfil declarado'}
+        <div className="shrink-0 text-right">
+          {/* A idade e o que justifica o preco. "Fresco" e so o que ainda esta
+              dentro da janela de HORAS_FRESCO -- nao e etiqueta de vendedor. */}
+          {fresco ? (
+            <span className="inline-block rounded bg-amarelo px-2 py-1 text-[11px] font-extrabold tracking-[0.04em]">
+              FRESCO · {dias === 0 ? 'hoje' : `${dias}d`}
             </span>
-          </span>
-        )}
+          ) : (
+            <span className="inline-block rounded bg-divisor px-2 py-1 text-[11px] font-bold tracking-[0.04em] text-apagado">
+              {dias} {dias === 1 ? 'DIA' : 'DIAS'}
+            </span>
+          )}
+          {selo && (
+            <p
+              className={`mt-1.5 text-xs font-semibold ${
+                verificado ? 'text-verde' : 'text-apagado'
+              }`}
+            >
+              {verificado ? '✓ ' : ''}
+              {rotuloSelo(selo)}
+              <span className="block text-[10px] font-normal text-apagado">
+                {verificado ? 'perfil verificado' : 'perfil declarado'}
+              </span>
+            </p>
+          )}
+        </div>
       </div>
 
-      <dl className="mb-4 flex flex-col gap-1 text-sm">
+      {emCarencia(interesse) && (
+        <p className="border-b border-divisor bg-amarelo-tenue px-4 py-2 text-xs font-semibold text-apagado-escuro">
+          Este empreendimento saiu do ar. O interesse continua valido, mas sai
+          da vitrine em breve.
+        </p>
+      )}
+
+      {/* Grade de atributos: linhas de 1px feitas com o fundo aparecendo entre
+          as celulas. Menos borda para o olho, e nenhuma borda dupla.
+          Duas colunas em qualquer tela -- o cartao tem a mesma largura no
+          celular e dentro da grade do desktop, entao um ponto de quebra por
+          largura de JANELA mediria a coisa errada. */}
+      <dl className="grid grid-cols-2 gap-px bg-divisor">
         {atributos.map(([rotulo, valor]) => (
-          <div
-            key={rotulo}
-            className="flex justify-between gap-2 border-b border-gray-200 py-1"
-          >
-            <dt className="text-gray-600">{rotulo}</dt>
-            <dd className="text-right font-medium">{valor}</dd>
+          <div key={rotulo} className="bg-white px-3.5 py-2.5">
+            <dt className="text-[11px] font-medium text-apagado">{rotulo}</dt>
+            <dd className="text-sm font-bold">{valor}</dd>
           </div>
         ))}
       </dl>
 
       {/* Placeholder de contato. Nao ha valor por baixo -- veja o comentario no
           topo do arquivo antes de "melhorar" isto com um blur. */}
-      <div className="mb-4 bg-gray-100 p-3">
-        <p className="mb-2 text-xs text-gray-600">Contato</p>
-        <div className="mb-2 h-4 w-32 rounded bg-gray-300" aria-hidden="true" />
-        <div className="h-4 w-40 rounded bg-gray-300" aria-hidden="true" />
+      <div className="flex items-center gap-3 bg-fundo px-4 py-3.5">
+        <div
+          aria-hidden="true"
+          className="size-[34px] shrink-0 rounded-full bg-linha"
+        />
+        <div className="flex flex-1 flex-col gap-1.5" aria-hidden="true">
+          <div className="h-2.5 w-[55%] rounded-sm bg-campo" />
+          <div className="h-2.5 w-[70%] rounded-sm bg-campo" />
+        </div>
+        <p className="text-right text-[11px] font-medium text-apagado">
+          contato
+          <br />
+          exclusivo
+        </p>
         <p className="sr-only">Nome e telefone liberados apos o desbloqueio.</p>
       </div>
 
-      {comprador ? (
-        <BotaoRevelar
-          interesseId={interesse.id}
-          preco={preco}
-          saldo={comprador.saldo}
-          nomeCorretor={comprador.nome}
-        />
-      ) : (
-        <div className="border border-dashed border-gray-400 p-3 text-center">
-          <p className="text-sm font-medium text-gray-700">
-            Valeria {reais(preco)} para o corretor
-          </p>
-          <p className="mt-1 text-xs text-gray-600">
-            Vistoria: aqui nao se compra. O contato desta pessoa esta na fila de
-            verificacao, em /admin.
-          </p>
-        </div>
-      )}
+      <div className="mt-auto p-3">
+        {comprador ? (
+          <BotaoRevelar
+            interesseId={interesse.id}
+            preco={preco}
+            saldo={comprador.saldo}
+            nomeCorretor={comprador.nome}
+          />
+        ) : (
+          <div className="rounded-lg border-[1.5px] border-dashed border-tracejado p-3 text-center">
+            <p className="text-sm font-bold text-apagado">
+              Valeria {reais(preco)} para o corretor
+            </p>
+            <p className="mt-1 text-xs text-apagado">
+              Vistoria: aqui nao se compra. O contato esta na fila do /admin.
+            </p>
+          </div>
+        )}
+      </div>
     </article>
   )
 }

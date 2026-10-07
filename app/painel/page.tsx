@@ -1,28 +1,27 @@
-import Link from 'next/link'
 import { exigirCorretorOuAdmin } from '@/lib/auth'
-import { RENDA_FAIXAS, DIAS_NA_VITRINE } from '@/lib/config'
-import { reais } from '@/lib/preco'
+import { supabaseAdmin } from '@/lib/supabase/admin'
+import { DIAS_NA_VITRINE } from '@/lib/config'
 import { listarInteresses, cidadesNaVitrine } from './dados'
 import { CartaoInteresse } from './cartao-interesse'
+import { BarraPainel, Abas } from './barra'
+import { Filtros } from './filtros'
 
 // ============================================================================
 // VITRINE
 //
 // Server Component: a consulta roda no servidor e o navegador do corretor
-// recebe apenas o que listarVitrine() devolve -- que nao inclui nome nem
+// recebe apenas o que listarInteresses() devolve -- que nao inclui nome nem
 // telefone, nem na view, nem na lista de colunas.
 //
 // Os filtros vivem na URL (?cidade=...), nao em estado de cliente. Assim o
-// corretor pode guardar o link de "Campinas, 2 quartos" nos favoritos, e eu
-// nao preciso de state manager.
+// corretor pode guardar o link de "Contagem, faixa 2" nos favoritos, e eu nao
+// preciso de state manager.
 //
 // DUAS LEITURAS DESTA MESMA TELA:
 //   corretor -> a vitrine dele (os empreendimentos dele + a vitrine geral),
 //               com saldo, recarga e o botao de revelar.
 //   admin    -> vistoria: a vitrine inteira, sem filtro de dono, sem saldo e
-//               sem botao de compra. Serve para eu ver o que o corretor ve
-//               antes de mandar o link, e para conferir o preco que o motor
-//               gravou em cada interesse.
+//               sem botao de compra.
 // ============================================================================
 
 export const dynamic = 'force-dynamic'
@@ -39,12 +38,12 @@ export default async function Painel({
   const corretorId =
     visitante.tipo === 'corretor' ? visitante.corretor.id : null
 
-  const [interesses, cidades] = await Promise.all([
+  const [interesses, cidades, comprados] = await Promise.all([
     listarInteresses(corretorId, filtros),
     cidadesNaVitrine(corretorId),
+    contarComprados(corretorId),
   ])
 
-  // O cartao usa isto para decidir se mostra o botao que cobra.
   const comprador =
     visitante.tipo === 'corretor'
       ? {
@@ -54,96 +53,25 @@ export default async function Painel({
       : null
 
   return (
-    <div className="mx-auto max-w-md pb-10">
-      {/* Saldo sempre visivel no topo -- ou o aviso de vistoria, no meu caso. */}
-      <header className="sticky top-0 border-b border-gray-300 bg-white p-4">
-        {comprador ? (
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs text-gray-600">Seu saldo</p>
-              <p className="text-xl font-bold">{reais(comprador.saldo)}</p>
-            </div>
-            <div className="flex gap-2">
-              <a
-                href="/painel/meus-leads"
-                className="border border-gray-500 px-3 py-3 text-sm"
-              >
-                Meus leads
-              </a>
-              <a
-                href="/painel/recarga"
-                className="border border-gray-800 px-4 py-3 text-sm font-medium"
-              >
-                Recarregar
-              </a>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-medium text-amber-800">
-                Vistoria de admin
-              </p>
-              <p className="text-sm text-gray-700">
-                Vitrine inteira, sem filtro de dono. Nao da para comprar daqui.
-              </p>
-            </div>
-            <Link
-              href="/admin"
-              className="shrink-0 border border-gray-800 px-4 py-3 text-sm font-medium"
-            >
-              Admin
-            </Link>
-          </div>
+    <div className="min-h-screen bg-fundo">
+      <BarraPainel corretor={comprador ? { nome: comprador.nome, creditos: comprador.saldo } : null} />
+
+      <main className="mx-auto flex max-w-[1120px] flex-col gap-4.5 p-5 pb-12">
+        {comprador && (
+          <Abas atual="vitrine" vitrine={interesses.length} meus={comprados} />
         )}
-      </header>
 
-      <main className="p-4">
-        <form method="GET" className="mb-6 flex flex-col gap-2">
-          <div className="flex gap-2">
-            <select
-              name="cidade"
-              defaultValue={filtros.cidade ?? ''}
-              className="w-full border border-gray-400 p-3 text-sm"
-            >
-              <option value="">Todas as cidades</option>
-              {cidades.map((c: string) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-            <input
-              name="bairro"
-              defaultValue={filtros.bairro ?? ''}
-              placeholder="Bairro"
-              className="w-full border border-gray-400 p-3 text-sm"
-            />
-          </div>
-          <select
-            name="renda_faixa"
-            defaultValue={filtros.renda_faixa ?? ''}
-            className="w-full border border-gray-400 p-3 text-sm"
-          >
-            <option value="">Todas as faixas de renda</option>
-            {RENDA_FAIXAS.map((f) => (
-              <option key={f.valor} value={f.valor}>
-                {f.rotulo}
-              </option>
-            ))}
-          </select>
-          <button type="submit" className="bg-gray-800 p-3 text-sm font-medium text-white">
-            Filtrar
-          </button>
-        </form>
+        <Filtros atuais={filtros} cidades={cidades} />
 
-        <h1 className="mb-4 text-lg font-bold">
+        <h1 className="text-[13px] font-bold tracking-[0.04em] text-apagado">
           {interesses.length}{' '}
-          {interesses.length === 1 ? 'interesse disponivel' : 'interesses disponiveis'}
+          {interesses.length === 1
+            ? 'interesse disponivel'
+            : 'interesses disponiveis'}
         </h1>
 
         {interesses.length === 0 && (
-          <p className="text-gray-600">
+          <p className="rounded-[10px] border-[1.5px] border-dashed border-tracejado px-6 py-8 text-base/[1.5] text-apagado text-pretty">
             Nenhum interesse com esses filtros. Eles ficam na vitrine por{' '}
             {DIAS_NA_VITRINE} dias e saem assim que outro corretor revela o
             contato.{' '}
@@ -153,7 +81,7 @@ export default async function Painel({
           </p>
         )}
 
-        <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-3.5">
           {interesses.map((interesse) => (
             <CartaoInteresse
               key={interesse.id}
@@ -165,4 +93,14 @@ export default async function Painel({
       </main>
     </div>
   )
+}
+
+/** Quantos este corretor ja comprou. So para o numero da aba. */
+async function contarComprados(corretorId: string | null): Promise<number> {
+  if (!corretorId) return 0
+  const { count } = await supabaseAdmin()
+    .from('desbloqueios')
+    .select('id', { count: 'exact', head: true })
+    .eq('corretor_id', corretorId)
+  return count ?? 0
 }
