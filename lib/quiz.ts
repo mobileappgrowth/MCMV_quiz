@@ -22,6 +22,10 @@ import {
 
 export type PassoOpcoes = {
   campo: string
+  /** Rotulo pequeno acima da pergunta. Agrupa as telas em blocos ("Sua renda",
+   *  "Seu FGTS") para a pessoa sentir que o assunto avanca, nao que as
+   *  perguntas nao acabam. */
+  tema: string
   pergunta: string
   ajuda?: string
   opcoes: { valor: string; rotulo: string }[]
@@ -44,6 +48,7 @@ function dentroDoPrograma(r: Record<string, string>): boolean {
 export const PASSOS_OPCOES: PassoOpcoes[] = [
   {
     campo: 'quartos',
+    tema: 'O imovel',
     pergunta: 'Quantos quartos voce precisa?',
     opcoes: [
       { valor: '1', rotulo: '1 quarto' },
@@ -53,6 +58,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'garagem',
+    tema: 'O imovel',
     pergunta: 'Precisa de garagem?',
     opcoes: [
       { valor: 'sim', rotulo: 'Sim, preciso' },
@@ -61,6 +67,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'prazo_compra',
+    tema: 'Seu prazo',
     pergunta: 'Quando pretende comprar?',
     opcoes: [
       { valor: 'imediato', rotulo: 'O quanto antes' },
@@ -72,12 +79,14 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'renda_faixa',
+    tema: 'Sua renda',
     pergunta: 'Qual a renda da familia por mes?',
     ajuda: 'Somando todos que vao entrar no financiamento.',
     opcoes: RENDA_FAIXAS.map((f) => ({ valor: f.valor, rotulo: f.rotulo })),
   },
   {
     campo: 'vinculo_renda',
+    tema: 'Sua renda',
     pergunta: 'Como e essa renda?',
     opcoes: VINCULO_RENDA_FAIXAS.map((f) => ({
       valor: f.valor,
@@ -86,6 +95,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'renda_composta',
+    tema: 'Sua renda',
     pergunta: 'Vai compor renda com outra pessoa?',
     ajuda: 'Conjuge, pai, mae, irmao.',
     visivelSe: dentroDoPrograma,
@@ -96,6 +106,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'nome_limpo',
+    tema: 'Seu credito',
     pergunta: 'Como esta o seu nome hoje?',
     opcoes: [
       { valor: 'sim', rotulo: 'Limpo' },
@@ -110,6 +121,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'regularizacao_andamento',
+    tema: 'Seu credito',
     pergunta: 'Voce ja esta regularizando essa pendencia?',
     ajuda: 'Acordo em andamento, parcelamento, ou ja quitado esperando baixa.',
     // So para quem declarou restricao. Perguntar isso a quem disse "limpo"
@@ -122,6 +134,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'fgts_tempo',
+    tema: 'Seu FGTS',
     pergunta: 'Quanto tempo de FGTS voce tem?',
     ajuda: 'Tempo somado de carteira assinada.',
     visivelSe: dentroDoPrograma,
@@ -134,6 +147,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'fgts_saldo',
+    tema: 'Seu FGTS',
     pergunta: 'E quanto tem de saldo no FGTS?',
     ajuda: 'Da para ver no aplicativo do FGTS. Um valor aproximado ja ajuda.',
     // Nao faz sentido perguntar saldo a quem acabou de dizer que nao tem FGTS.
@@ -145,6 +159,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'ja_financiou',
+    tema: 'Seu historico',
     pergunta: 'Ja financiou um imovel antes?',
     opcoes: [
       { valor: 'nao', rotulo: 'Nao, seria o primeiro' },
@@ -153,6 +168,7 @@ export const PASSOS_OPCOES: PassoOpcoes[] = [
   },
   {
     campo: 'entrada_disponivel',
+    tema: 'Sua entrada',
     pergunta: 'Quanto tem de entrada?',
     ajuda: 'Dinheiro guardado, sem contar o FGTS.',
     opcoes: ENTRADA_FAIXAS.map((f) => ({ valor: f.valor, rotulo: f.rotulo })),

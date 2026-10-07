@@ -20,6 +20,18 @@ tokens em `app/globals.css`. **Componente nao escreve hexadecimal** — usa
 `bg-marinho`, `text-apagado`, `border-linha`. Mudar a marca e mexer no
 `@theme` de um arquivo so.
 
+## A cor da acao principal muda de lado
+
+Vale para o projeto inteiro, e sai do proprio prototipo:
+
+- **Telas do lead** (landing, quiz, resultado) — acao principal **amarela**
+  sobre marinho ou branco. E a cor que convida.
+- **Telas do corretor e do admin** (painel, revelar, fila, cadastro) — acao
+  principal **marinha**. Ali a pessoa esta trabalhando, nao sendo convidada, e
+  varios botoes amarelos numa lista de cartoes viram ruido.
+- **Verde** so para WhatsApp e para "verificado". **Vermelho** so para erro e
+  descarte. Nenhum dos dois e decoracao.
+
 ## O prototipo e anterior ao pivo
 
 Ele foi sincronizado em 1 de outubro, quando a unidade de venda ainda era o

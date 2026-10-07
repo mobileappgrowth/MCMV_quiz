@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { CardEmpreendimento } from '@/components/card-empreendimento'
+import { Marca } from '@/components/marca'
 import {
   CONSENTIMENTO_CONTATO_GERAL,
   CONSENTIMENTO_INTERESSES,
@@ -24,6 +25,9 @@ import { salvarInteresses } from './actions'
 //
 // Quem nao marca nenhum recebe a pergunta de contato geral, que aparece
 // sozinha quando a contagem chega a zero -- sem tela extra.
+//
+// A barra de baixo e fixa de proposito: o contador precisa estar sob os olhos
+// no momento do toque, nao no topo de uma pagina que a pessoa ja rolou.
 // ============================================================================
 
 export function Escolha({
@@ -56,92 +60,143 @@ export function Escolha({
   }
 
   const n = marcados.size
+  const temOpcoes = opcoes.length > 0
 
   return (
-    <main className="mx-auto max-w-md p-4 pb-32">
-      <h1 className="mb-1 text-2xl font-bold">
-        {opcoes.length > 0
-          ? 'Encontramos opcoes para o seu perfil'
-          : 'Nao encontramos opcoes no momento'}
-      </h1>
-      <p className="mb-6 text-gray-600">
-        {opcoes.length > 0
-          ? 'Marque aqueles sobre os quais voce quer receber contato. Pode marcar quantos quiser, ou nenhum.'
-          : `Ainda nao temos empreendimentos cadastrados que sirvam para o seu perfil em ${cidade}.`}
-      </p>
-
-      <div className="flex flex-col gap-6">
-        {opcoes.map((e) => (
-          <CardEmpreendimento key={e.id} emp={e}>
-            {/* Desmarcado por padrao, sempre. */}
-            <label className="mt-4 flex cursor-pointer items-start gap-3 border-t border-gray-200 pt-4">
-              <input
-                type="checkbox"
-                checked={marcados.has(e.id)}
-                onChange={() => alternar(e.id)}
-                className="mt-1 h-5 w-5 shrink-0"
-              />
-              <span className="text-sm font-medium">
-                Quero receber contato sobre este
-              </span>
-            </label>
-          </CardEmpreendimento>
-        ))}
-      </div>
-
-      {/* A pergunta de contato geral aparece quando nada esta marcado. */}
-      {n === 0 && (
-        <section className="mt-8 border border-gray-400 p-4">
-          <h2 className="mb-2 font-bold">
-            Quer que um corretor da regiao entre em contato com outras opcoes?
-          </h2>
-          <label className="flex cursor-pointer items-start gap-3">
-            <input
-              type="checkbox"
-              checked={querGeral}
-              onChange={(e) => setQuerGeral(e.target.checked)}
-              className="mt-1 h-5 w-5 shrink-0"
-            />
-            <span className="text-sm text-gray-700">
-              {CONSENTIMENTO_CONTATO_GERAL.texto}
-            </span>
-          </label>
-        </section>
-      )}
-
-      {n > 0 && (
-        <p className="mt-6 text-sm text-gray-700">
-          {CONSENTIMENTO_INTERESSES.texto}
-        </p>
-      )}
-
-      {erro && (
-        <p role="alert" className="mt-4 text-sm text-red-700">
-          {erro}
-        </p>
-      )}
-
-      {/* Barra fixa: o contador precisa estar visivel no momento do toque, nao
-          no topo de uma pagina que a pessoa ja rolou. */}
-      <div className="fixed inset-x-0 bottom-0 border-t border-gray-300 bg-white p-4">
-        <div className="mx-auto max-w-md">
-          <p className="mb-2 text-center text-sm font-medium">
-            {n === 0
-              ? querGeral
-                ? 'Um corretor da regiao vai entrar em contato'
-                : 'Nenhum empreendimento marcado'
-              : `Voce vai receber contato de ${n} ${n === 1 ? 'empresa' : 'empresas'}`}
+    <div className="flex min-h-screen justify-center bg-fundo-fora">
+      <div className="flex w-full max-w-[480px] flex-col bg-white">
+        <header className="bg-marinho px-5 pt-5 pb-7 text-white">
+          <div className="mb-6">
+            <Marca claro />
+          </div>
+          <h1 className="text-[27px]/[1.2] font-extrabold tracking-[-0.01em] text-pretty">
+            {temOpcoes
+              ? 'Encontramos opcoes para o seu perfil'
+              : 'Nao encontramos opcoes no momento'}
+          </h1>
+          <p className="mt-2.5 text-[15px]/[1.5] text-sobre-marinho-claro">
+            {temOpcoes
+              ? 'Marque aqueles sobre os quais voce quer receber contato. Pode marcar quantos quiser, ou nenhum.'
+              : `Ainda nao temos empreendimentos cadastrados que sirvam para o seu perfil em ${cidade}.`}
           </p>
-          <button
-            type="button"
-            onClick={enviar}
-            disabled={enviando}
-            className="w-full bg-gray-800 p-4 text-lg font-medium text-white disabled:opacity-50"
-          >
-            {enviando ? 'Enviando...' : 'Confirmar'}
-          </button>
+        </header>
+
+        <main className="flex flex-col gap-4 px-5 py-6 pb-44">
+          {opcoes.map((e) => {
+            const marcado = marcados.has(e.id)
+            return (
+              <CardEmpreendimento key={e.id} emp={e}>
+                {/* Desmarcado por padrao, sempre. O <label> envolve a faixa
+                    inteira: o alvo de toque e a linha, nao o quadradinho. */}
+                <label
+                  className={`mt-4 flex cursor-pointer items-center gap-3 rounded-lg border-2 p-3.5 ${
+                    marcado
+                      ? 'border-marinho bg-amarelo-tenue'
+                      : 'border-campo hover:border-sobre-marinho'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={marcado}
+                    onChange={() => alternar(e.id)}
+                    className="sr-only"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className={`flex size-6 shrink-0 items-center justify-center rounded-[5px] text-sm font-extrabold ${
+                      marcado
+                        ? 'bg-marinho text-amarelo'
+                        : 'border-2 border-circulo bg-white'
+                    }`}
+                  >
+                    {marcado ? '✓' : ''}
+                  </span>
+                  <span
+                    className={`text-[15px] ${marcado ? 'font-bold' : 'font-semibold'}`}
+                  >
+                    Quero receber contato sobre este
+                  </span>
+                </label>
+              </CardEmpreendimento>
+            )
+          })}
+
+          {/* A pergunta de contato geral aparece quando nada esta marcado. */}
+          {n === 0 && (
+            <section className="rounded-[10px] border-[1.5px] border-linha p-4">
+              <h2 className="mb-3 text-[17px]/[1.3] font-extrabold text-pretty">
+                Quer que um corretor da regiao entre em contato com outras
+                opcoes?
+              </h2>
+              <label
+                className={`flex cursor-pointer items-start gap-3 rounded-lg border-2 p-3.5 ${
+                  querGeral
+                    ? 'border-marinho bg-amarelo-tenue'
+                    : 'border-campo hover:border-sobre-marinho'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={querGeral}
+                  onChange={(e) => setQuerGeral(e.target.checked)}
+                  className="sr-only"
+                />
+                <span
+                  aria-hidden="true"
+                  className={`flex size-6 shrink-0 items-center justify-center rounded-[5px] text-sm font-extrabold ${
+                    querGeral
+                      ? 'bg-marinho text-amarelo'
+                      : 'border-2 border-circulo bg-white'
+                  }`}
+                >
+                  {querGeral ? '✓' : ''}
+                </span>
+                <span className="text-sm/[1.45] text-apagado-escuro">
+                  {CONSENTIMENTO_CONTATO_GERAL.texto}
+                </span>
+              </label>
+            </section>
+          )}
+
+          {n > 0 && (
+            <p className="text-sm/[1.45] text-apagado">
+              {CONSENTIMENTO_INTERESSES.texto}
+            </p>
+          )}
+
+          {erro && (
+            <p
+              role="alert"
+              className="rounded-lg bg-vermelho-tenue px-3.5 py-3 text-sm font-semibold text-vermelho"
+            >
+              {erro}
+            </p>
+          )}
+        </main>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* BARRA FIXA                                                        */}
+        {/* ---------------------------------------------------------------- */}
+        <div className="fixed inset-x-0 bottom-0 border-t border-linha bg-white p-4">
+          <div className="mx-auto max-w-[440px]">
+            <p className="mb-2.5 text-center text-sm font-bold">
+              {n === 0
+                ? querGeral
+                  ? 'Um corretor da regiao vai entrar em contato'
+                  : 'Nenhum empreendimento marcado'
+                : `Voce vai receber contato de ${n} ${n === 1 ? 'empresa' : 'empresas'}`}
+            </p>
+            <button
+              type="button"
+              onClick={enviar}
+              disabled={enviando}
+              className="w-full rounded-lg bg-amarelo py-4 text-base font-extrabold text-marinho hover:bg-amarelo-hover disabled:opacity-50"
+            >
+              {enviando ? 'Enviando...' : 'Confirmar'}
+            </button>
+          </div>
         </div>
       </div>
-    </main>
+    </div>
   )
 }

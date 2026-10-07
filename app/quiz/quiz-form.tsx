@@ -3,10 +3,11 @@
 import { useState, useTransition } from 'react'
 import { passosVisiveis, totalPassos, type PassoOpcoes } from '@/lib/quiz'
 import { CONSENTIMENTO } from '@/lib/config'
+import { Marca } from '@/components/marca'
 import { salvarLead, type RespostasQuiz } from './actions'
 
 // ============================================================================
-// QUIZ -- 12 telas, uma pergunta por vez.
+// QUIZ -- uma pergunta por tela.
 //
 // Estado inteiro em dois useState. Nada e gravado no banco antes do envio
 // final: um lead so existe quando a pessoa chega ao fim e aceita o termo.
@@ -20,8 +21,9 @@ import { salvarLead, type RespostasQuiz } from './actions'
 // extra. Por isso a lista e recalculada a cada render, em vez de ser um indice
 // num array constante.
 //
-// Dia 1: sem estilizacao. Os tamanhos aqui existem so para caber no dedo
-// durante o teste no celular. O visual e o Dia 4.
+// SOBRE O VISUAL: coluna de 480px centrada, cabecalho marinho fixo com a barra
+// de progresso, e botao de 17px de altura interna. O alvo de toque grande nao e
+// estetica -- e quem responde isso no onibus, com uma mao.
 // ============================================================================
 
 export function QuizForm() {
@@ -70,129 +72,220 @@ export function QuizForm() {
   function enviar() {
     setErro(null)
     iniciarEnvio(async () => {
-      // Em caso de sucesso a action redireciona para /obrigado e nada retorna.
+      // Em caso de sucesso a action redireciona e nada retorna.
       const resultado = await salvarLead(respostas)
       if (resultado?.erro) setErro(resultado.erro)
     })
   }
 
+  const noLocal = passo === 0
+  const noContato = passo === ultimoPasso
+
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col p-4">
-      {/* barra de progresso */}
-      <div className="mb-6">
-        <div className="h-2 w-full bg-gray-200">
+    <div className="flex min-h-screen justify-center bg-fundo-fora">
+      <div className="flex min-h-screen w-full max-w-[480px] flex-col bg-white">
+        {/* ---------------------------------------------------------------- */}
+        {/* CABECALHO E PROGRESSO                                            */}
+        {/* ---------------------------------------------------------------- */}
+        <header className="bg-marinho px-5 pt-5 pb-6 text-white">
+          <div className="mb-4 flex items-center justify-between">
+            <Marca claro />
+            <p className="text-sm font-semibold text-amarelo">
+              {passo + 1}/{total}
+            </p>
+          </div>
+          {/* A barra usa o total dos passos VISIVEIS. Quem segue o caminho
+              curto ve a barra andar mais rapido -- nunca uma barra que
+              encolhe, que e o que acontece se o total mudar debaixo dela. */}
           <div
-            className="h-2 bg-gray-800"
-            style={{ width: `${((passo + 1) / total) * 100}%` }}
-          />
-        </div>
-        <p className="mt-2 text-sm text-gray-600">
-          Pergunta {passo + 1} de {total}
-        </p>
-      </div>
+            className="h-2 overflow-hidden rounded-full bg-marinho-claro"
+            role="progressbar"
+            aria-valuenow={passo + 1}
+            aria-valuemin={1}
+            aria-valuemax={total}
+          >
+            <div
+              className="h-2 rounded-full bg-amarelo transition-[width] duration-300"
+              style={{ width: `${((passo + 1) / total) * 100}%` }}
+            />
+          </div>
+        </header>
 
-      <div className="flex-1">
-        {passo === 0 && (
-          <TelaLocalizacao
-            respostas={respostas}
-            responder={responder}
-            avancar={() => {
-              if (!(respostas.cidade ?? '').trim()) {
-                setErro('Informe a cidade.')
-                return
+        {/* ---------------------------------------------------------------- */}
+        {/* PERGUNTA                                                          */}
+        {/* ---------------------------------------------------------------- */}
+        <main className="flex flex-1 flex-col px-5 pt-7 pb-5">
+          {noLocal && (
+            <TelaLocalizacao respostas={respostas} responder={responder} />
+          )}
+
+          {!noLocal && !noContato && passoAtual && (
+            <TelaOpcoes
+              passo={passoAtual}
+              selecionado={respostas[passoAtual.campo]}
+              nota={nota}
+              escolher={(valor) =>
+                escolher(passoAtual.campo, valor, passoAtual.notas?.[valor])
               }
-              avancar()
-            }}
-          />
-        )}
+            />
+          )}
 
-        {passo >= 1 && passoAtual && (
-          <TelaOpcoes
-            passo={passoAtual}
-            selecionado={respostas[passoAtual.campo]}
-            nota={nota}
-            continuar={avancar}
-            escolher={(valor) =>
-              escolher(passoAtual.campo, valor, passoAtual.notas?.[valor])
-            }
-          />
-        )}
+          {noContato && (
+            <TelaContato respostas={respostas} responder={responder} />
+          )}
 
-        {passo === ultimoPasso && (
-          <TelaContato
-            respostas={respostas}
-            responder={responder}
-            enviando={enviando}
-            enviar={enviar}
-          />
-        )}
+          {erro && (
+            <p
+              role="alert"
+              className="mt-3.5 rounded-lg bg-vermelho-tenue px-3.5 py-3 text-sm font-semibold text-vermelho"
+            >
+              {erro}
+            </p>
+          )}
 
-        {erro && (
-          <p role="alert" className="mt-4 text-sm text-red-700">
-            {erro}
-          </p>
-        )}
+          <div className="min-h-6 flex-1" />
+
+          {/* -------------------------------------------------------------- */}
+          {/* NAVEGACAO                                                       */}
+          {/*                                                                 */}
+          {/* "Continuar" so aparece onde o toque na opcao NAO avanca sozinho: */}
+          {/* localizacao, contato, e a tela que mostrou uma nota. Nas demais  */}
+          {/* um botao a mais seria um toque a mais por pergunta.              */}
+          {/* -------------------------------------------------------------- */}
+          <div className="flex gap-2.5">
+            {passo > 0 && (
+              <button
+                type="button"
+                onClick={voltar}
+                className="rounded-lg border-2 border-campo px-4.5 py-4 font-bold hover:border-sobre-marinho"
+              >
+                Voltar
+              </button>
+            )}
+
+            {noLocal && (
+              <BotaoAvancar
+                onClick={() => {
+                  if (!(respostas.cidade ?? '').trim()) {
+                    setErro('Informe a cidade.')
+                    return
+                  }
+                  avancar()
+                }}
+              >
+                Continuar
+              </BotaoAvancar>
+            )}
+
+            {!noLocal && !noContato && nota && (
+              <BotaoAvancar onClick={avancar}>Continuar</BotaoAvancar>
+            )}
+
+            {noContato && (
+              <BotaoAvancar onClick={enviar} desabilitado={enviando}>
+                {enviando ? 'Enviando...' : 'Quero ver as opcoes'}
+              </BotaoAvancar>
+            )}
+          </div>
+        </main>
       </div>
-
-      {passo > 0 && (
-        <button
-          type="button"
-          onClick={voltar}
-          className="mt-6 py-3 text-sm text-gray-600 underline"
-        >
-          Voltar
-        </button>
-      )}
-    </main>
+    </div>
   )
 }
 
 // ---------------------------------------------------------------------------
+// PECAS
+// ---------------------------------------------------------------------------
+
+function BotaoAvancar({
+  onClick,
+  desabilitado,
+  children,
+}: {
+  onClick: () => void
+  desabilitado?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={desabilitado}
+      className="flex-1 rounded-lg bg-amarelo py-4 text-base font-extrabold text-marinho hover:bg-amarelo-hover disabled:opacity-50"
+    >
+      {children}
+    </button>
+  )
+}
+
+function Titulo({ tema, pergunta, ajuda }: { tema: string; pergunta: string; ajuda?: string }) {
+  return (
+    <div className="mb-5.5">
+      <p className="mb-2 text-[13px] font-bold tracking-[0.06em] text-link uppercase">
+        {tema}
+      </p>
+      <h1 className="text-[27px]/[1.2] font-extrabold tracking-[-0.01em] text-pretty">
+        {pergunta}
+      </h1>
+      {ajuda && <p className="mt-2 text-base/[1.45] text-apagado">{ajuda}</p>}
+    </div>
+  )
+}
+
+function Campo({
+  rotulo,
+  opcional,
+  ...props
+}: {
+  rotulo: string
+  opcional?: boolean
+} & React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <label className="flex flex-col gap-1.5">
+      <span className="text-sm font-bold">
+        {rotulo}
+        {opcional && (
+          <span className="font-normal text-apagado"> (opcional)</span>
+        )}
+      </span>
+      <input
+        {...props}
+        className="w-full rounded-lg border-2 border-campo p-4 text-lg font-medium text-marinho outline-none focus:border-marinho"
+      />
+    </label>
+  )
+}
 
 function TelaLocalizacao({
   respostas,
   responder,
-  avancar,
 }: {
   respostas: RespostasQuiz
   responder: (campo: string, valor: string) => void
-  avancar: () => void
 }) {
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-bold">Onde voce quer morar?</h1>
-      <p className="mb-6 text-gray-600">
-        Informe a cidade. O bairro e opcional, mas ajuda a achar o imovel certo.
-      </p>
-
-      <label className="mb-4 block">
-        <span className="mb-1 block text-sm font-medium">Cidade</span>
-        <input
-          type="text"
+      <Titulo
+        tema="O lugar"
+        pergunta="Onde voce quer morar?"
+        ajuda="Informe a cidade. O bairro e opcional, mas ajuda a achar o imovel certo."
+      />
+      <div className="flex flex-col gap-4">
+        <Campo
+          rotulo="Cidade"
           autoComplete="address-level2"
+          placeholder="Ex: Contagem"
           value={respostas.cidade ?? ''}
           onChange={(e) => responder('cidade', e.target.value)}
-          className="w-full border border-gray-400 p-3 text-lg"
         />
-      </label>
-
-      <label className="mb-6 block">
-        <span className="mb-1 block text-sm font-medium">Bairro (opcional)</span>
-        <input
-          type="text"
+        <Campo
+          rotulo="Bairro"
+          opcional
+          placeholder="Ex: Eldorado"
           value={respostas.bairro ?? ''}
           onChange={(e) => responder('bairro', e.target.value)}
-          className="w-full border border-gray-400 p-3 text-lg"
         />
-      </label>
-
-      <button
-        type="button"
-        onClick={avancar}
-        className="w-full bg-gray-800 p-4 text-lg font-medium text-white"
-      >
-        Continuar
-      </button>
+      </div>
     </div>
   )
 }
@@ -202,49 +295,49 @@ function TelaOpcoes({
   selecionado,
   nota,
   escolher,
-  continuar,
 }: {
   passo: PassoOpcoes
   selecionado: string | undefined
   nota: string | null
   escolher: (valor: string) => void
-  continuar: () => void
 }) {
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-bold">{passo.pergunta}</h1>
-      {passo.ajuda && <p className="mb-6 text-gray-600">{passo.ajuda}</p>}
+      <Titulo tema={passo.tema} pergunta={passo.pergunta} ajuda={passo.ajuda} />
 
-      <div className="mt-6 flex flex-col gap-3">
-        {passo.opcoes.map((opcao) => (
-          <button
-            key={opcao.valor}
-            type="button"
-            onClick={() => escolher(opcao.valor)}
-            className={`w-full border p-4 text-left text-lg ${
-              selecionado === opcao.valor
-                ? 'border-gray-800 bg-gray-100 font-medium'
-                : 'border-gray-400'
-            }`}
-          >
-            {opcao.rotulo}
-          </button>
-        ))}
+      <div className="flex flex-col gap-2.5">
+        {passo.opcoes.map((opcao) => {
+          const marcada = selecionado === opcao.valor
+          return (
+            <button
+              key={opcao.valor}
+              type="button"
+              onClick={() => escolher(opcao.valor)}
+              aria-pressed={marcada}
+              className={`flex items-center gap-3 rounded-lg border-2 p-4 text-left text-[17px] ${
+                marcada
+                  ? 'border-marinho bg-amarelo-tenue font-bold'
+                  : 'border-campo font-semibold hover:border-sobre-marinho'
+              }`}
+            >
+              <span
+                aria-hidden="true"
+                className={`size-5.5 shrink-0 rounded-full ${
+                  marcada ? 'border-7 border-marinho' : 'border-2 border-circulo'
+                }`}
+              />
+              {opcao.rotulo}
+            </button>
+          )
+        })}
       </div>
 
       {/* A pessoa acabou de admitir algo que ela teme que a desqualifique.
           Responder na hora, e nao tres telas adiante, e o que evita o abandono. */}
       {nota && (
-        <div className="mt-6">
-          <p className="mb-4 bg-gray-100 p-4 text-gray-700">{nota}</p>
-          <button
-            type="button"
-            onClick={continuar}
-            className="w-full bg-gray-800 p-4 text-lg font-medium text-white"
-          >
-            Continuar
-          </button>
-        </div>
+        <p className="mt-5 rounded-lg bg-fundo p-4 text-[15px]/[1.45] text-apagado-escuro">
+          {nota}
+        </p>
       )}
     </div>
   )
@@ -253,65 +346,65 @@ function TelaOpcoes({
 function TelaContato({
   respostas,
   responder,
-  enviando,
-  enviar,
 }: {
   respostas: RespostasQuiz
   responder: (campo: string, valor: string) => void
-  enviando: boolean
-  enviar: () => void
 }) {
+  const aceitou = respostas.consentimento === 'sim'
+
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-bold">Para onde mando as opcoes?</h1>
-      <p className="mb-6 text-gray-600">
-        Vamos falar com voce pelo WhatsApp antes de qualquer visita.
-      </p>
+      <Titulo
+        tema="Quase la"
+        pergunta="Para onde mando as opcoes?"
+        ajuda="Vamos falar com voce pelo WhatsApp antes de qualquer visita."
+      />
 
-      <label className="mb-4 block">
-        <span className="mb-1 block text-sm font-medium">Seu nome</span>
-        <input
-          type="text"
+      <div className="flex flex-col gap-4">
+        <Campo
+          rotulo="Seu nome"
           autoComplete="name"
           value={respostas.nome ?? ''}
           onChange={(e) => responder('nome', e.target.value)}
-          className="w-full border border-gray-400 p-3 text-lg"
         />
-      </label>
-
-      <label className="mb-6 block">
-        <span className="mb-1 block text-sm font-medium">WhatsApp com DDD</span>
-        <input
+        <Campo
+          rotulo="WhatsApp com DDD"
           type="tel"
           inputMode="numeric"
           autoComplete="tel-national"
-          placeholder="11999999999"
+          placeholder="(31) 99999-9999"
           value={respostas.telefone ?? ''}
           onChange={(e) => responder('telefone', e.target.value)}
-          className="w-full border border-gray-400 p-3 text-lg"
         />
-      </label>
 
-      {/* Desmarcado por padrao. A versao do texto vem de lib/config.ts e e
-          gravada junto com IP e user agent no momento do envio. */}
-      <label className="mb-6 flex gap-3">
-        <input
-          type="checkbox"
-          checked={respostas.consentimento === 'sim'}
-          onChange={(e) => responder('consentimento', e.target.checked ? 'sim' : 'nao')}
-          className="mt-1 h-5 w-5 shrink-0"
-        />
-        <span className="text-sm text-gray-700">{CONSENTIMENTO.texto}</span>
-      </label>
-
-      <button
-        type="button"
-        onClick={enviar}
-        disabled={enviando}
-        className="w-full bg-gray-800 p-4 text-lg font-medium text-white disabled:opacity-50"
-      >
-        {enviando ? 'Enviando...' : 'Quero ver as opcoes'}
-      </button>
+        {/* Desmarcado por padrao. A versao do texto vem de lib/config.ts e e
+            gravada junto com IP e user agent no momento do envio.
+            O <label> envolve tudo: a area de toque e a caixa inteira, nao um
+            quadradinho de 20px. */}
+        <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-fundo p-3.5">
+          <input
+            type="checkbox"
+            checked={aceitou}
+            onChange={(e) =>
+              responder('consentimento', e.target.checked ? 'sim' : 'nao')
+            }
+            className="sr-only"
+          />
+          <span
+            aria-hidden="true"
+            className={`flex size-6 shrink-0 items-center justify-center rounded-[5px] text-sm font-extrabold ${
+              aceitou
+                ? 'bg-marinho text-amarelo'
+                : 'border-2 border-sobre-marinho bg-white'
+            }`}
+          >
+            {aceitou ? '✓' : ''}
+          </span>
+          <span className="text-sm/[1.45] text-apagado-escuro">
+            {CONSENTIMENTO.texto}
+          </span>
+        </label>
+      </div>
     </div>
   )
 }
