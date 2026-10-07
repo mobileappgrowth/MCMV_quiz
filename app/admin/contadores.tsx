@@ -56,23 +56,26 @@ export async function Contadores() {
   ]
 
   return (
-    <section className="mt-10 border-t border-gray-300 pt-6">
-      <h2 className="mb-3 text-lg font-bold">Numeros</h2>
-      <dl className="flex flex-col gap-1 text-sm">
+    <section className="rounded-[10px] border border-linha bg-white p-5">
+      <h2 className="mb-3 text-[17px] font-extrabold">Numeros</h2>
+      {/* Grade, nao lista: sete numeros em coluna viram sete linhas de leitura;
+          em grade o olho pega os sete de uma vez. Continua sendo texto -- a
+          especificacao pede sem grafico, e grafico com dezenas de linhas por
+          semana so enfeitaria. */}
+      <dl className="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-px bg-divisor">
         {linhas.map(([rotulo, valor]) => (
-          <div
-            key={rotulo}
-            className="flex justify-between gap-2 border-b border-gray-200 py-1"
-          >
-            <dt className="text-gray-700">{rotulo}</dt>
-            <dd className="font-medium">{valor}</dd>
+          <div key={rotulo} className="bg-white px-1 py-2.5">
+            <dt className="text-[11px] font-medium text-apagado">{rotulo}</dt>
+            <dd className="text-[19px] font-extrabold tracking-[-0.01em]">
+              {valor}
+            </dd>
           </div>
         ))}
       </dl>
-      <p className="mt-3 text-xs text-gray-600">
-        A taxa de desbloqueio e a que mais importa. Interesse que fica na vitrine
-        e nao vende quer dizer preco alto ou perfil que nao serve para quem esta
-        olhando -- e isso nao aparece nos outros numeros.
+      <p className="mt-3 text-xs/[1.45] text-apagado">
+        A taxa de desbloqueio e a que mais importa. Interesse que fica na
+        vitrine e nao vende quer dizer preco alto ou perfil que nao serve para
+        quem esta olhando -- e isso nao aparece nos outros numeros.
       </p>
     </section>
   )

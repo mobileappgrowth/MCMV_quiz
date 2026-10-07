@@ -2,7 +2,6 @@ import { notFound } from 'next/navigation'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 import { exigirAdmin } from '@/lib/auth'
 import { HORAS_CARENCIA_PAUSADO } from '@/lib/config'
-import { NavAdmin } from '../../nav'
 import { Formulario } from '../formulario'
 import { ControlePublicacao } from './controle-publicacao'
 
@@ -50,11 +49,9 @@ export default async function EditarEmpreendimento({
     .eq('empreendimento_id', id)
 
   return (
-    <main className="mx-auto max-w-2xl p-4">
-      <NavAdmin atual="empreendimentos" />
-
-      <h1 className="mb-1 text-2xl font-bold">{texto(emp.nome)}</h1>
-      <p className="mb-6 text-sm text-gray-600">
+    <main className="mx-auto max-w-[900px] p-5 pb-12">
+      <h1 className="mb-1 text-2xl font-extrabold tracking-[-0.01em]">{texto(emp.nome)}</h1>
+      <p className="mb-6 text-sm text-apagado">
         {interesses ?? 0} {interesses === 1 ? 'interesse gerado' : 'interesses gerados'}
         {' · '}
         {HORAS_CARENCIA_PAUSADO}h de carencia ao pausar
@@ -68,7 +65,7 @@ export default async function EditarEmpreendimento({
       />
 
       {arquivado ? (
-        <p className="mt-8 border border-gray-400 p-4 text-sm text-gray-700">
+        <p className="mt-8 rounded-[10px] border border-linha bg-white p-5 text-sm/[1.45] text-apagado-escuro">
           Arquivado nao e editavel. O cadastro permanece de proposito: apagar
           quebraria a rastreabilidade dos interesses ja gerados e cobrados.
         </p>
@@ -100,14 +97,14 @@ export default async function EditarEmpreendimento({
 
       {/* O log existe para responder a uma construtora que questione o que foi
           publicado: o que estava no ar, quando, e o que mudou. */}
-      <section className="mt-10 border-t border-gray-300 pt-6">
-        <h2 className="mb-3 text-lg font-bold">Historico</h2>
+      <section className="mt-10 rounded-[10px] border border-linha bg-white p-5">
+        <h2 className="mb-3 text-[17px] font-extrabold">Historico</h2>
         {(log?.length ?? 0) === 0 && (
-          <p className="text-sm text-gray-600">Nada registrado ainda.</p>
+          <p className="text-sm text-apagado">Nada registrado ainda.</p>
         )}
         <ul className="flex flex-col gap-2 text-sm">
           {log?.map((l, i) => (
-            <li key={i} className="border-b border-gray-200 pb-2">
+            <li key={i} className="border-b border-divisor pb-2 last:border-0">
               <span className="font-medium">
                 {l.campo === '_autor' ? 'por' : l.campo}
               </span>{' '}
@@ -115,13 +112,13 @@ export default async function EditarEmpreendimento({
                 <span>{l.valor_depois}</span>
               ) : (
                 <>
-                  <span className="text-gray-500 line-through">
+                  <span className="text-apagado line-through">
                     {l.valor_antes ?? 'vazio'}
                   </span>{' '}
                   <span>&rarr; {l.valor_depois ?? 'vazio'}</span>
                 </>
               )}
-              <span className="block text-xs text-gray-500">
+              <span className="block text-xs text-apagado">
                 {new Date(l.criado_em).toLocaleString('pt-BR')}
               </span>
             </li>

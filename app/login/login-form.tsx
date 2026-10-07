@@ -102,42 +102,69 @@ export function LoginForm() {
 
   if (estado === 'enviado') {
     return (
-      <div>
-        <p className="mb-2 font-medium">Link enviado para {email}.</p>
-        <p className="text-gray-600">
-          Abra o email no celular e toque no link. Ele vale por uma hora.
-        </p>
+      <div className="flex flex-col gap-4">
+        <div
+          aria-hidden="true"
+          className="flex size-12 items-center justify-center rounded-full bg-verde-tenue text-[22px] font-extrabold text-verde"
+        >
+          ✓
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[22px] font-extrabold">Link enviado</p>
+          <p className="text-[15px]/[1.45] text-apagado">
+            Enviamos para <strong className="text-marinho">{email}</strong>.
+            Abra o email no celular e toque no link. Ele vale por uma hora.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => setEstado('inicial')}
+          className="text-sm font-semibold text-apagado"
+        >
+          Usar outro email
+        </button>
       </div>
     )
   }
 
   return (
-    <form onSubmit={enviar}>
-      <label className="mb-4 block">
-        <span className="mb-1 block text-sm font-medium">Email</span>
+    <form onSubmit={enviar} className="flex flex-col gap-4.5">
+      <div className="flex flex-col gap-1.5">
+        <h1 className="text-2xl font-extrabold">Entrar no painel</h1>
+        <p className="text-[15px]/[1.45] text-apagado">
+          Mandamos um link de acesso para o seu email. Sem senha.
+        </p>
+      </div>
+
+      <label className="flex flex-col gap-1.5">
+        <span className="text-sm font-bold">Email</span>
         <input
           type="email"
           required
           autoComplete="email"
           inputMode="email"
+          placeholder="voce@imobiliaria.com.br"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-400 p-3 text-lg"
+          className="w-full rounded-lg border-2 border-campo p-4 text-[17px] font-medium text-marinho outline-none focus:border-marinho"
         />
       </label>
 
       <button
         type="submit"
         disabled={estado === 'enviando'}
-        className="w-full bg-gray-800 p-4 text-lg font-medium text-white disabled:opacity-50"
+        className="rounded-lg bg-marinho p-4 font-extrabold text-white hover:bg-marinho-hover disabled:opacity-50"
       >
         {estado === 'enviando' ? 'Enviando...' : 'Enviar link de acesso'}
       </button>
 
       {erro && (
-        <div role="alert" className="mt-4">
-          <p className="text-sm font-medium text-red-700">{erro}</p>
-          {detalhe && <p className="mt-1 text-sm text-gray-600">{detalhe}</p>}
+        <div
+          role="alert"
+          className="flex flex-col gap-1 rounded-lg bg-vermelho-tenue p-3.5"
+        >
+          <p className="text-sm font-bold text-vermelho">{erro}</p>
+          {detalhe && <p className="text-sm text-apagado-escuro">{detalhe}</p>}
         </div>
       )}
     </form>

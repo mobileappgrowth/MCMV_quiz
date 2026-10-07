@@ -1,3 +1,4 @@
+import { Marca } from '@/components/marca'
 import { LoginForm } from './login-form'
 
 // Login unico: corretor e admin entram pela mesma porta. Quem e quem se decide
@@ -10,29 +11,41 @@ export default async function Login({
   const { erro } = await searchParams
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center p-6">
-      <h1 className="mb-2 text-2xl font-bold">Entrar</h1>
-      <p className="mb-6 text-gray-600">
-        Digite seu email. Enviamos um link de acesso, sem senha.
-      </p>
+    <main className="flex min-h-screen items-center justify-center bg-marinho p-6">
+      <div className="flex w-full max-w-[420px] flex-col gap-6">
+        <Marca claro sufixo="Corretores" />
 
-      {/* O callback redireciona para ca com ?erro=... quando o link falha.
-          Antes esta pagina ignorava o parametro: a pessoa voltava para a mesma
-          tela sem explicacao nenhuma, e nao havia o que fazer a respeito. */}
-      {erro && (
-        <div role="alert" className="mb-6 border border-red-700 p-3">
-          <p className="text-sm font-medium text-red-700">
-            O link de acesso nao funcionou.
-          </p>
-          <p className="mt-1 text-sm text-gray-700">{erro}</p>
-          <p className="mt-2 text-sm text-gray-600">
-            Links de acesso valem uma hora e servem uma vez so. Peca um novo
-            abaixo, e abra-o no mesmo aparelho e navegador em que pediu.
-          </p>
+        <div className="flex flex-col gap-4.5 rounded-xl bg-white p-7">
+          {/* O callback redireciona para ca com ?erro=... quando o link falha.
+              Antes esta pagina ignorava o parametro: a pessoa voltava para a
+              mesma tela sem explicacao nenhuma, e nao havia o que fazer a
+              respeito. */}
+          {erro && (
+            <div
+              role="alert"
+              className="flex flex-col gap-1 rounded-lg bg-vermelho-tenue p-3.5"
+            >
+              <p className="text-sm font-bold text-vermelho">
+                O link de acesso nao funcionou.
+              </p>
+              <p className="text-sm text-apagado-escuro">{erro}</p>
+              <p className="text-[13px] text-apagado">
+                Links de acesso valem uma hora e servem uma vez so. Peca um novo
+                abaixo, e abra-o no mesmo aparelho e navegador em que pediu.
+              </p>
+            </div>
+          )}
+
+          <LoginForm />
         </div>
-      )}
 
-      <LoginForm />
+        <p className="text-center text-[13px] font-medium text-sobre-marinho">
+          Nao e corretor?{' '}
+          <a href="/" className="underline">
+            Ver as opcoes de imovel
+          </a>
+        </p>
+      </div>
     </main>
   )
 }

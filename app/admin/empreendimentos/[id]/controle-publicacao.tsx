@@ -79,23 +79,23 @@ export function ControlePublicacao({
   const precisaMotivo = statusAtual === 'publicado' || statusAtual === 'pausado'
 
   return (
-    <section className="border border-gray-400 p-4">
-      <p className="mb-1 text-sm text-gray-600">Estado da publicacao</p>
-      <p className="mb-3 text-lg font-bold">{statusAtual}</p>
+    <section className="rounded-[10px] border border-linha bg-white p-5">
+      <p className="mb-1 text-sm text-apagado">Estado da publicacao</p>
+      <p className="mb-3 text-[17px] font-extrabold">{statusAtual}</p>
 
       {pausadoMotivo && statusAtual === 'pausado' && (
-        <p className="mb-3 text-sm text-gray-700">
+        <p className="mb-3 text-sm text-apagado-escuro">
           Motivo da pausa: {pausadoMotivo}
         </p>
       )}
       {arquivadoMotivo && (
-        <p className="mb-3 text-sm text-gray-700">
+        <p className="mb-3 text-sm text-apagado-escuro">
           Motivo do arquivamento: {arquivadoMotivo}
         </p>
       )}
 
       {statusAtual === 'arquivado' ? (
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-apagado">
           Arquivado e definitivo. Se precisar dele de volta, cadastre um novo --
           o historico deste fica intacto.
         </p>
@@ -103,7 +103,7 @@ export function ControlePublicacao({
         <>
           {(precisaMotivo || true) && (
             <label className="mb-3 block">
-              <span className="mb-1 block text-sm font-medium">
+              <span className="mb-1 block text-sm font-bold">
                 Motivo {precisaMotivo ? '(obrigatorio para pausar e arquivar)' : ''}
               </span>
               <input
@@ -111,7 +111,7 @@ export function ControlePublicacao({
                 value={motivo}
                 onChange={(e) => setMotivo(e.target.value)}
                 placeholder="Unidades esgotadas, obra suspensa, pedido da construtora..."
-                className="w-full border border-gray-400 p-3 text-sm"
+                className="w-full rounded-lg border-2 border-campo p-3 text-sm outline-none focus:border-marinho"
               />
             </label>
           )}
@@ -123,7 +123,7 @@ export function ControlePublicacao({
                 type="button"
                 disabled={ocupado}
                 onClick={() => ir(d.valor, d.valor === 'pausado')}
-                className="border border-gray-700 px-4 py-3 text-sm disabled:opacity-50"
+                className="rounded-lg border-2 border-campo px-4 py-3 text-sm font-bold hover:border-sobre-marinho disabled:opacity-50"
               >
                 {d.rotulo}
               </button>
@@ -132,7 +132,7 @@ export function ControlePublicacao({
               type="button"
               disabled={ocupado}
               onClick={() => ir('arquivado', true)}
-              className="border border-red-700 px-4 py-3 text-sm text-red-700 disabled:opacity-50"
+              className="border border-vermelho-linha px-4 py-3 text-sm text-vermelho disabled:opacity-50"
             >
               Arquivar
             </button>
@@ -141,7 +141,7 @@ export function ControlePublicacao({
       )}
 
       {erro && (
-        <p role="alert" className="mt-3 text-sm text-red-700">
+        <p role="alert" className="mt-3 text-sm text-vermelho">
           {erro}
         </p>
       )}

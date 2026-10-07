@@ -27,19 +27,19 @@ export function FormCorretor() {
   function campo(nome: keyof typeof VAZIO, rotulo: string, tipo = 'text') {
     return (
       <label className="mb-3 block">
-        <span className="mb-1 block text-sm font-medium">{rotulo}</span>
+        <span className="mb-1 block text-sm font-bold">{rotulo}</span>
         <input
           type={tipo}
           value={campos[nome]}
           onChange={(e) => setCampos({ ...campos, [nome]: e.target.value })}
-          className="w-full border border-gray-400 p-3"
+          className="w-full rounded-lg border-2 border-campo p-3 outline-none focus:border-marinho"
         />
       </label>
     )
   }
 
   return (
-    <form onSubmit={enviar}>
+    <form onSubmit={enviar} className="rounded-[10px] border border-linha bg-white p-5">
       {campo('nome', 'Nome')}
       {campo('email', 'Email (e por onde ele entra)', 'email')}
       {campo('telefone', 'Telefone', 'tel')}
@@ -48,7 +48,7 @@ export function FormCorretor() {
       <button
         type="submit"
         disabled={ocupado}
-        className="w-full bg-gray-800 p-4 font-medium text-white disabled:opacity-50"
+        className="w-full rounded-lg bg-marinho p-4 font-extrabold text-white hover:bg-marinho-hover disabled:opacity-50"
       >
         {ocupado ? 'Cadastrando...' : 'Cadastrar e liberar acesso'}
       </button>
@@ -56,7 +56,11 @@ export function FormCorretor() {
       {aviso && (
         <p
           role="alert"
-          className={`mt-4 text-sm ${aviso.tipo === 'ok' ? 'text-green-700' : 'text-red-700'}`}
+          className={`mt-4 rounded-lg px-3.5 py-3 text-sm font-semibold ${
+            aviso.tipo === 'ok'
+              ? 'bg-verde-tenue text-verde-texto'
+              : 'bg-vermelho-tenue text-vermelho'
+          }`}
         >
           {aviso.texto}
         </p>

@@ -113,15 +113,15 @@ export function Formulario({
   ) {
     return (
       <label className="mb-3 block">
-        <span className="mb-1 block text-sm font-medium">{rotulo}</span>
+        <span className="mb-1 block text-sm font-bold">{rotulo}</span>
         {extra?.ajuda && (
-          <span className="mb-1 block text-xs text-gray-600">{extra.ajuda}</span>
+          <span className="mb-1 block text-xs text-apagado">{extra.ajuda}</span>
         )}
         <input
           type={extra?.tipo ?? 'text'}
           value={campos[nome]}
           onChange={(e) => mudar(nome, e.target.value)}
-          className="w-full border border-gray-400 p-3"
+          className="w-full rounded-lg border-2 border-campo p-3 outline-none focus:border-marinho"
         />
       </label>
     )
@@ -134,11 +134,11 @@ export function Formulario({
   ) {
     return (
       <label className="mb-3 block">
-        <span className="mb-1 block text-sm font-medium">{rotulo}</span>
+        <span className="mb-1 block text-sm font-bold">{rotulo}</span>
         <select
           value={campos[nome]}
           onChange={(e) => mudar(nome, e.target.value)}
-          className="w-full border border-gray-400 p-3"
+          className="w-full rounded-lg border-2 border-campo p-3 outline-none focus:border-marinho"
         >
           <option value="">Nao informado</option>
           {opcoes.map(([v, r]) => (
@@ -152,9 +152,9 @@ export function Formulario({
   }
 
   return (
-    <form onSubmit={enviar}>
-      <fieldset className="mb-8">
-        <legend className="mb-3 text-lg font-bold">1. Identificacao</legend>
+    <form onSubmit={enviar} className="flex flex-col gap-4">
+      <fieldset className="rounded-[10px] border border-linha bg-white p-5">
+        <legend className="mb-3 px-1 text-[17px] font-extrabold">1. Identificacao</legend>
         {campo('nome', 'Nome do empreendimento')}
         {campo('construtora', 'Construtora', {
           ajuda:
@@ -169,8 +169,8 @@ export function Formulario({
         ])}
       </fieldset>
 
-      <fieldset className="mb-8">
-        <legend className="mb-3 text-lg font-bold">2. Produto</legend>
+      <fieldset className="rounded-[10px] border border-linha bg-white p-5">
+        <legend className="mb-3 px-1 text-[17px] font-extrabold">2. Produto</legend>
         {campo('tipologias', 'Tipologias', { ajuda: 'Ex.: 2 e 3 quartos, 45 a 62 m2' })}
         {campo('quartos', 'Quartos', { tipo: 'number' })}
         {selecao('garagem', 'Garagem', [
@@ -182,23 +182,31 @@ export function Formulario({
           ajuda: 'So faixa. Nunca valor de unidade, tabela, parcela ou condicao.',
         })}
         {campo('preco_ate', 'Preco ate (R$)')}
-        {erroFaixa && <p className="mb-3 text-sm text-red-700">{erroFaixa}</p>}
-        {avisoMcmv && <p className="mb-3 text-sm text-amber-800">{avisoMcmv}</p>}
+        {erroFaixa && (
+          <p className="mb-3 rounded-lg bg-vermelho-tenue px-3.5 py-3 text-sm font-semibold text-vermelho">
+            {erroFaixa}
+          </p>
+        )}
+        {avisoMcmv && (
+          <p className="mb-3 rounded-lg bg-amarelo-tenue px-3.5 py-3 text-sm text-apagado-escuro">
+            {avisoMcmv}
+          </p>
+        )}
       </fieldset>
 
-      <fieldset className="mb-8">
-        <legend className="mb-3 text-lg font-bold">3. Material</legend>
+      <fieldset className="rounded-[10px] border border-linha bg-white p-5">
+        <legend className="mb-3 px-1 text-[17px] font-extrabold">3. Material</legend>
         {campo('foto_url', 'URL da foto', {
           ajuda:
             'Material oficial da construtora ou producao propria. Nunca puxe imagem de site de terceiro: ser publico nao remove o direito autoral.',
         })}
         <label className="mb-3 block">
-          <span className="mb-1 block text-sm font-medium">Descricao</span>
+          <span className="mb-1 block text-sm font-bold">Descricao</span>
           <textarea
             value={campos.descricao}
             onChange={(e) => mudar('descricao', e.target.value)}
             rows={4}
-            className="w-full border border-gray-400 p-3"
+            className="w-full rounded-lg border-2 border-campo p-3 outline-none focus:border-marinho"
           />
         </label>
         {campo('fonte_material', 'Fonte do material', {
@@ -211,9 +219,9 @@ export function Formulario({
         ])}
       </fieldset>
 
-      <fieldset className="mb-8">
-        <legend className="mb-3 text-lg font-bold">Pre-visualizacao</legend>
-        <p className="mb-3 text-sm text-gray-600">
+      <fieldset className="rounded-[10px] border border-linha bg-white p-5">
+        <legend className="mb-3 px-1 text-[17px] font-extrabold">Pre-visualizacao</legend>
+        <p className="mb-3 text-sm text-apagado">
           E o mesmo componente da tela de resultado do quiz, nao uma imitacao. O
           que voce ve aqui e o que a pessoa ve la.
         </p>
@@ -241,7 +249,7 @@ export function Formulario({
       <button
         type="submit"
         disabled={ocupado}
-        className="w-full bg-gray-800 p-4 font-medium text-white disabled:opacity-50"
+        className="w-full rounded-lg bg-marinho p-4 font-extrabold text-white hover:bg-marinho-hover disabled:opacity-50"
       >
         {ocupado ? 'Salvando...' : id ? 'Salvar alteracoes' : 'Criar rascunho'}
       </button>
@@ -249,7 +257,11 @@ export function Formulario({
       {aviso && (
         <p
           role="alert"
-          className={`mt-4 text-sm ${aviso.tipo === 'ok' ? 'text-green-700' : 'text-red-700'}`}
+          className={`rounded-lg px-3.5 py-3 text-sm font-semibold ${
+            aviso.tipo === 'ok'
+              ? 'bg-verde-tenue text-verde-texto'
+              : 'bg-vermelho-tenue text-vermelho'
+          }`}
         >
           {aviso.texto}
         </p>

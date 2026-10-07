@@ -2,8 +2,18 @@
 
 import { useState, useTransition } from 'react'
 import { verificarLead, descartarLead, salvarNota } from './actions'
-import { reais } from '@/lib/preco'
 import { rotuloSelo, type Selo } from '@/lib/motor'
+
+// ============================================================================
+// FICHA DE UM LEAD NA FILA
+//
+// E a tela da ligacao: telefone grande e clicavel no topo, os dados do quiz
+// em grade, as notas, e os botoes de decisao embaixo.
+//
+// Aprovar exige escolher o selo verificado: um toque, sem passo extra. Nao ha
+// botao generico de "aprovar" de proposito -- sem selo, o cartao da vitrine
+// nao teria o que mostrar, e o preco cheio nao se sustenta.
+// ============================================================================
 
 const SELOS: Selo[] = ['forte', 'medio', 'a_confirmar']
 
@@ -11,6 +21,7 @@ type LeadFila = {
   id: string
   nome: string
   telefone: string
+  local: string
   notas: string | null
   dias: number
   qtdInteresses: number
@@ -32,100 +43,116 @@ export function LinhaFila({ lead }: { lead: LeadFila }) {
     })
   }
 
-  // Link de WhatsApp pronto: e dessa tela que eu faco a ligacao de verificacao.
-  const whatsapp = `https://wa.me/55${lead.telefone}`
-
   return (
-    <section className="border border-gray-400 p-4">
-      <div className="mb-3">
-        <h2 className="text-lg font-bold">{lead.nome}</h2>
-        <p className="text-gray-700">
-          <a href={whatsapp} target="_blank" rel="noopener" className="text-blue-700 underline">
-            {lead.telefone}
-          </a>
-        </p>
-        <p className="text-sm text-gray-600">
-          Captado ha {lead.dias} {lead.dias === 1 ? 'dia' : 'dias'} &middot;{' '}
-          {lead.qtdInteresses === 0
-            ? 'nenhum interesse'
-            : `${lead.qtdInteresses} ${lead.qtdInteresses === 1 ? 'interesse' : 'interesses'}`}
-        </p>
-        {/* O selo que o motor deu a partir do que a pessoa digitou. E um ponto
-            de partida para a ligacao, nao um veredito -- quem decide o selo
-            verificado e voce, depois de falar com ela. */}
-        <p className="mt-1 text-sm">
-          Declarado pelo quiz:{' '}
-          <strong>{rotuloSelo(lead.seloDeclarado)}</strong>
-          {lead.pontuacao !== null && (
-            <span className="text-gray-600"> ({lead.pontuacao} pontos)</span>
-          )}
-        </p>
+    <section className="overflow-hidden rounded-[10px] border border-linha bg-white">
+      {/* --- cabecalho: quem e, e o botao de ligar --- */}
+      <div className="flex flex-wrap items-center justify-between gap-3.5 border-b border-divisor p-5">
+        <div>
+          <h2 className="text-2xl font-extrabold tracking-[-0.01em]">
+            {lead.nome}
+          </h2>
+          <p className="text-sm font-medium text-apagado">
+            {lead.local} · captado ha {lead.dias}{' '}
+            {lead.dias === 1 ? 'dia' : 'dias'} ·{' '}
+            {lead.qtdInteresses === 0
+              ? 'nenhum interesse'
+              : `${lead.qtdInteresses} ${lead.qtdInteresses === 1 ? 'interesse' : 'interesses'}`}
+          </p>
+        </div>
+        <a
+          href={`https://wa.me/55${lead.telefone}`}
+          target="_blank"
+          rel="noopener"
+          className="rounded-lg bg-verde px-4 py-3 font-mono text-[15px] font-semibold whitespace-nowrap text-white hover:bg-verde-hover"
+        >
+          {lead.telefone} ↗
+        </a>
       </div>
 
-      <dl className="mb-4 grid grid-cols-2 gap-x-4 gap-y-1 text-sm">
+      {/* O selo que o motor deu a partir do que a pessoa digitou. E um ponto de
+          partida para a ligacao, nao um veredito -- quem decide o selo
+          verificado e voce, depois de falar com ela. */}
+      <p className="border-b border-divisor bg-fundo px-5 py-2.5 text-sm">
+        Declarado pelo quiz:{' '}
+        <strong>{rotuloSelo(lead.seloDeclarado)}</strong>
+        {lead.pontuacao !== null && (
+          <span className="text-apagado"> ({lead.pontuacao} pontos)</span>
+        )}
+      </p>
+
+      <dl className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-px border-b border-divisor bg-divisor">
         {lead.qualificacao.map(([rotulo, valor]) => (
-          <div key={rotulo} className="flex justify-between gap-2 border-b border-gray-200 py-1">
-            <dt className="text-gray-600">{rotulo}</dt>
-            <dd className="text-right font-medium">{valor || '-'}</dd>
+          <div key={rotulo} className="bg-white px-5 py-2.5">
+            <dt className="text-[11px] font-medium text-apagado">{rotulo}</dt>
+            <dd className="text-sm font-bold">{valor || '-'}</dd>
           </div>
         ))}
       </dl>
 
-      <label className="mb-3 block">
-        <span className="mb-1 block text-sm font-medium">Notas da verificacao</span>
-        <textarea
-          value={nota}
-          onChange={(e) => setNota(e.target.value)}
-          rows={2}
-          placeholder="O que ela disse na ligacao."
-          className="w-full border border-gray-400 p-2 text-sm"
-        />
-      </label>
+      <div className="flex flex-col gap-3 p-5">
+        <label className="flex flex-col gap-1.5">
+          <span className="text-sm font-bold">Notas da verificacao</span>
+          <textarea
+            value={nota}
+            onChange={(e) => setNota(e.target.value)}
+            rows={3}
+            placeholder="O que ela disse na ligacao."
+            className="w-full resize-y rounded-lg border-2 border-campo p-3 text-[15px] outline-none focus:border-marinho"
+          />
+        </label>
 
-      {/* Aprovar exige escolher o selo verificado: um toque, sem passo extra.
-          Nao ha botao generico de "aprovar" de proposito -- sem selo, o cartao
-          da vitrine nao teria o que mostrar, e o preco cheio nao se sustenta. */}
-      <p className="mb-2 text-sm font-medium">Aprovar como:</p>
-      <div className="mb-3 flex flex-wrap gap-2">
-        {SELOS.map((selo) => (
+        <div>
+          <p className="mb-2 text-sm font-bold">Aprovar como:</p>
+          <div className="flex flex-wrap gap-2">
+            {SELOS.map((selo) => (
+              <button
+                key={selo}
+                type="button"
+                disabled={ocupado}
+                onClick={() => rodar(() => verificarLead(lead.id, selo))}
+                className={`flex-1 rounded-lg px-4 py-3.5 text-[15px] font-extrabold disabled:opacity-50 ${
+                  selo === lead.seloDeclarado
+                    ? 'bg-verde text-white hover:bg-verde-hover'
+                    : 'border-2 border-verde text-verde-texto hover:bg-verde-tenue'
+                }`}
+              >
+                {rotuloSelo(selo)}
+              </button>
+            ))}
+          </div>
+          <p className="mt-1.5 text-xs text-apagado">
+            O realcado e o que o motor sugeriu. Quem decide e a ligacao.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap gap-2">
           <button
-            key={selo}
             type="button"
             disabled={ocupado}
-            onClick={() => rodar(() => verificarLead(lead.id, selo))}
-            className={`px-4 py-3 text-sm font-medium text-white disabled:opacity-50 ${
-              selo === lead.seloDeclarado ? 'bg-green-800' : 'bg-green-600'
-            }`}
+            onClick={() => rodar(() => salvarNota(lead.id, nota))}
+            className="flex-1 rounded-lg border-2 border-campo px-4 py-3.5 text-[15px] font-bold hover:border-sobre-marinho disabled:opacity-50"
           >
-            {rotuloSelo(selo)}
+            Salvar nota
           </button>
-        ))}
-      </div>
+          <button
+            type="button"
+            disabled={ocupado}
+            onClick={() => rodar(() => descartarLead(lead.id))}
+            className="flex-1 rounded-lg border-2 border-vermelho-linha px-4 py-3.5 text-[15px] font-bold text-vermelho disabled:opacity-50"
+          >
+            Descartar
+          </button>
+        </div>
 
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          disabled={ocupado}
-          onClick={() => rodar(() => salvarNota(lead.id, nota))}
-          className="border border-gray-500 px-4 py-3 text-sm disabled:opacity-50"
-        >
-          Salvar nota
-        </button>
-        <button
-          type="button"
-          disabled={ocupado}
-          onClick={() => rodar(() => descartarLead(lead.id))}
-          className="border border-red-700 px-4 py-3 text-sm text-red-700 disabled:opacity-50"
-        >
-          Descartar
-        </button>
+        {aviso && (
+          <p
+            role="alert"
+            className="rounded-lg bg-vermelho-tenue px-3.5 py-3 text-sm font-semibold text-vermelho"
+          >
+            {aviso}
+          </p>
+        )}
       </div>
-
-      {aviso && (
-        <p role="alert" className="mt-3 text-sm text-red-700">
-          {aviso}
-        </p>
-      )}
     </section>
   )
 }
